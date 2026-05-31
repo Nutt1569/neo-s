@@ -181,6 +181,17 @@
   .typing span:nth-child(2){ animation-delay: .2s; } .typing span:nth-child(3){ animation-delay: .4s; }
   @keyframes blink { 0%,60%,100%{ opacity:.3; } 30%{ opacity:1; } }
 
+  /* ===== LEAD FORM (ในแชท) ===== */
+  .lead-card { background: var(--card); border: 1px solid var(--blue); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 9px; box-shadow: 0 8px 26px rgba(59,130,246,0.18); }
+  .lead-card h4 { font-size: 14.5px; font-weight: 600; }
+  .lead-note { font-size: 11.5px; color: var(--txt-dim); margin-top: -3px; margin-bottom: 3px; }
+  .lead-card input, .lead-card select, .lead-card textarea { background: var(--bg-2); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; color: var(--txt); font-family: inherit; font-size: 13.5px; outline: none; width: 100%; resize: none; }
+  .lead-card input:focus, .lead-card select:focus, .lead-card textarea:focus { border-color: var(--blue); }
+  .lead-card select { cursor: pointer; }
+  .lead-card button { background: var(--grad); color: #050A14; border: none; border-radius: 9px; padding: 11px; font-weight: 700; font-size: 14px; cursor: pointer; transition: transform .15s; }
+  .lead-card button:hover:not(:disabled) { transform: translateY(-1px); }
+  .lead-card button:disabled { opacity: .6; cursor: default; }
+
   /* reveal anim */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s; }
   .reveal.in { opacity: 1; transform: none; }
@@ -315,21 +326,21 @@
         <div class="price-num">฿3,500<small>/เดือน</small></div>
         <div class="price-sub">ค่าติดตั้ง ฿15,000 · เหมาะกับ SME / ร้านออนไลน์</div>
         <ul class="price-feat"><li>AI Sales + AI Finance</li><li>10,000 NEO Credits/เดือน</li><li>ตอบแชท + รับออเดอร์ + ตรวจสลิป</li><li>Support รายเดือน</li></ul>
-        <button class="price-btn" onclick="openChat()">เริ่มต้น</button>
+        <button class="price-btn" onclick="openLead('Starter')">เริ่มต้น</button>
       </div>
       <div class="price-card featured reveal">
         <div class="price-name">🥈 BUSINESS</div>
         <div class="price-num">฿6,500<small>/เดือน</small></div>
         <div class="price-sub">ค่าติดตั้ง ฿25,000 · เหมาะกับแบรนด์สินค้า</div>
         <ul class="price-feat"><li>ทุกอย่างใน Starter</li><li>30,000 NEO Credits/เดือน</li><li>เชื่อม LINE / Facebook</li><li>Dashboard สรุปยอด</li><li>Support ใกล้ชิด</li></ul>
-        <button class="price-btn" onclick="openChat()">เลือกแพ็กเกจนี้</button>
+        <button class="price-btn" onclick="openLead('Business')">เลือกแพ็กเกจนี้</button>
       </div>
       <div class="price-card reveal">
         <div class="price-name">🥇 ENTERPRISE</div>
         <div class="price-num">฿15,000<small>+/เดือน</small></div>
         <div class="price-sub">ค่าติดตั้ง ฿50,000+ · เหมาะกับองค์กรขนาดใหญ่</div>
         <ul class="price-feat"><li>ทุกอย่างใน Business</li><li>NEO Credits ไม่จำกัด</li><li>AI Agents ครบ 6 ตัว</li><li>Custom integration</li><li>Dedicated support</li></ul>
-        <button class="price-btn" onclick="openChat()">ติดต่อทีมขาย</button>
+        <button class="price-btn" onclick="openLead('Enterprise')">ติดต่อทีมขาย</button>
       </div>
     </div>
   </div>
@@ -406,6 +417,7 @@
   </div>
   <div class="chat-body" id="chatBody"></div>
   <div class="chat-quick" id="chatQuick">
+    <button class="quick-b" onclick="showLeadForm()" style="border-color:var(--blue);color:var(--txt)">📩 ฝากให้ติดต่อกลับ</button>
     <button class="quick-b" onclick="quick('NEO-S ทำอะไรได้บ้างคะ')">NEO-S ทำอะไรได้บ้าง?</button>
     <button class="quick-b" onclick="quick('ราคาเท่าไหร่คะ')">ราคาเท่าไหร่?</button>
     <button class="quick-b" onclick="quick('ติดตั้งนานไหมคะ')">ติดตั้งนานไหม?</button>
@@ -426,6 +438,10 @@
 //    เมื่อทำ Dify workflow เสร็จ → ใส่ URL แล้ว chat จะฉลาดขึ้นทันที
 const NOVA_WORKER_URL = 'https://neos-sales-proxy.kritsada-nutt1981.workers.dev';
 
+// 🗄️ Supabase — เก็บ Lead (ตาราง neos_leads, INSERT only ผ่าน anon key)
+const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
+
 // ===== คำตอบสำเร็จรูป (offline fallback) =====
 const CANNED = [
   { k: ['ทำอะไร','คือ','อะไรได้','feature','ฟีเจอร์'], a: 'NEO-S เป็นระบบ AI ที่ช่วยธุรกิจคุณค่ะ ✨\n\n• ตอบแชทลูกค้า 24 ชม.\n• รับออเดอร์ + ส่ง QR อัตโนมัติ\n• ตรวจสลิปการโอนเงิน\n• บันทึกข้อมูลลงระบบกลาง\n\nมี AI 6 ตัวช่วยกันค่ะ ตอนนี้ AI Sales กับ AI Finance พร้อมใช้แล้วนะคะ 😊' },
@@ -437,6 +453,7 @@ const CANNED = [
 const DEFAULT_A = 'ขอบคุณที่สนใจ NEO-S ค่ะ 😊\n\nโนวาช่วยตอบเรื่องระบบ AI ได้เลยนะคะ — ลองถามเรื่องฟีเจอร์ ราคา หรือขอดูตัวอย่างระบบได้ค่ะ\n\nหรือถ้าอยากคุยกับทีมโดยตรง ทักได้ที่ kritsada.nutt1981@gmail.com ค่ะ';
 
 let chatStarted = false;
+let userMsgCount = 0, leadShown = false, leadSubmitted = false;
 function toggleChat() {
   const w = document.getElementById('chatWin');
   w.classList.toggle('open');
@@ -487,11 +504,12 @@ async function reply(text) {
       const ans = out.output || out.text || '';
       typing(false);
       botSay(ans || localAnswer(text));
+      maybeOfferLead(text);
       return;
     } catch(e) { /* ตก fallback */ }
   }
   // offline fallback
-  setTimeout(() => { typing(false); botSay(localAnswer(text)); }, 700);
+  setTimeout(() => { typing(false); botSay(localAnswer(text)); maybeOfferLead(text); }, 700);
 }
 
 function sendMsg() {
@@ -499,10 +517,104 @@ function sendMsg() {
   const text = inp.value.trim();
   if (!text) return;
   inp.value = '';
+  userMsgCount++;
   addMsg(text, 'user');
   reply(text);
 }
-function quick(t) { addMsg(t, 'user'); reply(t); }
+function quick(t) { userMsgCount++; addMsg(t, 'user'); reply(t); }
+
+// ============================================================
+// LEAD CAPTURE — เก็บผู้สนใจ → Supabase (neos_leads)
+// ============================================================
+function openLead(pkg) { openChat(); setTimeout(() => showLeadForm(pkg), 350); }
+
+// เสนอฟอร์มอัตโนมัติ: เมื่อลูกค้าถามราคา/สนใจ หรือคุยมา 3 ข้อความ
+function maybeOfferLead(text) {
+  if (leadShown || leadSubmitted) return;
+  const low = (text || '').toLowerCase();
+  const intent = ['ราคา','เท่าไหร่','แพ็ก','package','สนใจ','ติดต่อ','ซื้อ','เริ่ม','สมัคร','ใบเสนอ'].some(k => low.includes(k));
+  if (intent || userMsgCount >= 3) setTimeout(() => showLeadForm(), intent ? 1300 : 800);
+}
+
+function showLeadForm(prefillPkg) {
+  if (leadSubmitted) return;
+  if (leadShown) {
+    const ex = document.getElementById('leadForm');
+    if (ex) { ex.scrollIntoView({ behavior:'smooth', block:'center' }); if (prefillPkg) document.getElementById('leadInterest').value = prefillPkg; }
+    return;
+  }
+  leadShown = true;
+  const body = document.getElementById('chatBody');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg bot';
+  wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="padding:0;background:none;max-width:100%">
+    <div class="lead-card" id="leadForm">
+      <h4>📩 ฝากข้อมูลให้ทีมติดต่อกลับ</h4>
+      <div class="lead-note">ทีม NEO-S จะติดต่อกลับพร้อมรายละเอียด + ใบเสนอราคาให้ค่ะ</div>
+      <input id="leadName" type="text" placeholder="ชื่อ *" autocomplete="name">
+      <input id="leadContact" type="text" placeholder="อีเมล หรือ เบอร์โทร *" autocomplete="email">
+      <select id="leadInterest">
+        <option value="">แพ็กเกจที่สนใจ (ถ้ามี)</option>
+        <option>Starter</option>
+        <option>Business</option>
+        <option>Enterprise</option>
+        <option>ยังไม่แน่ใจ</option>
+      </select>
+      <textarea id="leadMsg" rows="2" placeholder="ธุรกิจของคุณ / สิ่งที่อยากให้ AI ช่วย (ถ้ามี)"></textarea>
+      <button id="leadBtn" onclick="submitLead()">ส่งข้อมูล</button>
+    </div></div>`;
+  body.appendChild(wrap);
+  body.scrollTop = body.scrollHeight;
+  if (prefillPkg) document.getElementById('leadInterest').value = prefillPkg;
+}
+
+async function saveLead(lead) {
+  const r = await fetch(SUPABASE_URL + '/rest/v1/neos_leads', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(lead)
+  });
+  return r.ok;
+}
+
+async function submitLead() {
+  const name    = document.getElementById('leadName').value.trim();
+  const contact = document.getElementById('leadContact').value.trim();
+  if (!name || !contact) { alert('กรอกชื่อและช่องทางติดต่อด้วยนะคะ 😊'); return; }
+  const interest = document.getElementById('leadInterest').value;
+  const message  = document.getElementById('leadMsg').value.trim();
+  const isEmail  = contact.includes('@');
+  const btn = document.getElementById('leadBtn');
+  if (btn) { btn.textContent = 'กำลังส่ง…'; btn.disabled = true; }
+
+  const lead = {
+    lead_id:  'LEAD-' + Date.now(),
+    name, contact,
+    email:    isEmail ? contact : null,
+    phone:    isEmail ? null : contact,
+    interest: interest || null,
+    message:  message || null,
+    source:   'website-nova'
+  };
+
+  let ok = false;
+  try { ok = await saveLead(lead); } catch(e) { ok = false; }
+
+  if (ok) {
+    leadSubmitted = true;
+    const msgEl = document.getElementById('leadForm')?.closest('.msg');
+    if (msgEl) msgEl.remove();
+    botSay('ขอบคุณมากค่ะ 🙏 ได้รับข้อมูลของคุณ' + name + ' แล้วนะคะ\n\nทีม NEO-S จะติดต่อกลับโดยเร็วที่สุดค่ะ ระหว่างรอ ลองเข้าไปดูระบบจริงที่ LUMINA ได้เลยนะคะ 👉 nutt1569.github.io/lumina 😊');
+  } else {
+    if (btn) { btn.textContent = 'ลองอีกครั้ง'; btn.disabled = false; }
+    botSay('ขออภัยค่ะ ส่งข้อมูลไม่สำเร็จ 🙏 รบกวนทักมาที่ kritsada.nutt1981@gmail.com โดยตรงได้เลยนะคะ');
+  }
+}
 
 // ===== scroll reveal =====
 const io = new IntersectionObserver((entries) => {
