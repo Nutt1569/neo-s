@@ -205,6 +205,9 @@
   .calc-opt .co-sub { font-size: 12px; color: var(--txt-dim); }
   .calc-opt.soon { opacity: .5; cursor: not-allowed; }
   .calc-opt.soon:hover { border-color: var(--line); }
+  .calc-opt.incl { border-color: var(--cyan); background: rgba(34,211,238,0.12); box-shadow: inset 0 0 0 1px var(--cyan); cursor: default; }
+  .calc-opt.incl:hover { border-color: var(--cyan); }
+  .co-badge.incl { background: var(--cyan); color: #04121A; border-color: var(--cyan); font-weight: 700; }
   .co-badge { position: absolute; top: -9px; right: 10px; font-size: 10px; padding: 2px 8px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); color: var(--txt-dim); }
   .calc-num-input { width: 170px; background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 12px 15px; color: var(--txt); font-family: inherit; font-size: 16px; font-weight: 600; outline: none; }
   .calc-num-input:focus { border-color: var(--blue); }
@@ -359,7 +362,7 @@
         <div class="price-name">🥈 BUSINESS</div>
         <div class="price-num">฿6,500<small>/เดือน</small></div>
         <div class="price-sub">ค่าติดตั้ง ฿25,000 · เหมาะกับแบรนด์สินค้า</div>
-        <ul class="price-feat"><li>ทุกอย่างใน Starter</li><li>30,000 NEO Credits/เดือน</li><li>เชื่อม LINE / Facebook</li><li>Dashboard สรุปยอด</li><li>Support ใกล้ชิด</li></ul>
+        <ul class="price-feat"><li>ทุกอย่างใน Starter</li><li>30,000 NEO Credits/เดือน</li><li>เชื่อม LINE / Facebook</li><li>Dashboard สรุปยอด</li><li>Support รายเดือน</li></ul>
         <button class="price-btn" onclick="openLead('Business')">เลือกแพ็กเกจนี้</button>
       </div>
       <div class="price-card reveal">
@@ -691,9 +694,9 @@ async function submitLead() {
 // ============================================================
 const CALC = {
   packages: [
-    { id:'Starter',    name:'🥉 Starter',    install:15000, monthly:3500,  credits:'10,000 Credits' },
-    { id:'Business',   name:'🥈 Business',   install:25000, monthly:6500,  credits:'30,000 Credits' },
-    { id:'Enterprise', name:'🥇 Enterprise', install:50000, monthly:15000, credits:'ไม่จำกัด', custom:true },
+    { id:'Starter',    name:'🥉 Starter',    install:15000, monthly:3500,  credits:'10,000 Credits', includes:[] },
+    { id:'Business',   name:'🥈 Business',   install:25000, monthly:6500,  credits:'30,000 Credits', includes:['line','fb'] },
+    { id:'Enterprise', name:'🥇 Enterprise', install:50000, monthly:15000, credits:'ไม่จำกัด', custom:true, includes:['line','fb'] },
   ],
   // จำนวนสินค้า: รวม 100 รายการในแพ็กเกจ · เกินคิดต่อรายการ (จ่ายตามจริง — ยุติธรรม)
   products: { included: 100, extraPerItem: 120 },
@@ -717,7 +720,14 @@ function renderCalc(){
        <span class="co-sub">${baht(p.install)}${p.custom?'+':''} · ${baht(p.monthly)}${p.custom?'+':''}/ด.</span>
      </div>`).join('');
   // จำนวนสินค้าใช้ช่องกรอกตัวเลข (id=calcProductCount) — ไม่ต้อง render ที่นี่
+  const curPkg = CALC.packages.find(p => p.id === calcState.pkg);
+  const incList = curPkg.includes || [];
   document.getElementById('calcAddons').innerHTML = CALC.addons.map(a => {
+    // รวมในแพ็กเกจแล้ว (เช่น Business มี LINE/FB) → ตัวทึบ ไม่คิดเงินเพิ่ม
+    if (incList.includes(a.id)) {
+      const label = (a.status === 'soon') ? '✓ รวม (เร็วๆ นี้)' : '✓ รวมในแพ็กเกจ';
+      return `<div class="calc-opt incl"><span class="co-badge incl">${label}</span><span class="co-name">${a.name}</span><span class="co-sub">มีให้ใน ${curPkg.id} แล้ว</span></div>`;
+    }
     if (a.status === 'soon')
       return `<div class="calc-opt soon"><span class="co-badge">เร็วๆ นี้</span><span class="co-name">${a.name}</span><span class="co-sub">+${baht(a.install)}</span></div>`;
     return `<div class="calc-opt ${calcState.addons.has(a.id)?'on':''}" onclick="toggleAddon('${a.id}')">
@@ -733,7 +743,8 @@ function toggleAddon(id){ calcState.addons.has(id) ? calcState.addons.delete(id)
 
 function computeCalc(){
   const pkg  = CALC.packages.find(p => p.id === calcState.pkg);
-  const adds = CALC.addons.filter(a => calcState.addons.has(a.id) && a.status === 'ready');
+  const incAddons = pkg.includes || [];
+  const adds = CALC.addons.filter(a => calcState.addons.has(a.id) && a.status === 'ready' && !incAddons.includes(a.id));
   const inc = CALC.products.included, rate = CALC.products.extraPerItem;
   const count = Math.max(0, calcState.count || 0);
   const extraItems = Math.max(0, count - inc);
@@ -749,6 +760,8 @@ function computeCalc(){
     : `✅ ไม่เกิน ${inc} รายการ — รวมในแพ็กเกจแล้ว <b style="color:var(--cyan)">ไม่มีค่าเพิ่ม</b>`;
 
   const lines = [['แพ็กเกจ', pkg.name], ['จำนวนสินค้า', count + ' รายการ'], ['NEO Credits', pkg.credits]];
+  CALC.addons.filter(a => incAddons.includes(a.id)).forEach(a =>
+    lines.push(['✓ ' + shortName(a.name), a.status === 'soon' ? 'รวม (เร็วๆ นี้)' : 'รวมแล้ว']));
   if (extraItems > 0) lines.push([`+ สินค้าเกิน ${inc} (${extraItems}×${baht(rate)})`, baht(extraCost)]);
   adds.forEach(a => lines.push(['+ ' + shortName(a.name), baht(a.install)]));
   document.getElementById('calcLines').innerHTML = lines.map(l =>
