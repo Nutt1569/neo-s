@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -112,7 +113,14 @@
   .case-tag { display: inline-block; font-size: 12px; letter-spacing: 2px; color: var(--gold); border: 1px solid rgba(226,182,121,0.3); padding: 5px 13px; border-radius: 999px; margin-bottom: 18px; }
   .case h3 { font-size: 28px; margin-bottom: 14px; } .case p { color: var(--txt-dim); margin-bottom: 24px; }
   .case-metrics { display: flex; gap: 30px; } .cm-num { font-size: 28px; font-weight: 700; } .cm-lbl { font-size: 12px; color: var(--txt-dim); }
-  .case-visual { aspect-ratio: 4/3; border-radius: 16px; background: radial-gradient(circle at 30% 30%, rgba(59,130,246,0.25), transparent 60%), var(--bg); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 60px; }
+  .case-visual { aspect-ratio: 4/3; border-radius: 16px; background: radial-gradient(circle at 30% 30%, rgba(226,182,121,0.14), transparent 60%), var(--bg); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .case-lumina { text-align: center; }
+  .case-lumina .ln { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 7vw, 78px); font-weight: 500; letter-spacing: 14px; line-height: 1; padding-left: 14px; background: linear-gradient(135deg, #F5E8CC, #E2B679 55%, #C99A57); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .case-lumina .sk { font-family: 'Jost', sans-serif; font-size: clamp(12px, 1.5vw, 17px); font-weight: 500; letter-spacing: 11px; padding-left: 11px; color: var(--gold); text-transform: uppercase; margin-top: 10px; }
+  .price-card.soon-card { position: relative; opacity: .68; }
+  .price-card.soon-card .price-btn { background: var(--bg-2); color: var(--txt-dim); cursor: default; }
+  .price-card.soon-card .price-btn:hover { transform: none; }
+  .soon-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--gold); color: var(--gold); font-size: 12px; font-weight: 600; padding: 4px 16px; border-radius: 999px; white-space: nowrap; }
   @media(max-width: 820px){ .case { grid-template-columns: 1fr; padding: 32px; } .case-visual{ display:none; } }
 
   /* ===== PRICING ===== */
@@ -255,9 +263,9 @@
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="wrap">
-    <div class="hero-badge"><span class="dot"></span> Autonomous Business OS · ขับเคลื่อนด้วย AI ทั้งหมด</div>
+    <div class="hero-badge"><span class="dot"></span> Autonomous Business OS · ขับเคลื่อนด้วย AI Agent</div>
     <h1>ให้ <span class="grad-txt">AI</span> ดูแลธุรกิจคุณ<br>ตลอด 24 ชั่วโมง</h1>
-    <p>NEO-S คือระบบบริหารธุรกิจที่ขับเคลื่อนด้วย AI Agent — ตอบแชทลูกค้า รับออเดอร์ ตรวจสลิป และจัดการหลังบ้าน อัตโนมัติ ไม่มีวันหยุด</p>
+    <p>NEO-S คือระบบบริหารธุรกิจที่ขับเคลื่อนด้วย AI Agent — <span style="white-space:nowrap">ตอบแชทลูกค้า</span> <span style="white-space:nowrap">รับออเดอร์</span> <span style="white-space:nowrap">ตรวจสลิป</span> และจัดการหลังบ้าน อัตโนมัติ ไม่มีวันหยุด</p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="openChat()">เริ่มปรึกษาฟรี →</button>
       <a class="btn-ghost" href="https://nutt1569.github.io/lumina" target="_blank">ดูระบบจริง (LUMINA)</a>
@@ -337,7 +345,12 @@
         </div>
         <div style="margin-top:26px"><a class="btn-ghost" href="https://nutt1569.github.io/lumina" target="_blank">เปิดดูระบบจริง →</a></div>
       </div>
-      <div class="case-visual">🌸</div>
+      <div class="case-visual">
+        <div class="case-lumina">
+          <div class="ln">LUMINA</div>
+          <div class="sk">Skincare</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -365,12 +378,13 @@
         <ul class="price-feat"><li>ทุกอย่างใน Starter</li><li>30,000 NEO Credits/เดือน</li><li>เชื่อม LINE / Facebook</li><li>Dashboard สรุปยอด</li><li>Support รายเดือน</li></ul>
         <button class="price-btn" onclick="openLead('Business')">เลือกแพ็กเกจนี้</button>
       </div>
-      <div class="price-card reveal">
+      <div class="price-card reveal soon-card">
+        <div class="soon-tag">เร็วๆ นี้</div>
         <div class="price-name">🥇 ENTERPRISE</div>
         <div class="price-num">฿15,000<small>+/เดือน</small></div>
         <div class="price-sub">ค่าติดตั้ง ฿50,000+ · เหมาะกับองค์กรขนาดใหญ่</div>
-        <ul class="price-feat"><li>ทุกอย่างใน Business</li><li>NEO Credits ไม่จำกัด</li><li>AI Agents ครบ 6 ตัว</li><li>Custom integration</li><li>Dedicated support</li></ul>
-        <button class="price-btn" onclick="openLead('Enterprise')">ติดต่อทีมขาย</button>
+        <ul class="price-feat"><li>ทุกอย่างใน Business</li><li>NEO Credits ไม่จำกัด</li><li>AI Agents ครบ 6 ตัว</li><li>Custom integration</li><li>Support รายเดือน</li></ul>
+        <button class="price-btn">เร็วๆ นี้</button>
       </div>
     </div>
   </div>
@@ -696,7 +710,7 @@ const CALC = {
   packages: [
     { id:'Starter',    name:'🥉 Starter',    install:15000, monthly:3500,  credits:'10,000 Credits', includes:[] },
     { id:'Business',   name:'🥈 Business',   install:25000, monthly:6500,  credits:'30,000 Credits', includes:['line','fb'] },
-    { id:'Enterprise', name:'🥇 Enterprise', install:50000, monthly:15000, credits:'ไม่จำกัด', custom:true, includes:['line','fb'] },
+    { id:'Enterprise', name:'🥇 Enterprise', install:50000, monthly:15000, credits:'ไม่จำกัด', custom:true, includes:['line','fb'], soon:true },
   ],
   // จำนวนสินค้า: รวม 100 รายการในแพ็กเกจ · เกินคิดต่อรายการ (จ่ายตามจริง — ยุติธรรม)
   products: { included: 100, extraPerItem: 120 },
@@ -714,11 +728,14 @@ function shortName(s){ return s.replace(/^\S+\s/,''); }
 function renderCalc(){
   const pkgEl = document.getElementById('calcPkgs');
   if (!pkgEl) return;
-  pkgEl.innerHTML = CALC.packages.map(p =>
-    `<div class="calc-opt ${calcState.pkg===p.id?'on':''}" onclick="pickPkg('${p.id}')">
+  pkgEl.innerHTML = CALC.packages.map(p => {
+    if (p.soon)
+      return `<div class="calc-opt soon"><span class="co-badge">เร็วๆ นี้</span><span class="co-name">${p.name}</span><span class="co-sub">กำลังพัฒนา</span></div>`;
+    return `<div class="calc-opt ${calcState.pkg===p.id?'on':''}" onclick="pickPkg('${p.id}')">
        <span class="co-name">${p.name}</span>
        <span class="co-sub">${baht(p.install)}${p.custom?'+':''} · ${baht(p.monthly)}${p.custom?'+':''}/ด.</span>
-     </div>`).join('');
+     </div>`;
+  }).join('');
   // จำนวนสินค้าใช้ช่องกรอกตัวเลข (id=calcProductCount) — ไม่ต้อง render ที่นี่
   const curPkg = CALC.packages.find(p => p.id === calcState.pkg);
   const incList = curPkg.includes || [];
