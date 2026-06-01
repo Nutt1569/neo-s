@@ -206,6 +206,9 @@
   .calc-opt.soon { opacity: .5; cursor: not-allowed; }
   .calc-opt.soon:hover { border-color: var(--line); }
   .co-badge { position: absolute; top: -9px; right: 10px; font-size: 10px; padding: 2px 8px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); color: var(--txt-dim); }
+  .calc-num-input { width: 170px; background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 12px 15px; color: var(--txt); font-family: inherit; font-size: 16px; font-weight: 600; outline: none; }
+  .calc-num-input:focus { border-color: var(--blue); }
+  .calc-prod-note { font-size: 13px; color: var(--txt-dim); margin-top: 10px; line-height: 1.5; }
   .calc-summary { background: linear-gradient(160deg, var(--card), var(--bg-2)); border: 1px solid var(--line); border-radius: 18px; padding: 26px; position: sticky; top: 90px; }
   .cs-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
   .cs-lines { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; font-size: 13.5px; color: var(--txt-dim); }
@@ -386,7 +389,8 @@
         </div>
         <div class="calc-group">
           <div class="calc-label"><span>2</span>จำนวนสินค้า</div>
-          <div class="calc-opts" id="calcTiers"></div>
+          <input type="number" id="calcProductCount" class="calc-num-input" min="1" value="50" oninput="onProductCount()" placeholder="เช่น 50">
+          <div class="calc-prod-note" id="calcProdNote"></div>
         </div>
         <div class="calc-group">
           <div class="calc-label"><span>3</span>ส่วนเสริม (Add-ons)</div>
@@ -691,11 +695,8 @@ const CALC = {
     { id:'Business',   name:'🥈 Business',   install:25000, monthly:6500,  credits:'30,000 Credits' },
     { id:'Enterprise', name:'🥇 Enterprise', install:50000, monthly:15000, credits:'ไม่จำกัด', custom:true },
   ],
-  tiers: [
-    { id:'1-50',   label:'1–50 รายการ',     sub:'ราคาเริ่มต้น',   add:0 },
-    { id:'51-100', label:'51–100 รายการ',   sub:'+ ค่าทำข้อมูล',  add:10000 },
-    { id:'100+',   label:'เกิน 100 รายการ', sub:'Custom',         contact:true },
-  ],
+  // จำนวนสินค้า: รวม 100 รายการในแพ็กเกจ · เกินคิดต่อรายการ (จ่ายตามจริง — ยุติธรรม)
+  products: { included: 100, extraPerItem: 120 },
   addons: [
     { id:'copy',  name:'✍️ AI เขียนคำบรรยายสินค้า', sub:'ครั้งเดียว', install:3000, monthly:0,    status:'ready' },
     { id:'photo', name:'📸 บริการจัดทำรูปสินค้า',   sub:'ครั้งเดียว', install:5000, monthly:0,    status:'ready' },
@@ -703,7 +704,7 @@ const CALC = {
     { id:'fb',    name:'📘 เชื่อม Facebook',         sub:'',          install:5000, monthly:1000, status:'soon' },
   ],
 };
-const calcState = { pkg:'Starter', tier:'1-50', addons:new Set(), _install:15000, _monthly:3500 };
+const calcState = { pkg:'Starter', count:50, addons:new Set(), _install:15000, _monthly:3500 };
 function baht(n){ return '฿' + n.toLocaleString('en-US'); }
 function shortName(s){ return s.replace(/^\S+\s/,''); }
 
@@ -715,11 +716,7 @@ function renderCalc(){
        <span class="co-name">${p.name}</span>
        <span class="co-sub">${baht(p.install)}${p.custom?'+':''} · ${baht(p.monthly)}${p.custom?'+':''}/ด.</span>
      </div>`).join('');
-  document.getElementById('calcTiers').innerHTML = CALC.tiers.map(t =>
-    `<div class="calc-opt ${calcState.tier===t.id?'on':''}" onclick="pickTier('${t.id}')">
-       <span class="co-name">${t.label}</span>
-       <span class="co-sub">${t.sub}</span>
-     </div>`).join('');
+  // จำนวนสินค้าใช้ช่องกรอกตัวเลข (id=calcProductCount) — ไม่ต้อง render ที่นี่
   document.getElementById('calcAddons').innerHTML = CALC.addons.map(a => {
     if (a.status === 'soon')
       return `<div class="calc-opt soon"><span class="co-badge">เร็วๆ นี้</span><span class="co-name">${a.name}</span><span class="co-sub">+${baht(a.install)}</span></div>`;
@@ -731,46 +728,45 @@ function renderCalc(){
   computeCalc();
 }
 function pickPkg(id){ calcState.pkg = id; renderCalc(); }
-function pickTier(id){ calcState.tier = id; renderCalc(); }
+function onProductCount(){ calcState.count = parseInt(document.getElementById('calcProductCount').value) || 0; computeCalc(); }
 function toggleAddon(id){ calcState.addons.has(id) ? calcState.addons.delete(id) : calcState.addons.add(id); renderCalc(); }
 
 function computeCalc(){
   const pkg  = CALC.packages.find(p => p.id === calcState.pkg);
-  const tier = CALC.tiers.find(t => t.id === calcState.tier);
   const adds = CALC.addons.filter(a => calcState.addons.has(a.id) && a.status === 'ready');
-  const contact = tier.contact;
+  const inc = CALC.products.included, rate = CALC.products.extraPerItem;
+  const count = Math.max(0, calcState.count || 0);
+  const extraItems = Math.max(0, count - inc);
+  const extraCost  = extraItems * rate;
 
-  const install = pkg.install + (tier.add || 0) + adds.reduce((s,a) => s + a.install, 0);
+  const install = pkg.install + extraCost + adds.reduce((s,a) => s + a.install, 0);
   const monthly = pkg.monthly + adds.reduce((s,a) => s + a.monthly, 0);
 
-  const lines = [['แพ็กเกจ', pkg.name], ['จำนวนสินค้า', tier.label], ['NEO Credits', pkg.credits]];
+  // โน้ตใต้ช่องจำนวนสินค้า
+  const note = document.getElementById('calcProdNote');
+  note.innerHTML = (extraItems > 0)
+    ? `รวม ${inc} รายการในแพ็กเกจ · เกิน <b>${extraItems}</b> รายการ × ${baht(rate)} = <b style="color:var(--cyan)">+${baht(extraCost)}</b>`
+    : `✅ ไม่เกิน ${inc} รายการ — รวมในแพ็กเกจแล้ว <b style="color:var(--cyan)">ไม่มีค่าเพิ่ม</b>`;
+
+  const lines = [['แพ็กเกจ', pkg.name], ['จำนวนสินค้า', count + ' รายการ'], ['NEO Credits', pkg.credits]];
+  if (extraItems > 0) lines.push([`+ สินค้าเกิน ${inc} (${extraItems}×${baht(rate)})`, baht(extraCost)]);
   adds.forEach(a => lines.push(['+ ' + shortName(a.name), baht(a.install)]));
   document.getElementById('calcLines').innerHTML = lines.map(l =>
     `<div class="cs-line"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('');
 
   const csI = document.getElementById('csInstall'), csM = document.getElementById('csMonthly'), cta = document.getElementById('calcCta');
-  if (contact){
-    csI.textContent = 'ติดต่อทีมขาย'; csI.classList.remove('grad-txt');
-    csM.textContent = 'ประเมินตาม scope';
-    cta.textContent = 'ติดต่อทีมขาย →';
-    calcState._install = null; calcState._monthly = null;
-  } else {
-    csI.textContent = baht(install) + (pkg.custom ? '+' : ''); csI.classList.add('grad-txt');
-    csM.textContent = baht(monthly) + (pkg.custom ? '+' : '') + '/เดือน';
-    cta.textContent = 'ขอใบเสนอราคา →';
-    calcState._install = install; calcState._monthly = monthly;
-  }
+  csI.textContent = baht(install) + (pkg.custom ? '+' : ''); csI.classList.add('grad-txt');
+  csM.textContent = baht(monthly) + (pkg.custom ? '+' : '') + '/เดือน';
+  cta.textContent = 'ขอใบเสนอราคา →';
+  calcState._install = install; calcState._monthly = monthly;
 }
 
 function requestQuote(){
   const pkg  = CALC.packages.find(p => p.id === calcState.pkg);
-  const tier = CALC.tiers.find(t => t.id === calcState.tier);
   const adds = CALC.addons.filter(a => calcState.addons.has(a.id) && a.status === 'ready');
-  let msg = `[ขอใบเสนอราคา] แพ็กเกจ ${pkg.id} · สินค้า ${tier.label}`;
+  let msg = `[ขอใบเสนอราคา] แพ็กเกจ ${pkg.id} · สินค้า ${calcState.count} รายการ`;
   if (adds.length) msg += ` · Add-on: ${adds.map(a => shortName(a.name)).join(', ')}`;
-  msg += (calcState._install != null)
-    ? ` · ราคาเริ่มต้น ${baht(calcState._install)} + ${baht(calcState._monthly)}/เดือน`
-    : ` · (เกิน 100 รายการ — ประเมินตาม scope)`;
+  msg += ` · ราคาเริ่มต้น ${baht(calcState._install)} + ${baht(calcState._monthly)}/เดือน`;
   openChat();
   setTimeout(() => showLeadForm(pkg.id, msg), 350);
 }
