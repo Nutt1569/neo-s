@@ -43,6 +43,11 @@
   .nav-user { font-size:13px; color:var(--txt-dim); }
   .nav-btn { background:var(--bg-2); border:1px solid var(--line); color:var(--txt-dim); border-radius:9px; padding:8px 14px; font-size:13px; cursor:pointer; font-family:inherit; transition:all .2s; }
   .nav-btn:hover { border-color:var(--blue); color:var(--txt); }
+  .nav-bell { position:relative; background:var(--bg-2); border:1px solid var(--line); border-radius:9px; width:40px; height:36px; font-size:16px; cursor:pointer; color:var(--txt); transition:all .2s; }
+  .nav-bell:hover { border-color:var(--cyan); }
+  .nav-bell.ring { animation:bellRing .5s ease 2; }
+  @keyframes bellRing { 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(14deg); } 75%{ transform:rotate(-14deg); } }
+  .bell-badge { position:absolute; top:-6px; right:-6px; background:var(--cyan); color:#04121A; font-size:10px; font-weight:700; min-width:17px; height:17px; line-height:17px; border-radius:999px; padding:0 4px; display:none; }
   @media(max-width:680px){ .nav-user{ display:none; } }
 
   /* ===== APP ===== */
@@ -120,6 +125,7 @@
         <div><div class="nav-logo-txt">NEO-S</div><div class="nav-logo-sub">Lead Dashboard</div></div>
       </div>
       <div class="nav-right">
+        <button class="nav-bell" id="bell" onclick="bellClick()" title="เปิด/ดูแจ้งเตือน Lead ใหม่">🔔<span class="bell-badge" id="bellBadge">0</span></button>
         <span class="nav-user" id="navUser"></span>
         <button class="nav-btn" onclick="logout()">ออกจากระบบ</button>
       </div>
@@ -180,6 +186,9 @@ const STATUSES = ['NEW','CONTACTED','QUOTED','WON','LOST'];
 const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้', LOST:'ไม่สำเร็จ' };
 let LEADS = [];
 let chart = null;
+let knownIds = null;   // null = ยังไม่เคยโหลด (กันแจ้งเตือนตอนเปิดครั้งแรก)
+let unread = 0;
+let polling = false;
 
 // ===== AUTH =====
 function loginGoogle(){
@@ -204,6 +213,50 @@ async function checkAuth(){
   document.getElementById('app').style.display='block';
   document.getElementById('navUser').textContent = email;
   loadLeads();
+  startPolling();
+  askNotify();
+}
+
+// ===== NOTIFICATIONS (polling — เสถียร) =====
+function startPolling(){
+  if (polling) return; polling = true;
+  setInterval(() => { if (document.getElementById('app').style.display === 'block') loadLeads(); }, 15000); // เช็กทุก 15 วิ
+}
+function askNotify(){ try { if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); } catch(e){} }
+
+function announceNewLead(lead){
+  unread++; updateBell();
+  const b = document.getElementById('bell'); if (b){ b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring'); }
+  beep();
+  toast('📥 Lead ใหม่: ' + (lead.name || 'ไม่ระบุชื่อ') + (lead.interest ? (' · ' + lead.interest) : ''));
+  notify(lead);
+}
+function notify(lead){
+  try {
+    if (window.Notification && Notification.permission === 'granted'){
+      const body = (lead.name || 'ไม่ระบุชื่อ') + (lead.interest ? (' · สนใจ ' + lead.interest) : '') + (lead.contact ? ('\n' + lead.contact) : '');
+      const n = new Notification('📥 Lead ใหม่จากโนวา!', { body, tag: lead.lead_id });
+      n.onclick = () => { window.focus(); n.close(); };
+    }
+  } catch(e){}
+}
+function beep(){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = 880; g.gain.value = 0.06;
+    o.start(); o.frequency.setValueAtTime(660, ctx.currentTime + 0.13);
+    setTimeout(() => { o.stop(); ctx.close(); }, 260);
+  } catch(e){}
+}
+function updateBell(){ const b = document.getElementById('bellBadge'); if (!b) return; if (unread > 0){ b.textContent = unread; b.style.display = 'inline-block'; } else b.style.display = 'none'; }
+function bellClick(){
+  unread = 0; updateBell();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.Notification && Notification.permission === 'default') askNotify();
+  else if (window.Notification && Notification.permission === 'granted') toast('🔔 แจ้งเตือนเปิดอยู่');
+  else toast('🔕 แจ้งเตือนถูกปิด — เปิดได้ที่ตั้งค่าเบราว์เซอร์');
 }
 
 // ===== DATA =====
@@ -211,7 +264,14 @@ async function loadLeads(manual){
   try {
     const { data, error } = await sb.from('neos_leads').select('*').order('created_at', { ascending:false });
     if (error) throw error;
+    const prev = knownIds;
     LEADS = data || [];
+    // ตรวจจับ Lead ใหม่ (เฉพาะหลังโหลดครั้งแรก) → แจ้งเตือน
+    if (prev) {
+      const fresh = LEADS.filter(l => !prev.has(l.lead_id));
+      fresh.slice().reverse().forEach(announceNewLead);
+    }
+    knownIds = new Set(LEADS.map(l => l.lead_id));
     renderKPIs(); buildChart(); renderTable();
     document.getElementById('updatedAt').textContent = 'อัปเดต: ' + fmtDateTime(new Date().toISOString());
     if (manual) toast('รีเฟรชแล้ว ✅');
