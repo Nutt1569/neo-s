@@ -518,7 +518,16 @@ const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
 const ADMIN_EMAILS  = ['kritsada.nutt1981@gmail.com', 'kritsada.msit04@gmail.com'];
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    // 🔑 กัน getSession() ค้าง (navigator LockManager deadlock ของ supabase-js) → login ค้างจอ login ทั้งที่ session ยัง valid
+    //    no-op lock = อ่าน session จาก storage ทันที ไม่รอ lock ข้ามแท็บ (แอดมินผู้ใช้คนเดียว ปลอดภัย)
+    lock: (name, acquireTimeout, fn) => fn()
+  }
+});
 const STATUSES = ['NEW','CONTACTED','QUOTED','WON','LOST'];
 const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้', LOST:'ไม่สำเร็จ' };
 const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', LOST:'#5b6781' };
