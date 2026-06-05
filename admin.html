@@ -229,6 +229,7 @@
       <button class="tab on" id="tab-leads" onclick="showTab('leads')">📥 Leads</button>
       <button class="tab" id="tab-customers" onclick="showTab('customers')">👥 ลูกค้า</button>
       <button class="tab" id="tab-credits" onclick="showTab('credits')">🔋 เครดิต LLM</button>
+      <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
     </div>
 
     <div id="page-leads">
@@ -368,6 +369,29 @@
         <button class="nav-btn" onclick="openCredit()">+ เพิ่ม provider</button>
       </div>
       <div id="creditCards" class="cred-grid"></div>
+    </div><!-- /page-credits -->
+
+    <!-- ===== REPORT (เอเลน่า) PAGE ===== -->
+    <div id="page-report" style="display:none">
+      <div class="page-head">
+        <div><h1>📊 รายงานจากเอเลน่า</h1><div class="sub">AI Manager สรุปธุรกิจ CSS → ส่งเข้าไลน์นัท</div></div>
+        <div class="head-actions">
+          <button class="nav-btn" onclick="buildReport()">🔄 รีเฟรช</button>
+          <button class="nav-btn" onclick="copyReport()">📋 คัดลอก</button>
+          <button class="nav-btn" onclick="sendReport()">📤 ส่งเข้าไลน์</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">👩‍💼 สรุปจากเอเลน่า</div>
+        <pre id="reportText" style="white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;color:var(--txt);margin:0">กำลังสร้างรายงาน…</pre>
+      </div>
+      <div class="panel">
+        <div class="panel-title">⚙️ ตั้งค่าส่งไลน์ <span class="spacer"></span><span style="font-size:11.5px;color:var(--txt-dim);font-weight:400">เก็บในเครื่อง (localStorage) · ต้องตั้ง LINE OA ก่อน</span></div>
+        <div class="frow"><div class="fl">Worker URL</div><div class="fv"><input class="cf" id="rp_worker" placeholder="https://neos-sales-proxy.kritsada-nutt1981.workers.dev"></div></div>
+        <div class="frow"><div class="fl">LINE User ID</div><div class="fv"><input class="cf" id="rp_uid" placeholder="Uxxxxxxxx... (33 ตัว)"></div></div>
+        <div class="frow"><div class="fl">Report Secret</div><div class="fv"><input class="cf" id="rp_secret" placeholder="neos-report-2026"></div></div>
+        <div class="m-actions" style="margin-top:14px"><button class="btn-primary" style="flex:0 0 auto" onclick="saveReportCfg()">💾 บันทึกการตั้งค่า</button></div>
+      </div>
     </div>
   </div>
 </div>
@@ -814,6 +838,7 @@ function showTab(which){
   });
   if (which==='customers') loadCustomers();
   if (which==='credits')   loadCredits();
+  if (which==='report')    openReport();
 }
 
 // ===== AGENT ADOPTION (ตัวไหนลูกค้าใช้เยอะ) =====
@@ -1018,6 +1043,75 @@ async function deleteCustomer(id){
     closeCustomer(); await loadCustomers();
     toast('ลบแล้ว');
   } catch(e){ toast('ลบไม่สำเร็จ: ' + (e.message||e)); }
+}
+
+// ===== REPORT (เอเลน่า AI Manager) =====
+async function openReport(){
+  if (!CUSTOMERS.length) { try { await loadCustomers(); } catch(e){} }
+  try { await loadCredits(); } catch(e){}
+  loadReportCfg();
+  buildReport();
+}
+function reportCfg(){ try { return JSON.parse(localStorage.getItem('neos_report_cfg')||'{}'); } catch(e){ return {}; } }
+function loadReportCfg(){
+  const c = reportCfg();
+  document.getElementById('rp_worker').value = c.worker || 'https://neos-sales-proxy.kritsada-nutt1981.workers.dev';
+  document.getElementById('rp_uid').value    = c.uid || '';
+  document.getElementById('rp_secret').value = c.secret || '';
+}
+function saveReportCfg(){
+  localStorage.setItem('neos_report_cfg', JSON.stringify({
+    worker: document.getElementById('rp_worker').value.trim(),
+    uid:    document.getElementById('rp_uid').value.trim(),
+    secret: document.getElementById('rp_secret').value.trim()
+  }));
+  toast('บันทึกการตั้งค่าแล้ว ✅');
+}
+function buildReport(){
+  const now = new Date();
+  const dstr = now.toLocaleDateString('th-TH',{ weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const d7 = Date.now() - 7*864e5;
+  const leadsNew = LEADS.filter(l=>(l.status||'NEW')==='NEW').length;
+  const leads7   = LEADS.filter(l=> new Date(l.created_at).getTime() >= d7).length;
+  const won      = LEADS.filter(l=>l.status==='WON').length;
+  const custActive = CUSTOMERS.filter(c=>c.status==='active').length;
+  const mrr = CUSTOMERS.filter(c=>c.status==='active').reduce((s,c)=>s+(Number(c.monthly_fee)||0),0);
+  const low = CREDITS.map(c=>{ const q=Number(c.quota)||0,u=Number(c.used)||0; return { p:c.provider, pct:q?Math.round(Math.max(0,q-u)/q*100):0 }; }).filter(x=>x.pct<50).sort((a,b)=>a.pct-b.pct);
+  let credLine;
+  if (!CREDITS.length) credLine = '— ยังไม่ได้ใส่ข้อมูลเครดิต —';
+  else if (!low.length) credLine = '🟢 ทุก provider เหลือเกิน 50%';
+  else credLine = low.map(x=>`${x.pct<20?'🔴':'🟠'} ${x.p} เหลือ ${x.pct}%`).join('\n   ');
+  const txt =
+`👩‍💼 รายงานจากเอเลน่า (AI Manager)
+📅 ${dstr}
+
+📥 Lead
+   • ทั้งหมด ${LEADS.length} · ใหม่ ${leadsNew} · 7 วัน ${leads7} · ปิดได้ ${won}
+
+👥 ลูกค้า
+   • ทั้งหมด ${CUSTOMERS.length} · Active ${custActive}
+   • 💰 MRR ฿${mrr.toLocaleString('en-US')}/เดือน
+
+🔋 เครดิต LLM
+   ${credLine}
+
+📊 NEO-S · Comtech Solution System`;
+  document.getElementById('reportText').textContent = txt;
+  return txt;
+}
+function copyReport(){ const t=document.getElementById('reportText').textContent; try{ navigator.clipboard.writeText(t); toast('คัดลอกแล้ว 📋'); }catch(e){ toast('คัดลอกไม่สำเร็จ'); } }
+async function sendReport(){
+  const c = reportCfg();
+  if (!c.worker || !c.uid || !c.secret){ toast('ตั้งค่า Worker URL / LINE User ID / Secret ก่อนนะคะ (ด้านล่าง)'); return; }
+  const text = buildReport();
+  try {
+    const r = await fetch(c.worker.replace(/\/$/,'') + '/report', {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ secret:c.secret, to:c.uid, text })
+    });
+    if (!r.ok){ const d=await r.text(); throw new Error('('+r.status+') '+d.slice(0,120)); }
+    toast('ส่งเข้าไลน์แล้ว ✅');
+  } catch(e){ toast('ส่งไม่สำเร็จ: '+(e.message||e)); }
 }
 
 // ===== INIT =====
