@@ -444,6 +444,18 @@
         <button class="nav-btn" onclick="openCredit()">+ เพิ่ม provider</button>
       </div>
       <div id="creditCards" class="cred-grid"></div>
+      <div class="panel" style="margin-top:22px">
+        <div class="panel-title">📈 ประวัติการใช้รายวัน
+          <span class="spacer"></span>
+          <span class="mini-seg" id="chMode">
+            <button class="on" onclick="setCreditMode('daily',this)" style="font-size:12px;padding:4px 11px">ใช้ต่อวัน</button>
+            <button onclick="setCreditMode('cumulative',this)" style="font-size:12px;padding:4px 11px">สะสม</button>
+          </span>
+        </div>
+        <div class="chart-wrap"><canvas id="creditHistChart"></canvas></div>
+        <div id="creditHistEmpty" class="ov-empty" style="display:none">ยังไม่มีประวัติ — ระบบเริ่มเก็บ snapshot ตั้งแต่วันนี้ กลับมาดูพรุ่งนี้จะเห็นเทรนด์ 📊</div>
+        <div style="font-size:11.5px;color:var(--txt-dim);margin-top:10px;border-top:1px solid rgba(30,42,68,.5);padding-top:10px">📌 <b>เฟสนี้:</b> เก็บประวัติในเครื่องนี้ก่อน (localStorage) · <b>เฟสถัดไป:</b> ต่อ Worker cron → เก็บ Supabase กลาง = ของจริงข้ามเครื่อง + แยกรายลูกค้า (automation เต็ม)</div>
+      </div>
     </div><!-- /page-credits -->
 
     <!-- ===== REPORT (เอเลน่า) PAGE ===== -->
@@ -1053,7 +1065,7 @@ async function loadCredits(){
 }
 function renderCredits(){
   const el = document.getElementById('creditCards');
-  if(!CREDITS.length){ el.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="em-ic">🔋</div>ยังไม่มีข้อมูล<br><small>กด "+ เพิ่ม provider" ใส่งบ/เครดิต API (OpenAI/Anthropic/Gemini/Dify)</small></div>'; return; }
+  if(!CREDITS.length){ el.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="em-ic">🔋</div>ยังไม่มีข้อมูล<br><small>กด "+ เพิ่ม provider" ใส่งบ/เครดิต API (OpenAI/Anthropic/Gemini/Dify)</small></div>'; buildCreditHistChart(); return; }
   el.innerHTML = CREDITS.map(c=>{
     const q=Number(c.quota)||0, u=Number(c.used)||0, remain=Math.max(0,q-u);
     const pct = q?Math.round(remain/q*100):0, col=creditColor(pct);
@@ -1064,6 +1076,57 @@ function renderCredits(){
       <div class="cred-meta">เหลือ ${remain.toLocaleString('en-US')} / ${q.toLocaleString('en-US')} ${esc(c.unit||'')}${c.note?(' · '+esc(c.note)):''}</div>
     </div>`;
   }).join('');
+  snapshotCredits();
+  buildCreditHistChart();
+}
+
+// ===== ประวัติเครดิตรายวัน (เฟสนี้เก็บ localStorage · เฟสถัดไปย้าย Supabase+Worker) =====
+let creditHistChart = null, creditMode = 'daily';
+function creditHist(){ try { return JSON.parse(localStorage.getItem('neos_credit_hist')||'{}'); } catch(e){ return {}; } }
+function snapshotCredits(){
+  if (!CREDITS.length) return;
+  const hist = creditHist();
+  const today = new Date().toISOString().slice(0,10);
+  hist[today] = hist[today] || {};
+  CREDITS.forEach(c=>{ if(c.provider) hist[today][c.provider] = { used:Number(c.used)||0, quota:Number(c.quota)||0 }; });
+  // เก็บย้อนหลังไม่เกิน 90 วัน
+  const keys = Object.keys(hist).sort();
+  while (keys.length > 90){ delete hist[keys.shift()]; }
+  try { localStorage.setItem('neos_credit_hist', JSON.stringify(hist)); } catch(e){}
+}
+function setCreditMode(m, el){ creditMode = m; document.querySelectorAll('#chMode button').forEach(b=>b.classList.remove('on')); if(el) el.classList.add('on'); buildCreditHistChart(); }
+function buildCreditHistChart(){
+  const ctx = document.getElementById('creditHistChart'); if(!ctx) return;
+  const hist = creditHist();
+  const dates = Object.keys(hist).sort();
+  const provs = [...new Set(dates.flatMap(d=>Object.keys(hist[d])))];
+  const emptyEl = document.getElementById('creditHistEmpty');
+  if (creditHistChart){ creditHistChart.destroy(); creditHistChart = null; }
+  if (dates.length < 1 || !provs.length){
+    if (emptyEl) emptyEl.style.display = 'block';
+    ctx.getContext('2d').clearRect(0,0,ctx.width,ctx.height);
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  const palette = ['#22D3EE','#8B5CF6','#E2B679','#34D399','#F87171','#3B82F6'];
+  const labels = dates.map(d=> new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short'}));
+  const datasets = provs.map((p,i)=>{
+    const series = dates.map(d=> hist[d][p] ? hist[d][p].used : null);
+    let data;
+    if (creditMode === 'cumulative'){ data = series; }
+    else { // ใช้ต่อวัน = ผลต่างจากวันก่อน (ถ้ารีเซ็ตเดือน used ลดลง → ใช้ค่า used ของวันนั้น)
+      data = series.map((v,idx)=>{ if(v==null) return null; if(idx===0||series[idx-1]==null) return 0; const diff=v-series[idx-1]; return diff>=0?diff:v; });
+    }
+    const col = palette[i%palette.length];
+    return { label:p, data, borderColor:col, backgroundColor:col+'33', borderWidth:2, tension:.35, fill:false, pointRadius:2, pointBackgroundColor:col, spanGaps:true };
+  });
+  creditHistChart = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:'#EAF0FF', font:{size:12}, boxWidth:13, padding:12 } } },
+      scales:{ x:{ grid:{display:false}, ticks:{ color:'#95A3C2', font:{size:10}, maxRotation:0, autoSkip:true, maxTicksLimit:10 } }, y:{ beginAtZero:true, ticks:{ color:'#95A3C2' }, grid:{ color:'rgba(30,42,68,.6)' } } } }
+  });
 }
 function openCredit(id){
   const c = id ? CREDITS.find(x=>x.id===id) : null;
