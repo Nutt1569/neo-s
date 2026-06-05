@@ -229,6 +229,7 @@
   .tl-empty { color:var(--txt-dim); font-size:12.5px; padding:14px 2px; text-align:center; }
   .note-add { display:flex; gap:8px; margin-top:10px; }
   .note-add input { flex:1; }
+  .clink { text-decoration:none; opacity:.85; transition:opacity .15s; } .clink:hover { opacity:1; }
 </style>
 </head>
 <body>
@@ -1141,7 +1142,7 @@ function renderAdoption(){
 // ===== LLM CREDITS (เฝ้าเครดิต API → เอเลน่าเตือน) =====
 function creditColor(pct){ return pct>50?'var(--green)':(pct>=20?'var(--gold)':'var(--red)'); }
 async function loadCredits(){
-  try { const { data, error } = await sb.from('neos_llm_credits').select('*').order('provider'); if(error) throw error; CREDITS = data||[]; renderCredits(); renderOverview(); }
+  try { const { data, error } = await sb.from('neos_llm_credits').select('*').order('provider'); if(error) throw error; CREDITS = data||[]; await loadCreditUsage(); renderCredits(); renderOverview(); }
   catch(e){ document.getElementById('creditCards').innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="em-ic">⚠️</div>โหลดไม่ได้: '+(e.message||e)+'</div>'; }
 }
 function renderCredits(){
@@ -1161,9 +1162,14 @@ function renderCredits(){
   buildCreditHistChart();
 }
 
-// ===== ประวัติเครดิตรายวัน (เฟสนี้เก็บ localStorage · เฟสถัดไปย้าย Supabase+Worker) =====
-let creditHistChart = null, creditMode = 'daily';
+// ===== ประวัติเครดิตรายวัน (อ่านของจริงจาก neos_credit_usage · fallback localStorage) =====
+let creditHistChart = null, creditMode = 'daily', USAGE = [];
 function creditHist(){ try { return JSON.parse(localStorage.getItem('neos_credit_hist')||'{}'); } catch(e){ return {}; } }
+// โหลด usage รายครั้งจากตารางกลาง (Worker เขียนอัตโนมัติ) — เงียบถ้ายังไม่มีตาราง
+async function loadCreditUsage(){
+  try { const { data, error } = await sb.from('neos_credit_usage').select('provider,cost_usd,created_at').order('created_at',{ ascending:true }); if(error) throw error; USAGE = data||[]; }
+  catch(e){ USAGE = []; }
+}
 function snapshotCredits(){
   if (!CREDITS.length) return;
   const hist = creditHist();
@@ -1176,27 +1182,40 @@ function snapshotCredits(){
   try { localStorage.setItem('neos_credit_hist', JSON.stringify(hist)); } catch(e){}
 }
 function setCreditMode(m, el){ creditMode = m; document.querySelectorAll('#chMode button').forEach(b=>b.classList.remove('on')); if(el) el.classList.add('on'); buildCreditHistChart(); }
+// usage จริง = cost_usd ต่อ event → รวมต่อวัน+provider
+function creditSeriesFromUsage(){
+  const byDay={}, provSet=new Set();
+  USAGE.forEach(u=>{ const d=(u.created_at||'').slice(0,10); if(!d) return; const p=u.provider||'?'; provSet.add(p); byDay[d]=byDay[d]||{}; byDay[d][p]=(byDay[d][p]||0)+(Number(u.cost_usd)||0); });
+  return { dates:Object.keys(byDay).sort(), provs:[...provSet], val:(d,p)=> (byDay[d]&&byDay[d][p]!=null)?byDay[d][p]:null, mode:'usage' };
+}
+// fallback snapshot localStorage = used สะสม
+function creditSeriesFromSnapshot(){
+  const hist=creditHist(), dates=Object.keys(hist).sort();
+  return { dates, provs:[...new Set(dates.flatMap(d=>Object.keys(hist[d])))], val:(d,p)=> hist[d][p]?hist[d][p].used:null, mode:'snapshot' };
+}
 function buildCreditHistChart(){
   const ctx = document.getElementById('creditHistChart'); if(!ctx) return;
-  const hist = creditHist();
-  const dates = Object.keys(hist).sort();
-  const provs = [...new Set(dates.flatMap(d=>Object.keys(hist[d])))];
   const emptyEl = document.getElementById('creditHistEmpty');
   if (creditHistChart){ creditHistChart.destroy(); creditHistChart = null; }
-  if (dates.length < 1 || !provs.length){
+  const src = USAGE.length ? creditSeriesFromUsage() : creditSeriesFromSnapshot();
+  if (!src.dates.length || !src.provs.length){
     if (emptyEl) emptyEl.style.display = 'block';
     ctx.getContext('2d').clearRect(0,0,ctx.width,ctx.height);
     return;
   }
   if (emptyEl) emptyEl.style.display = 'none';
   const palette = ['#22D3EE','#8B5CF6','#E2B679','#34D399','#F87171','#3B82F6'];
-  const labels = dates.map(d=> new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short'}));
-  const datasets = provs.map((p,i)=>{
-    const series = dates.map(d=> hist[d][p] ? hist[d][p].used : null);
+  const labels = src.dates.map(d=> new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short'}));
+  const round = v => v==null ? null : Math.round(v*1e6)/1e6;
+  const datasets = src.provs.map((p,i)=>{
+    const raw = src.dates.map(d=> src.val(d,p));
     let data;
-    if (creditMode === 'cumulative'){ data = series; }
-    else { // ใช้ต่อวัน = ผลต่างจากวันก่อน (ถ้ารีเซ็ตเดือน used ลดลง → ใช้ค่า used ของวันนั้น)
-      data = series.map((v,idx)=>{ if(v==null) return null; if(idx===0||series[idx-1]==null) return 0; const diff=v-series[idx-1]; return diff>=0?diff:v; });
+    if (src.mode === 'usage'){   // cost ต่อวันอยู่แล้ว
+      if (creditMode === 'cumulative'){ let run=0; data = raw.map(v=>{ run += (v||0); return round(run); }); }
+      else data = raw.map(round);
+    } else {                     // snapshot = used สะสม
+      if (creditMode === 'cumulative'){ data = raw.map(round); }
+      else data = raw.map((v,idx)=>{ if(v==null) return null; if(idx===0||raw[idx-1]==null) return 0; const diff=v-raw[idx-1]; return round(diff>=0?diff:v); });
     }
     const col = palette[i%palette.length];
     return { label:p, data, borderColor:col, backgroundColor:col+'33', borderWidth:2, tension:.35, fill:false, pointRadius:2, pointBackgroundColor:col, spanGaps:true };
@@ -1276,7 +1295,7 @@ function renderCust(){
   const area = document.getElementById('custTableArea');
   if (!CUSTOMERS.length){ area.innerHTML = '<div class="empty"><div class="em-ic">👥</div>ยังไม่มีลูกค้า<br><small>กด "+ เพิ่มลูกค้า" หรือแปลงจาก Lead ที่ปิดได้ (WON)</small></div>'; return; }
   if (!rows.length){ area.innerHTML = '<div class="empty"><div class="em-ic">🔍</div>ไม่พบลูกค้าตามที่กรอง</div>'; return; }
-  let h = '<div class="table-wrap"><table><thead><tr><th>ธุรกิจ</th><th>แพ็กเกจ</th><th>ค่ารายเดือน</th><th>สถานะ</th><th>เริ่มใช้</th><th>เครดิต</th></tr></thead><tbody>';
+  let h = '<div class="table-wrap"><table><thead><tr><th>ธุรกิจ</th><th>แพ็กเกจ</th><th>ค่ารายเดือน</th><th>สถานะ</th><th>เริ่มใช้</th><th>เครดิต</th><th>ลิงก์</th></tr></thead><tbody>';
   h += rows.map(c=>{
     const st = c.status||'trial';
     const credit = (c.credit_quota||0) ? `${c.credit_used||0}/${c.credit_quota}` : '-';
@@ -1287,6 +1306,7 @@ function renderCust(){
       <td><span class="pill" style="border-color:${CUST_STATUS_COLOR[st]};color:${CUST_STATUS_COLOR[st]}">${CUST_STATUS_TH[st]}</span></td>
       <td class="td-date">${c.start_date?fmtDate(c.start_date):'-'}</td>
       <td class="td-date">${credit}</td>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap;font-size:16px">${custLinks(c)}</td>
     </tr>`;
   }).join('');
   h += '</tbody></table></div>';
@@ -1294,6 +1314,12 @@ function renderCust(){
 }
 
 function crow(lbl, inner){ return `<div class="frow"><div class="fl">${lbl}</div><div class="fv">${inner}</div></div>`; }
+// ปุ่มลิงก์ไปเว็บ/หลังบ้านลูกค้า (เปิดแท็บใหม่)
+function custLinks(c){
+  const mk=(url,ic,title)=> url?`<a href="${esc(url)}" target="_blank" rel="noopener" class="clink" title="${title}">${ic}</a>`:'';
+  const s=mk(c.site_url,'🌐','เปิดเว็บลูกค้า'), a=mk(c.admin_url,'🖥️','เปิดหลังบ้านลูกค้า');
+  return (s||a) ? (s+' '+a) : '<span style="opacity:.3">—</span>';
+}
 function openCustomer(id){
   const c = id ? CUSTOMERS.find(x=>x.id===id) : null;
   const won = LEADS.filter(l=>l.status==='WON');
@@ -1322,6 +1348,8 @@ function openCustomer(id){
       ${crow('เข้าใช้ล่าสุด', `<input class="cf" id="cf_lastactive" type="datetime-local" value="${c&&c.last_active?String(c.last_active).slice(0,16):''}">`)}
       ${crow('เครดิต/เดือน', `<input class="cf" id="cf_quota" type="number" min="0" value="${c?(c.credit_quota||0):0}">`)}
       ${crow('เครดิตที่ใช้', `<input class="cf" id="cf_used" type="number" min="0" value="${c?(c.credit_used||0):0}">`)}
+      ${crow('🌐 เว็บลูกค้า', `<input class="cf" id="cf_site" value="${c?esc(c.site_url||''):''}" placeholder="https://...">`)}
+      ${crow('🖥️ หลังบ้านลูกค้า', `<input class="cf" id="cf_admin" value="${c?esc(c.admin_url||''):''}" placeholder="https://.../admin.html">`)}
       <div class="frow" style="display:block"><div class="fl" style="margin-bottom:8px">โน้ต</div><textarea class="cf" id="cf_notes" rows="2">${c?esc(c.notes||''):''}</textarea></div>
       <div class="m-actions">
         <button class="btn-primary" onclick="saveCustomer()">${c?'บันทึก':'เพิ่มลูกค้า'}</button>
@@ -1358,7 +1386,9 @@ async function saveCustomer(){
     notes: v('cf_notes').trim() || null,
     lead_id: v('cf_lead_id') || null,
     agents: [...document.querySelectorAll('.cf_agent:checked')].map(x=>x.value).join(',') || null,
-    last_active: v('cf_lastactive') || null
+    last_active: v('cf_lastactive') || null,
+    site_url:  v('cf_site').trim()  || null,
+    admin_url: v('cf_admin').trim() || null
   };
   try {
     let error;
