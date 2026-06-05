@@ -560,8 +560,30 @@ function logout(){ sb.auth.signOut().then(()=> location.reload()); }
 
 function showLoginErr(msg){ const e=document.getElementById('loginErr'); e.textContent=msg; e.style.display='block'; }
 
+// อ่าน session จาก localStorage ตรงๆ (fallback กรณี getSession ค้าง — navigator lock deadlock)
+function readStoredSession(){
+  try {
+    const raw = localStorage.getItem('sb-hdpjwegiorofmferhlhq-auth-token');
+    if (!raw) return null;
+    const v = JSON.parse(raw);
+    if (!v || !v.access_token || !v.user) return null;
+    if (v.expires_at && (v.expires_at*1000) < Date.now()) return null;   // หมดอายุแล้ว
+    return v;   // มี .user.email
+  } catch(e){ return null; }
+}
+// getSession ที่ไม่มีวันค้าง: race กับ timeout 2.5 วิ → ถ้าค้าง อ่านจาก storage แทน
+async function getSessionSafe(){
+  try {
+    const r = await Promise.race([
+      sb.auth.getSession().then(x => x && x.data ? x.data.session : null),
+      new Promise(res => setTimeout(() => res('__TIMEOUT__'), 2500))
+    ]);
+    if (r === '__TIMEOUT__') return readStoredSession();
+    return r || readStoredSession();
+  } catch(e){ return readStoredSession(); }
+}
 async function checkAuth(){
-  const { data:{ session } } = await sb.auth.getSession();
+  const session = await getSessionSafe();
   if (!session){ document.getElementById('login').style.display='flex'; document.getElementById('app').style.display='none'; return; }
   const email = (session.user.email || '').toLowerCase();
   if (!ADMIN_EMAILS.map(e=>e.toLowerCase()).includes(email)){
