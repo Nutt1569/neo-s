@@ -78,6 +78,33 @@
   .kpi .lbl { font-size:12.5px; color:var(--txt-dim); margin-top:6px; }
   @media(max-width:1000px){ .kpis{ grid-template-columns:repeat(3,1fr); } }
   @media(max-width:560px){ .kpis{ grid-template-columns:1fr 1fr; } .kpi .num{ font-size:26px; } }
+  .kpis.six { grid-template-columns:repeat(6,1fr); }
+  @media(max-width:1100px){ .kpis.six{ grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:560px){ .kpis.six{ grid-template-columns:1fr 1fr; } }
+
+  /* action / upsell / overview rows */
+  .act-row { display:flex; gap:12px; align-items:center; padding:11px 2px; border-bottom:1px solid rgba(30,42,68,.5); cursor:pointer; transition:background .12s; border-radius:8px; }
+  .act-row:last-child { border-bottom:none; }
+  .act-row:hover { background:rgba(59,130,246,.06); }
+  .act-ic { width:34px; height:34px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:15px; background:var(--bg-2); border:1px solid var(--line); border-radius:9px; }
+  .act-main { flex:1; min-width:0; }
+  .act-name { font-size:13.5px; font-weight:600; }
+  .act-sub { font-size:11.5px; color:var(--txt-dim); margin-top:2px; }
+  .act-tag { font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; flex-shrink:0; }
+  .act-tag.warn { background:rgba(226,182,121,.14); color:var(--gold); border:1px solid rgba(226,182,121,.3); }
+  .act-tag.hot  { background:rgba(248,113,113,.14); color:var(--red); border:1px solid rgba(248,113,113,.32); }
+  .ov-empty { color:var(--txt-dim); font-size:13px; padding:18px 4px; text-align:center; }
+  .ov-empty .ok { color:var(--green); }
+  .kpi.alert::before { background:linear-gradient(120deg,#F87171,#E2B679); opacity:1; }
+  /* overview pipeline bars */
+  .ovpipe-row { display:flex; align-items:center; gap:10px; padding:7px 0; }
+  .ovpipe-lbl { width:96px; font-size:12.5px; color:var(--txt-dim); flex-shrink:0; }
+  .ovpipe-track { flex:1; height:18px; background:var(--bg-2); border-radius:6px; overflow:hidden; }
+  .ovpipe-fill { height:100%; border-radius:6px; min-width:2px; transition:width .3s; }
+  .ovpipe-num { width:34px; text-align:right; font-size:13px; font-weight:700; flex-shrink:0; }
+  .ovcred-row { display:flex; align-items:center; gap:10px; padding:6px 0; font-size:12.5px; }
+  .ovcred-name { width:90px; flex-shrink:0; } .ovcred-track { flex:1; height:7px; background:var(--bg-2); border-radius:99px; overflow:hidden; }
+  .ovcred-fill { height:100%; border-radius:99px; } .ovcred-pct { width:38px; text-align:right; font-weight:700; flex-shrink:0; }
 
   .grid-2 { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; margin-bottom:22px; }
   @media(max-width:880px){ .grid-2{ grid-template-columns:1fr; } }
@@ -226,13 +253,56 @@
 
   <div class="wrap">
     <div class="tabs">
-      <button class="tab on" id="tab-leads" onclick="showTab('leads')">📥 Leads</button>
+      <button class="tab on" id="tab-overview" onclick="showTab('overview')">🏠 ภาพรวม</button>
+      <button class="tab" id="tab-leads" onclick="showTab('leads')">📥 Leads</button>
       <button class="tab" id="tab-customers" onclick="showTab('customers')">👥 ลูกค้า</button>
       <button class="tab" id="tab-credits" onclick="showTab('credits')">🔋 เครดิต LLM</button>
       <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
     </div>
 
-    <div id="page-leads">
+    <!-- ===== OVERVIEW PAGE ===== -->
+    <div id="page-overview">
+      <div class="page-head">
+        <div><h1>🏠 ภาพรวมธุรกิจ CSS</h1><div class="sub" id="ovUpdatedAt">สรุปสถานะปัจจุบันทั้งหมด — Lead · ลูกค้า · รายได้ · เครดิต</div></div>
+        <button class="nav-btn refresh" onclick="loadAll(true)">🔄 รีเฟรช</button>
+      </div>
+      <div class="kpis six">
+        <div class="kpi"><div class="ic">📥</div><div class="num grad-txt" id="oLeadTotal">0</div><div class="lbl">Lead ทั้งหมด</div></div>
+        <div class="kpi"><div class="ic">✨</div><div class="num" style="color:var(--cyan)" id="oLeadNew">0</div><div class="lbl">Lead ใหม่</div></div>
+        <div class="kpi" id="oActionCard"><div class="ic">⏰</div><div class="num" style="color:var(--gold)" id="oAction">0</div><div class="lbl">ต้องตามด่วน</div></div>
+        <div class="kpi"><div class="ic">✅</div><div class="num" style="color:var(--green)" id="oCustActive">0</div><div class="lbl">ลูกค้า Active</div></div>
+        <div class="kpi"><div class="ic">💰</div><div class="num" style="color:var(--gold)" id="oMRR">฿0</div><div class="lbl">MRR / เดือน</div></div>
+        <div class="kpi"><div class="ic">📈</div><div class="num" style="color:var(--violet)" id="oARR">฿0</div><div class="lbl">ARR / ปี (คาดการณ์)</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">⏰ สิ่งที่ต้องตาม (Lead ค้าง) <span class="spacer"></span><span style="font-size:11.5px;color:var(--txt-dim);font-weight:400">NEW &gt; 3 วัน · ติดตาม &gt; 7 วัน</span></div>
+          <div id="ovActions"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🔔 โอกาส Upsell (ลูกค้าใกล้เต็มเครดิต) <span class="spacer"></span><span style="font-size:11.5px;color:var(--txt-dim);font-weight:400">ใช้เกิน 80% → ชวนอัปเกรด</span></div>
+          <div id="ovUpsell"></div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">📊 Lead Pipeline</div>
+          <div id="ovPipeline"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">📣 เว็บ &amp; เครดิต</div>
+          <div class="vis-kpis">
+            <div class="vis-k"><div class="vk-num" id="oVisUniq">0</div><div class="vk-lbl">คนเข้าชม (ไม่นับซ้ำ)</div></div>
+            <div class="vis-k"><div class="vk-num" id="oVisConv">—</div><div class="vk-lbl">Lead Conversion</div></div>
+            <div class="vis-k"><div class="vk-num" id="oWon">0</div><div class="vk-lbl">ปิดได้ (WON)</div></div>
+          </div>
+          <div class="panel-sub-title" style="margin-top:18px">🔋 เครดิต LLM</div>
+          <div id="ovCredits"></div>
+        </div>
+      </div>
+    </div><!-- /page-overview -->
+
+    <div id="page-leads" style="display:none">
     <div class="page-head">
       <div><h1>📥 Lead จากโนวา</h1><div class="sub" id="updatedAt"></div></div>
       <div class="head-actions">
@@ -334,13 +404,18 @@
     <div id="page-customers" style="display:none">
       <div class="page-head">
         <div><h1>👥 ลูกค้า</h1><div class="sub">ธุรกิจที่ปิดการขายแล้ว · ใช้ระบบ NEO-S (deployed)</div></div>
-        <button class="nav-btn" onclick="openCustomer()">+ เพิ่มลูกค้า</button>
+        <div class="head-actions">
+          <button class="nav-btn" onclick="exportCustomersCSV()">📥 Export CSV</button>
+          <button class="nav-btn" onclick="openCustomer()">+ เพิ่มลูกค้า</button>
+        </div>
       </div>
-      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpis six">
         <div class="kpi"><div class="ic">👥</div><div class="num grad-txt" id="cTotal">0</div><div class="lbl">ลูกค้าทั้งหมด</div></div>
         <div class="kpi"><div class="ic">✅</div><div class="num" style="color:var(--green)" id="cActive">0</div><div class="lbl">Active (ใช้งานอยู่)</div></div>
-        <div class="kpi"><div class="ic">💰</div><div class="num" style="color:var(--gold)" id="cMRR">฿0</div><div class="lbl">MRR (รายได้/เดือน)</div></div>
         <div class="kpi"><div class="ic">🧪</div><div class="num" style="color:var(--cyan)" id="cTrial">0</div><div class="lbl">ทดลองใช้</div></div>
+        <div class="kpi"><div class="ic">📉</div><div class="num" style="color:var(--red)" id="cChurn">0</div><div class="lbl">เลิกใช้ (Churn)</div></div>
+        <div class="kpi"><div class="ic">💰</div><div class="num" style="color:var(--gold)" id="cMRR">฿0</div><div class="lbl">MRR (รายได้/เดือน)</div></div>
+        <div class="kpi"><div class="ic">📈</div><div class="num" style="color:var(--violet)" id="cARR">฿0</div><div class="lbl">ARR (คาดการณ์/ปี)</div></div>
       </div>
       <div class="panel">
         <div class="panel-title">📊 Agent ที่ลูกค้าใช้ (Adoption) <span class="spacer"></span><span style="font-size:11.5px;color:var(--txt-dim);font-weight:400">ตัวไหนนิยม → พัฒนาต่อ · ตัวไหนน้อย → หาวิธีดัน</span></div>
@@ -464,9 +539,18 @@ async function checkAuth(){
   document.getElementById('app').style.display='block';
   document.getElementById('navUser').textContent = email + ' · 🕐 ' + new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
   try { sb.from('neos_admin_logins').insert({ email }).then(()=>{}, ()=>{}); } catch(e){}
-  loadLeads();
+  loadAll();
   startPolling();
   askNotify();
+}
+
+// โหลดข้อมูลทุกตาราง (สำหรับหน้าภาพรวม) — leads/visits ผ่าน loadLeads · customers/credits แยก
+async function loadAll(manual){
+  await loadLeads();
+  try { await loadCustomers(); } catch(e){}
+  try { await loadCredits(); } catch(e){}
+  renderOverview();
+  if (manual) toast('รีเฟรชแล้ว ✅');
 }
 
 // ===== NOTIFICATIONS (polling — เสถียร) =====
@@ -570,7 +654,7 @@ function setRange(r, el){
 function applyCustom(){ page=1; renderAll(); }
 
 // ===== RENDER =====
-function renderAll(){ renderKPIs(); buildChart(); buildPipe(); buildInterest(); renderVisitors(); renderTable(); }
+function renderAll(){ renderKPIs(); buildChart(); buildPipe(); buildInterest(); renderVisitors(); renderTable(); renderOverview(); }
 function rangedVisits(){ return VISITS.filter(v => inRange(v.created_at)); }
 
 function renderKPIs(){
@@ -680,6 +764,108 @@ function renderSources(rv){
       <div class="src-pct">${pct}% ของทั้งหมด</div></div></div>`;
   }).join('');
 }
+
+// ===== OVERVIEW (ภาพรวม) =====
+// Lead ที่ต้องตาม: NEW ค้าง >=3 วัน · CONTACTED/QUOTED ค้าง >=7 วัน (นับจากวันที่เข้ามา)
+function leadActionItems(){
+  const now = Date.now();
+  const out = [];
+  LEADS.forEach(l=>{
+    const st = l.status || 'NEW';
+    if (st==='WON' || st==='LOST') return;
+    const age = Math.floor((now - new Date(l.created_at).getTime())/864e5);
+    if (st==='NEW' && age>=3) out.push({ l, age, hot:age>=7, reason:'ยังไม่ติดต่อ '+age+' วัน' });
+    else if ((st==='CONTACTED'||st==='QUOTED') && age>=7) out.push({ l, age, hot:age>=14, reason:(st==='QUOTED'?'เสนอราคาแล้วยังไม่ปิด':'ติดต่อแล้วยังไม่คืบ')+' '+age+' วัน' });
+  });
+  return out.sort((a,b)=>b.age-a.age);
+}
+// ลูกค้าใกล้เต็มเครดิต (>=80%) = โอกาส upsell
+function upsellItems(){
+  return CUSTOMERS.filter(c=>{
+    const q=Number(c.credit_quota)||0, u=Number(c.credit_used)||0;
+    return q>0 && (u/q)>=0.8 && c.status!=='churned';
+  }).map(c=>{ const q=Number(c.credit_quota)||0, u=Number(c.credit_used)||0; return { c, pct:Math.round(u/q*100) }; })
+   .sort((a,b)=>b.pct-a.pct);
+}
+function renderOverview(){
+  if (!document.getElementById('page-overview')) return;
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+  const won    = LEADS.filter(l=>l.status==='WON').length;
+  const active = CUSTOMERS.filter(c=>c.status==='active');
+  const mrr    = active.reduce((s,c)=>s+(Number(c.monthly_fee)||0),0);
+  const actions= leadActionItems();
+  const ups    = upsellItems();
+  const uniq   = new Set(VISITS.map(v=>v.visitor_id||v.id)).size;
+
+  set('oLeadTotal', LEADS.length);
+  set('oLeadNew',   LEADS.filter(l=>(l.status||'NEW')==='NEW').length);
+  set('oAction',    actions.length);
+  set('oCustActive',active.length);
+  set('oMRR', '฿'+mrr.toLocaleString('en-US'));
+  set('oARR', '฿'+(mrr*12).toLocaleString('en-US'));
+  set('oVisUniq', uniq || '—');
+  set('oVisConv', uniq ? Math.round(LEADS.length/uniq*100)+'%' : '—');
+  set('oWon', won);
+  const aCard=document.getElementById('oActionCard'); if(aCard) aCard.classList.toggle('alert', actions.length>0);
+
+  // action items list
+  const ael = document.getElementById('ovActions');
+  if (ael){
+    ael.innerHTML = actions.length ? actions.slice(0,8).map(a=>{
+      const l=a.l, contact=l.contact||l.email||l.phone||'';
+      return `<div class="act-row" onclick="goLead('${esc(l.lead_id)}')">
+        <div class="act-ic">${a.hot?'🔥':'⏰'}</div>
+        <div class="act-main"><div class="act-name">${esc(l.name)||'ไม่ระบุชื่อ'}${l.interest?` · <span style="color:var(--gold)">${esc(l.interest)}</span>`:''}</div>
+        <div class="act-sub">${esc(contact)||'ไม่มีข้อมูลติดต่อ'} · ${esc(a.reason)}</div></div>
+        <span class="act-tag ${a.hot?'hot':'warn'}">${STATUS_TH[l.status||'NEW']}</span>
+      </div>`;
+    }).join('') + (actions.length>8?`<div class="ov-empty">…และอีก ${actions.length-8} รายการ</div>`:'')
+    : '<div class="ov-empty"><span class="ok">✓</span> ไม่มี Lead ค้าง — ตามครบทุกคนแล้ว 🎉</div>';
+  }
+
+  // upsell list
+  const uel = document.getElementById('ovUpsell');
+  if (uel){
+    uel.innerHTML = ups.length ? ups.slice(0,8).map(u=>{
+      const c=u.c, hot=u.pct>=95;
+      return `<div class="act-row" onclick="showTab('customers')">
+        <div class="act-ic">${hot?'🔴':'🔔'}</div>
+        <div class="act-main"><div class="act-name">${esc(c.name)||'-'}${c.package?` · <span style="color:var(--cyan)">${esc(c.package)}</span>`:''}</div>
+        <div class="act-sub">ใช้เครดิต ${Number(c.credit_used||0).toLocaleString('en-US')}/${Number(c.credit_quota||0).toLocaleString('en-US')}</div></div>
+        <span class="act-tag ${hot?'hot':'warn'}">${u.pct}%</span>
+      </div>`;
+    }).join('')
+    : '<div class="ov-empty"><span class="ok">✓</span> ยังไม่มีลูกค้าใกล้เต็มเครดิต</div>';
+  }
+
+  // mini pipeline
+  const pel = document.getElementById('ovPipeline');
+  if (pel){
+    const counts = STATUSES.map(s=>LEADS.filter(l=>(l.status||'NEW')===s).length);
+    const max = Math.max(1,...counts);
+    pel.innerHTML = STATUSES.map((s,i)=>`<div class="ovpipe-row">
+      <span class="ovpipe-lbl">${STATUS_TH[s]}</span>
+      <span class="ovpipe-track"><span class="ovpipe-fill" style="width:${Math.round(counts[i]/max*100)}%;background:${STATUS_COLOR[s]}"></span></span>
+      <span class="ovpipe-num" style="color:${STATUS_COLOR[s]}">${counts[i]}</span>
+    </div>`).join('');
+  }
+
+  // mini credits
+  const cel = document.getElementById('ovCredits');
+  if (cel){
+    cel.innerHTML = CREDITS.length ? CREDITS.map(c=>{
+      const q=Number(c.quota)||0,u=Number(c.used)||0,pct=q?Math.round(Math.max(0,q-u)/q*100):0,col=creditColor(pct);
+      return `<div class="ovcred-row"><span class="ovcred-name">${pct<20?'🔴':(pct<50?'🟠':'🟢')} ${esc(c.provider)}</span>
+        <span class="ovcred-track"><span class="ovcred-fill" style="width:${pct}%;background:${col}"></span></span>
+        <span class="ovcred-pct" style="color:${col}">${pct}%</span></div>`;
+    }).join('') : '<div class="ov-empty" style="padding:10px 4px">— ยังไม่ได้ใส่ข้อมูลเครดิต —</div>';
+  }
+
+  const u2 = document.getElementById('ovUpdatedAt');
+  if (u2) u2.textContent = 'อัปเดต ' + fmtDateTime(new Date().toISOString()) + ' · Lead · ลูกค้า · รายได้ · เครดิต';
+}
+// คลิก action item → ไปแท็บ Leads + เปิด modal
+function goLead(id){ showTab('leads'); setTimeout(()=>openLead(id), 60); }
 
 // ===== TABLE =====
 function filteredRows(){
@@ -832,10 +1018,11 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['leads','customers','credits','report'].forEach(p=>{
+  ['overview','leads','customers','credits','report'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
+  if (which==='overview')  renderOverview();
   if (which==='customers') loadCustomers();
   if (which==='credits')   loadCredits();
   if (which==='report')    openReport();
@@ -861,7 +1048,7 @@ function renderAdoption(){
 // ===== LLM CREDITS (เฝ้าเครดิต API → เอเลน่าเตือน) =====
 function creditColor(pct){ return pct>50?'var(--green)':(pct>=20?'var(--gold)':'var(--red)'); }
 async function loadCredits(){
-  try { const { data, error } = await sb.from('neos_llm_credits').select('*').order('provider'); if(error) throw error; CREDITS = data||[]; renderCredits(); }
+  try { const { data, error } = await sb.from('neos_llm_credits').select('*').order('provider'); if(error) throw error; CREDITS = data||[]; renderCredits(); renderOverview(); }
   catch(e){ document.getElementById('creditCards').innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="em-ic">⚠️</div>โหลดไม่ได้: '+(e.message||e)+'</div>'; }
 }
 function renderCredits(){
@@ -916,6 +1103,7 @@ async function loadCustomers(){
     if (error) throw error;
     CUSTOMERS = data || [];
     renderCust();
+    renderOverview();
   } catch(e){
     document.getElementById('custTableArea').innerHTML = '<div class="empty"><div class="em-ic">⚠️</div>โหลดลูกค้าไม่ได้: ' + (e.message||e) + '<br><small>เช็กว่ารัน SQL ตาราง neos_customers แล้วหรือยัง</small></div>';
   }
@@ -928,6 +1116,8 @@ function renderCust(){
   document.getElementById('cActive').textContent = active.length;
   document.getElementById('cMRR').textContent    = '฿' + mrr.toLocaleString('en-US');
   document.getElementById('cTrial').textContent  = CUSTOMERS.filter(c=>c.status==='trial').length;
+  document.getElementById('cChurn').textContent  = CUSTOMERS.filter(c=>c.status==='churned').length;
+  document.getElementById('cARR').textContent    = '฿' + (mrr*12).toLocaleString('en-US');
   renderAdoption();
 
   const q  = (document.getElementById('cSearch').value||'').toLowerCase().trim();
@@ -1045,10 +1235,26 @@ async function deleteCustomer(id){
   } catch(e){ toast('ลบไม่สำเร็จ: ' + (e.message||e)); }
 }
 
+function exportCustomersCSV(){
+  if (!CUSTOMERS.length){ toast('ไม่มีลูกค้าให้ export'); return; }
+  const cols = ['name','contact','email','phone','package','status','monthly_fee','install_fee','start_date','last_active','agents','credit_used','credit_quota','notes'];
+  const head = ['ธุรกิจ','ผู้ติดต่อ','อีเมล','เบอร์','แพ็กเกจ','สถานะ','ค่ารายเดือน','ค่าติดตั้ง','เริ่มใช้','เข้าล่าสุด','Agent','เครดิตใช้','เครดิตทั้งหมด','โน้ต'];
+  const csvEsc = v => { const s=(v==null?'':String(v)).replace(/"/g,'""'); return /[",\n]/.test(s)?`"${s}"`:s; };
+  let csv = '﻿' + head.join(',') + '\n';
+  csv += CUSTOMERS.map(c=> cols.map(k=> csvEsc(k==='status'?(CUST_STATUS_TH[c.status]||c.status||''):c[k])).join(',')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'neos-customers-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Export ' + CUSTOMERS.length + ' ลูกค้าแล้ว ✅');
+}
+
 // ===== REPORT (เอเลน่า AI Manager) =====
 async function openReport(){
   if (!CUSTOMERS.length) { try { await loadCustomers(); } catch(e){} }
   try { await loadCredits(); } catch(e){}
+  if (!VISITS.length) { try { await loadVisits(); } catch(e){} }
   loadReportCfg();
   buildReport();
 }
@@ -1081,16 +1287,30 @@ function buildReport(){
   if (!CREDITS.length) credLine = '— ยังไม่ได้ใส่ข้อมูลเครดิต —';
   else if (!low.length) credLine = '🟢 ทุก provider เหลือเกิน 50%';
   else credLine = low.map(x=>`${x.pct<20?'🔴':'🟠'} ${x.p} เหลือ ${x.pct}%`).join('\n   ');
+  // เพิ่ม: ต้องตาม / โอกาส upsell / คนเข้าชมเว็บ
+  const actions = leadActionItems().length;
+  const ups = upsellItems();
+  const uniqV = new Set(VISITS.map(v=>v.visitor_id||v.id)).size;
+  const visConv = uniqV ? Math.round(LEADS.length/uniqV*100)+'%' : '—';
+  const srcMap = {}; VISITS.forEach(v=>{ const s=(v.source||'other'); srcMap[s]=(srcMap[s]||0)+1; });
+  const topSrc = Object.keys(srcMap).sort((a,b)=>srcMap[b]-srcMap[a])[0];
+  const topSrcLbl = topSrc ? ((SRC_META[topSrc]||{label:topSrc}).label+' '+srcMap[topSrc]+' ครั้ง') : '—';
+  const actionLine = actions ? `⚠️ มี Lead ต้องตาม ${actions} ราย` : '🟢 ไม่มี Lead ค้าง';
+  const upsLine = ups.length ? ('   • 🔔 Upsell: '+ups.slice(0,3).map(u=>`${u.c.name} (${u.pct}%)`).join(', ')+(ups.length>3?` +${ups.length-3}`:'')) : '';
   const txt =
 `👩‍💼 รายงานจากเอเลน่า (AI Manager)
 📅 ${dstr}
 
 📥 Lead
    • ทั้งหมด ${LEADS.length} · ใหม่ ${leadsNew} · 7 วัน ${leads7} · ปิดได้ ${won}
+   • ${actionLine}
 
 👥 ลูกค้า
    • ทั้งหมด ${CUSTOMERS.length} · Active ${custActive}
-   • 💰 MRR ฿${mrr.toLocaleString('en-US')}/เดือน
+   • 💰 MRR ฿${mrr.toLocaleString('en-US')}/เดือน · ARR ฿${(mrr*12).toLocaleString('en-US')}/ปี${upsLine?'\n'+upsLine:''}
+
+📣 เว็บ
+   • คนเข้าชม ${uniqV||'—'} · Conversion ${visConv} · ช่องทางเด่น ${topSrcLbl}
 
 🔋 เครดิต LLM
    ${credLine}
