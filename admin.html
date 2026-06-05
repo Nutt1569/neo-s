@@ -832,7 +832,7 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['leads','customers','credits'].forEach(p=>{
+  ['leads','customers','credits','report'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
