@@ -53,19 +53,43 @@
   /* ===== APP ===== */
   #app { display:none; }
   .wrap { max-width:1240px; margin:0 auto; padding:28px 24px 60px; }
-  .page-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:22px; }
+  .page-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
   .page-head h1 { font-size:26px; } .page-head .sub { color:var(--txt-dim); font-size:13px; margin-top:2px; }
+  .head-actions { display:flex; gap:10px; flex-wrap:wrap; }
 
-  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
-  .kpi { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 22px; }
-  .kpi .ic { font-size:22px; margin-bottom:10px; }
-  .kpi .num { font-size:32px; font-weight:700; font-family:'Space Grotesk'; line-height:1; }
-  .kpi .lbl { font-size:13px; color:var(--txt-dim); margin-top:6px; }
-  @media(max-width:820px){ .kpis{ grid-template-columns:1fr 1fr; } }
+  /* range bar */
+  .rangebar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:20px; }
+  .seg { display:inline-flex; background:var(--bg-2); border:1px solid var(--line); border-radius:11px; padding:3px; gap:2px; }
+  .seg button { background:transparent; border:none; color:var(--txt-dim); font-family:inherit; font-size:12.5px; font-weight:500; padding:7px 13px; border-radius:8px; cursor:pointer; transition:all .15s; }
+  .seg button.on { background:var(--grad); color:#04121A; font-weight:700; }
+  .seg button:not(.on):hover { color:var(--txt); }
+  .custom-range { display:none; gap:8px; align-items:center; }
+  .custom-range.show { display:inline-flex; }
+  .custom-range input { background:var(--bg-2); border:1px solid var(--line); border-radius:9px; padding:7px 10px; color:var(--txt); font-family:inherit; font-size:12.5px; outline:none; }
+  .custom-range input:focus { border-color:var(--blue); }
+  .custom-range span { color:var(--txt-dim); font-size:12px; }
 
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:22px; }
+  .kpi { position:relative; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; overflow:hidden; transition:transform .15s,border-color .15s; }
+  .kpi:hover { transform:translateY(-3px); border-color:var(--blue); }
+  .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad); opacity:.85; }
+  .kpi .ic { font-size:20px; margin-bottom:9px; }
+  .kpi .num { font-size:30px; font-weight:700; font-family:'Space Grotesk'; line-height:1; }
+  .kpi .lbl { font-size:12.5px; color:var(--txt-dim); margin-top:6px; }
+  @media(max-width:1000px){ .kpis{ grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:560px){ .kpis{ grid-template-columns:1fr 1fr; } .kpi .num{ font-size:26px; } }
+
+  .grid-2 { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; margin-bottom:22px; }
+  @media(max-width:880px){ .grid-2{ grid-template-columns:1fr; } }
   .panel { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; margin-bottom:22px; }
-  .panel-title { font-size:14px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-  .chart-wrap { height:200px; }
+  .grid-2 .panel { margin-bottom:0; }
+  .panel-title { font-size:14px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .panel-title .spacer { margin-left:auto; }
+  .mini-seg { display:inline-flex; background:var(--bg-2); border:1px solid var(--line); border-radius:9px; padding:2px; gap:2px; }
+  .mini-seg button { background:transparent; border:none; color:var(--txt-dim); font-family:inherit; font-size:14px; padding:4px 9px; border-radius:7px; cursor:pointer; transition:all .15s; }
+  .mini-seg button.on { background:var(--blue); color:#fff; }
+  .chart-wrap { height:230px; }
+  .chart-wrap.sm { height:240px; }
 
   .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
   .toolbar input, .toolbar select { background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:10px 13px; color:var(--txt); font-family:inherit; font-size:13.5px; outline:none; }
@@ -77,7 +101,8 @@
   table { width:100%; border-collapse:collapse; font-size:13.5px; }
   th { text-align:left; color:var(--cyan); font-weight:600; font-size:12px; letter-spacing:.5px; text-transform:uppercase; padding:10px 12px; border-bottom:1px solid var(--line); white-space:nowrap; }
   td { padding:13px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
-  tr:hover td { background:rgba(59,130,246,.05); }
+  tbody tr { cursor:pointer; transition:background .12s; }
+  tbody tr:hover td { background:rgba(59,130,246,.06); }
   .td-name { font-weight:600; }
   .td-contact { color:var(--cyan); }
   .td-msg { color:var(--txt-dim); max-width:280px; font-size:12.5px; }
@@ -91,11 +116,59 @@
   .st-WON{ border-color:var(--green); color:var(--green); }
   .st-LOST{ border-color:var(--txt-dim); color:var(--txt-dim); opacity:.7; }
 
+  /* pagination */
+  .pager { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:14px; font-size:12.5px; color:var(--txt-dim); }
+  .pager button { background:var(--bg-2); border:1px solid var(--line); color:var(--txt); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:15px; transition:all .15s; }
+  .pager button:hover:not(:disabled) { border-color:var(--blue); }
+  .pager button:disabled { opacity:.35; cursor:default; }
+
   .empty { text-align:center; padding:50px 20px; color:var(--txt-dim); }
   .empty .em-ic { font-size:46px; margin-bottom:14px; }
   .loading { text-align:center; padding:40px; color:var(--txt-dim); }
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--blue); border-radius:12px; padding:12px 20px; font-size:14px; box-shadow:0 12px 34px rgba(0,0,0,.5); opacity:0; transition:opacity .25s; pointer-events:none; z-index:100; }
   .toast.show { opacity:1; }
+
+  /* visitor / marketing */
+  .panel-sub-title { font-size:12.5px; font-weight:600; color:var(--txt-dim); margin-bottom:12px; }
+  .vis-kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  @media(max-width:560px){ .vis-kpis{ grid-template-columns:1fr; } }
+  .vis-k { background:var(--bg-2); border:1px solid var(--line); border-radius:13px; padding:15px 16px; }
+  .vis-k .vk-num { font-size:26px; font-weight:700; font-family:'Space Grotesk'; line-height:1; }
+  .vis-k:nth-child(1) .vk-num{ color:var(--violet); } .vis-k:nth-child(2) .vk-num{ color:var(--cyan); } .vis-k:nth-child(3) .vk-num{ color:var(--gold); }
+  .vis-k .vk-lbl { font-size:12px; color:var(--txt-dim); margin-top:6px; }
+  .src-row { display:flex; gap:12px; align-items:center; padding:11px 0; border-bottom:1px solid rgba(30,42,68,.5); }
+  .src-row:last-child { border-bottom:none; }
+  .src-ic { width:38px; height:38px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; background:var(--bg-2); border:1px solid var(--line); border-radius:10px; }
+  .src-main { flex:1; min-width:0; }
+  .src-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .src-name { font-size:13.5px; font-weight:600; } .src-cnt { font-size:13px; font-weight:700; color:var(--cyan); white-space:nowrap; }
+  .src-bar { height:6px; background:var(--bg-2); border-radius:99px; margin:7px 0 4px; overflow:hidden; }
+  .src-fill { height:100%; background:var(--grad); border-radius:99px; }
+  .src-pct { font-size:11px; color:var(--txt-dim); }
+
+  /* ===== MODAL ===== */
+  .overlay { position:fixed; inset:0; background:rgba(3,6,14,.72); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:24px; z-index:120; }
+  .overlay.show { display:flex; }
+  .modal { background:var(--card); border:1px solid var(--line); border-radius:20px; width:100%; max-width:560px; max-height:88vh; overflow-y:auto; box-shadow:0 30px 80px rgba(0,0,0,.6); }
+  .modal-head { position:sticky; top:0; background:var(--card); border-bottom:1px solid var(--line); padding:20px 24px; display:flex; align-items:flex-start; gap:12px; }
+  .modal-head h2 { font-size:20px; } .modal-head .m-sub { font-size:12px; color:var(--txt-dim); margin-top:3px; }
+  .modal-close { margin-left:auto; background:var(--bg-2); border:1px solid var(--line); color:var(--txt-dim); width:34px; height:34px; border-radius:9px; font-size:18px; cursor:pointer; flex-shrink:0; }
+  .modal-close:hover { border-color:var(--red); color:var(--red); }
+  .modal-body { padding:22px 24px 26px; }
+  .frow { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid rgba(30,42,68,.55); }
+  .frow:last-child { border-bottom:none; }
+  .frow .fl { font-size:12px; color:var(--txt-dim); width:108px; flex-shrink:0; padding-top:2px; }
+  .frow .fv { font-size:14px; flex:1; word-break:break-word; }
+  .frow .fv a { color:var(--cyan); text-decoration:none; } .frow .fv a:hover { text-decoration:underline; }
+  .msgbox { background:var(--bg-2); border:1px solid var(--line); border-radius:11px; padding:13px 15px; font-size:13.5px; line-height:1.6; white-space:pre-wrap; color:var(--txt); }
+  .m-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+  .m-actions a, .m-actions button { flex:1; min-width:130px; text-align:center; text-decoration:none; border-radius:11px; padding:11px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; border:1px solid var(--line); transition:all .15s; }
+  .btn-primary { background:var(--grad); color:#04121A; border:none; }
+  .btn-primary:hover { opacity:.9; }
+  .btn-ghost { background:var(--bg-2); color:var(--txt); }
+  .btn-ghost:hover { border-color:var(--blue); }
+  .m-status { display:flex; align-items:center; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .m-status .fl { font-size:12px; color:var(--txt-dim); }
 </style>
 </head>
 <body>
@@ -135,25 +208,84 @@
   <div class="wrap">
     <div class="page-head">
       <div><h1>📥 Lead จากโนวา</h1><div class="sub" id="updatedAt"></div></div>
-      <button class="nav-btn refresh" onclick="loadLeads(true)">🔄 รีเฟรช</button>
+      <div class="head-actions">
+        <button class="nav-btn" onclick="exportCSV()">📥 Export CSV</button>
+        <button class="nav-btn refresh" onclick="loadLeads(true)">🔄 รีเฟรช</button>
+      </div>
+    </div>
+
+    <!-- range filter -->
+    <div class="rangebar">
+      <div class="seg" id="rangeSeg">
+        <button data-r="today" onclick="setRange('today',this)">วันนี้</button>
+        <button data-r="3" onclick="setRange('3',this)">3 วัน</button>
+        <button data-r="7" onclick="setRange('7',this)">7 วัน</button>
+        <button data-r="30" onclick="setRange('30',this)">30 วัน</button>
+        <button data-r="month" onclick="setRange('month',this)">เดือนนี้</button>
+        <button data-r="all" class="on" onclick="setRange('all',this)">ทั้งหมด</button>
+        <button data-r="custom" onclick="setRange('custom',this)">กำหนดเอง</button>
+      </div>
+      <div class="custom-range" id="customRange">
+        <input type="date" id="dFrom" onchange="applyCustom()">
+        <span>ถึง</span>
+        <input type="date" id="dTo" onchange="applyCustom()">
+      </div>
     </div>
 
     <div class="kpis">
-      <div class="kpi"><div class="ic">📊</div><div class="num grad-txt" id="kTotal">0</div><div class="lbl">Lead ทั้งหมด</div></div>
+      <div class="kpi"><div class="ic">📊</div><div class="num grad-txt" id="kTotal">0</div><div class="lbl">Lead (ในช่วง)</div></div>
       <div class="kpi"><div class="ic">✨</div><div class="num" style="color:var(--cyan)" id="kNew">0</div><div class="lbl">ใหม่ (ยังไม่ติดต่อ)</div></div>
-      <div class="kpi"><div class="ic">📅</div><div class="num" style="color:var(--blue)" id="kWeek">0</div><div class="lbl">7 วันล่าสุด</div></div>
+      <div class="kpi"><div class="ic">💬</div><div class="num" style="color:var(--blue)" id="kActive">0</div><div class="lbl">กำลังติดตาม</div></div>
       <div class="kpi"><div class="ic">🎉</div><div class="num" style="color:var(--green)" id="kWon">0</div><div class="lbl">ปิดได้ (WON)</div></div>
+      <div class="kpi"><div class="ic">⚡</div><div class="num" style="color:var(--gold)" id="kConv">0%</div><div class="lbl">ปิดได้ (WON %)</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">📈 Lead เข้ามารายวัน
+          <span class="spacer"></span>
+          <span class="mini-seg" id="trendSeg">
+            <button class="on" onclick="setTrendType('bar',this)" title="แท่ง">📊</button>
+            <button onclick="setTrendType('line',this)" title="เส้น">📈</button>
+          </span>
+        </div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">🎯 Sales Pipeline</div>
+        <div class="chart-wrap sm"><canvas id="pipeChart"></canvas></div>
+      </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">📈 Lead เข้ามารายวัน (14 วันล่าสุด)</div>
-      <div class="chart-wrap"><canvas id="chart"></canvas></div>
+      <div class="panel-title">🧩 แพ็กเกจที่สนใจ</div>
+      <div class="chart-wrap sm" style="height:200px"><canvas id="intChart"></canvas></div>
+    </div>
+
+    <!-- 📣 การตลาด · คนเข้าชมเว็บ -->
+    <div class="panel">
+      <div class="panel-title">📣 การตลาด · คนเข้าชมเว็บ <span class="spacer"></span><span id="visEmpty" style="font-size:11.5px;color:var(--txt-dim);font-weight:400"></span></div>
+      <div class="vis-kpis">
+        <div class="vis-k"><div class="vk-num" id="vUnique">0</div><div class="vk-lbl">คนเข้าชม (ไม่นับซ้ำ)</div></div>
+        <div class="vis-k"><div class="vk-num" id="vTotal">0</div><div class="vk-lbl">เข้าชมทั้งหมด</div></div>
+        <div class="vis-k"><div class="vk-num" id="vConv">0%</div><div class="vk-lbl">Lead Conversion (Lead ÷ คนเข้าชม)</div></div>
+      </div>
+      <div class="grid-2" style="margin-top:18px">
+        <div>
+          <div class="panel-sub-title">📈 คนเข้าชมรายวัน</div>
+          <div class="chart-wrap sm" style="height:200px"><canvas id="visChart"></canvas></div>
+        </div>
+        <div>
+          <div class="panel-sub-title">🧭 ช่องทางที่มา</div>
+          <div id="sourceList"></div>
+        </div>
+      </div>
     </div>
 
     <div class="panel">
       <div class="toolbar">
-        <input id="search" type="text" placeholder="🔍 ค้นหา ชื่อ / อีเมล / เบอร์ / ข้อความ" oninput="renderTable()">
-        <select id="fStatus" onchange="renderTable()">
+        <input id="search" type="text" placeholder="🔍 ค้นหา ชื่อ / อีเมล / เบอร์ / ข้อความ" oninput="onFilter()">
+        <select id="fStatus" onchange="onFilter()">
           <option value="">ทุกสถานะ</option>
           <option value="NEW">ใหม่</option>
           <option value="CONTACTED">ติดต่อแล้ว</option>
@@ -161,14 +293,20 @@
           <option value="WON">ปิดได้</option>
           <option value="LOST">ไม่สำเร็จ</option>
         </select>
-        <select id="fInterest" onchange="renderTable()">
+        <select id="fInterest" onchange="onFilter()">
           <option value="">ทุกแพ็กเกจ</option>
           <option>Starter</option><option>Business</option><option>Enterprise</option><option>ยังไม่แน่ใจ</option>
         </select>
       </div>
       <div id="tableArea"><div class="loading">กำลังโหลด…</div></div>
+      <div id="pager"></div>
     </div>
   </div>
+</div>
+
+<!-- ===== LEAD MODAL ===== -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -184,14 +322,30 @@ const ADMIN_EMAILS  = ['kritsada.nutt1981@gmail.com', 'kritsada.msit04@gmail.com
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const STATUSES = ['NEW','CONTACTED','QUOTED','WON','LOST'];
 const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้', LOST:'ไม่สำเร็จ' };
-let LEADS = [];
-let chart = null;
+const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', LOST:'#5b6781' };
+const KNOWN_LABELS = { name:'ชื่อ', contact:'ติดต่อ', email:'อีเมล', phone:'เบอร์โทร', interest:'สนใจแพ็กเกจ', source:'ที่มา', message:'ข้อความ', status:'สถานะ', created_at:'เข้ามาเมื่อ', lead_id:'Lead ID' };
+
+let LEADS = [], VISITS = [];
+let chart = null, pipeChart = null, intChart = null, visChart = null;
+const SRC_META = {
+  direct:{label:'เข้าตรง',ic:'🔗'}, facebook:{label:'Facebook',ic:'📘'}, google:{label:'Google',ic:'🔍'},
+  line:{label:'LINE',ic:'💬'}, instagram:{label:'Instagram',ic:'📷'}, tiktok:{label:'TikTok',ic:'🎵'},
+  bing:{label:'Bing',ic:'🔎'}, other:{label:'อื่นๆ',ic:'🌐'}
+};
 let knownIds = null;   // null = ยังไม่เคยโหลด (กันแจ้งเตือนตอนเปิดครั้งแรก)
 let unread = 0;
 let polling = false;
+let RANGE = 'all';      // all | today | 7 | 30 | custom
+let trendType = 'bar';
+let page = 1;
+const PAGE_SIZE = 15;
 
 // ===== AUTH =====
 function loginGoogle(){
+  if (location.protocol === 'file:'){
+    showLoginErr('⚠️ กำลังเปิดเป็นไฟล์ในเครื่อง (file://) — Google login ใช้ไม่ได้ · กรุณาเปิดผ่านลิงก์เว็บจริง: https://nutt1569.github.io/neo-s/admin.html');
+    return;
+  }
   sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href.split('#')[0] } });
 }
 function logout(){ sb.auth.signOut().then(()=> location.reload()); }
@@ -272,7 +426,8 @@ async function loadLeads(manual){
       fresh.slice().reverse().forEach(announceNewLead);
     }
     knownIds = new Set(LEADS.map(l => l.lead_id));
-    renderKPIs(); buildChart(); renderTable();
+    await loadVisits();
+    renderAll();
     document.getElementById('updatedAt').textContent = 'อัปเดต: ' + fmtDateTime(new Date().toISOString());
     if (manual) toast('รีเฟรชแล้ว ✅');
   } catch(e){
@@ -280,67 +435,285 @@ async function loadLeads(manual){
   }
 }
 
-function renderKPIs(){
-  const now = Date.now(), wk = now - 7*864e5;
-  document.getElementById('kTotal').textContent = LEADS.length;
-  document.getElementById('kNew').textContent   = LEADS.filter(l=>(l.status||'NEW')==='NEW').length;
-  document.getElementById('kWeek').textContent  = LEADS.filter(l=> new Date(l.created_at).getTime() >= wk).length;
-  document.getElementById('kWon').textContent   = LEADS.filter(l=>l.status==='WON').length;
+// ===== VISITS (ตาราง neos_visits — โหลดแยก ถ้ายังไม่มีตาราง = เงียบ ไม่กระทบ Lead) =====
+async function loadVisits(){
+  try { const { data, error } = await sb.from('neos_visits').select('*'); if (error) throw error; VISITS = data || []; }
+  catch(e){ VISITS = []; }
 }
 
+// ===== RANGE =====
+function getBounds(){
+  const now = new Date();
+  if (RANGE === 'all') return null;
+  if (RANGE === 'today'){ const s=new Date(now); s.setHours(0,0,0,0); return { from:s.getTime(), to:now.getTime()+1 }; }
+  if (RANGE === '3')  return { from: Date.now()-3*864e5,  to: Date.now()+1 };
+  if (RANGE === '7')  return { from: Date.now()-7*864e5,  to: Date.now()+1 };
+  if (RANGE === '30') return { from: Date.now()-30*864e5, to: Date.now()+1 };
+  if (RANGE === 'month'){ const s=new Date(now.getFullYear(), now.getMonth(), 1); s.setHours(0,0,0,0); return { from:s.getTime(), to:now.getTime()+1 }; }
+  if (RANGE === 'custom'){
+    const f=document.getElementById('dFrom').value, t=document.getElementById('dTo').value;
+    const from = f ? new Date(f+'T00:00:00').getTime() : -Infinity;
+    const to   = t ? new Date(t+'T23:59:59').getTime() : Infinity;
+    return { from, to };
+  }
+  return null;
+}
+function inRange(iso){ const b=getBounds(); if(!b) return true; const t=new Date(iso).getTime(); return t>=b.from && t<=b.to; }
+function rangedLeads(){ return LEADS.filter(l => inRange(l.created_at)); }
+
+function setRange(r, el){
+  RANGE = r; page = 1;
+  document.querySelectorAll('#rangeSeg button').forEach(b=>b.classList.remove('on'));
+  if (el) el.classList.add('on');
+  document.getElementById('customRange').classList.toggle('show', r==='custom');
+  if (r!=='custom') renderAll();
+  else { if(!document.getElementById('dTo').value){ const t=new Date().toISOString().slice(0,10); document.getElementById('dTo').value=t; const f=new Date(Date.now()-30*864e5).toISOString().slice(0,10); document.getElementById('dFrom').value=f; } renderAll(); }
+}
+function applyCustom(){ page=1; renderAll(); }
+
+// ===== RENDER =====
+function renderAll(){ renderKPIs(); buildChart(); buildPipe(); buildInterest(); renderVisitors(); renderTable(); }
+function rangedVisits(){ return VISITS.filter(v => inRange(v.created_at)); }
+
+function renderKPIs(){
+  const rl = rangedLeads();
+  const won = rl.filter(l=>l.status==='WON').length;
+  const active = rl.filter(l=>['CONTACTED','QUOTED'].includes(l.status||'')).length;
+  document.getElementById('kTotal').textContent  = rl.length;
+  document.getElementById('kNew').textContent    = rl.filter(l=>(l.status||'NEW')==='NEW').length;
+  document.getElementById('kActive').textContent = active;
+  document.getElementById('kWon').textContent    = won;
+  document.getElementById('kConv').textContent   = rl.length ? Math.round(won/rl.length*100)+'%' : '0%';
+}
+
+function trendDays(){
+  if (RANGE==='today') return 1;
+  if (RANGE==='3') return 3;
+  if (RANGE==='7') return 7;
+  if (RANGE==='30') return 30;
+  if (RANGE==='month') return new Date().getDate();   // ตั้งแต่วันที่ 1 ถึงวันนี้
+  if (RANGE==='custom'){ const b=getBounds(); if(b&&isFinite(b.from)&&isFinite(b.to)){ return Math.min(90, Math.max(1, Math.ceil((b.to-b.from)/864e5))); } return 14; }
+  return 14; // all
+}
 function buildChart(){
-  const days = [], counts = [];
-  for (let i=13;i>=0;i--){ const d=new Date(Date.now()-i*864e5); const key=d.toISOString().slice(0,10); days.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'})); counts.push(LEADS.filter(l=>(l.created_at||'').slice(0,10)===key).length); }
+  const n = trendDays(), days=[], counts=[];
+  const endTs = (RANGE==='custom') ? (getBounds()?.to ?? Date.now()) : Date.now();
+  for (let i=n-1;i>=0;i--){ const d=new Date(endTs-i*864e5); const key=d.toISOString().slice(0,10); days.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'})); counts.push(LEADS.filter(l=>(l.created_at||'').slice(0,10)===key).length); }
   const ctx = document.getElementById('chart');
   if (chart) chart.destroy();
+  const grad = ctx.getContext('2d').createLinearGradient(0,0,0,230);
+  grad.addColorStop(0,'rgba(59,130,246,.7)'); grad.addColorStop(1,'rgba(34,211,238,.12)');
   chart = new Chart(ctx, {
-    type:'bar',
-    data:{ labels:days, datasets:[{ data:counts, backgroundColor:'rgba(59,130,246,.55)', borderColor:'#22D3EE', borderWidth:1, borderRadius:5 }] },
+    type: trendType,
+    data:{ labels:days, datasets:[{ data:counts, backgroundColor: trendType==='line'?'rgba(59,130,246,.12)':grad, borderColor:'#22D3EE', borderWidth:2, borderRadius:5, fill:trendType==='line', tension:.35, pointRadius:trendType==='line'?3:0, pointBackgroundColor:'#22D3EE' }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
-      scales:{ x:{ grid:{display:false}, ticks:{ color:'#95A3C2', font:{size:10} } }, y:{ beginAtZero:true, ticks:{ color:'#95A3C2', precision:0 }, grid:{ color:'rgba(30,42,68,.6)' } } } }
+      scales:{ x:{ grid:{display:false}, ticks:{ color:'#95A3C2', font:{size:10}, maxRotation:0, autoSkip:true, maxTicksLimit:10 } }, y:{ beginAtZero:true, ticks:{ color:'#95A3C2', precision:0 }, grid:{ color:'rgba(30,42,68,.6)' } } } }
+  });
+}
+function setTrendType(t, el){ trendType=t; document.querySelectorAll('#trendSeg button').forEach(b=>b.classList.remove('on')); if(el)el.classList.add('on'); buildChart(); }
+
+function buildPipe(){
+  const rl = rangedLeads();
+  const counts = STATUSES.map(s=> rl.filter(l=>(l.status||'NEW')===s).length);
+  const ctx = document.getElementById('pipeChart');
+  if (pipeChart) pipeChart.destroy();
+  pipeChart = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:STATUSES.map(s=>STATUS_TH[s]), datasets:[{ data:counts, backgroundColor:STATUSES.map(s=>STATUS_COLOR[s]), borderRadius:6, barThickness:22 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+      scales:{ x:{ beginAtZero:true, ticks:{ color:'#95A3C2', precision:0 }, grid:{ color:'rgba(30,42,68,.6)' } }, y:{ grid:{display:false}, ticks:{ color:'#EAF0FF', font:{size:12} } } } }
   });
 }
 
-function renderTable(){
+function buildInterest(){
+  const rl = rangedLeads();
+  const map = {};
+  rl.forEach(l=>{ const k=(l.interest||'ยังไม่ระบุ').trim()||'ยังไม่ระบุ'; map[k]=(map[k]||0)+1; });
+  const labels = Object.keys(map), data = labels.map(k=>map[k]);
+  const palette = ['#22D3EE','#3B82F6','#8B5CF6','#E2B679','#34D399','#F87171','#5b6781'];
+  const ctx = document.getElementById('intChart');
+  if (intChart) intChart.destroy();
+  if (!labels.length){ if(intChart){intChart.destroy();intChart=null;} ctx.getContext('2d').clearRect(0,0,ctx.width,ctx.height); return; }
+  intChart = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor:labels.map((_,i)=>palette[i%palette.length]), borderColor:'#111A2E', borderWidth:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{ position:'right', labels:{ color:'#EAF0FF', font:{size:12}, padding:14, boxWidth:13 } } } }
+  });
+}
+
+// ===== VISITORS / MARKETING =====
+function renderVisitors(){
+  const rv = rangedVisits();
+  const uniq = new Set(rv.map(v=>v.visitor_id||v.id)).size;
+  const leadCount = rangedLeads().length;
+  document.getElementById('vUnique').textContent = uniq;
+  document.getElementById('vTotal').textContent  = rv.length;
+  document.getElementById('vConv').textContent   = uniq ? Math.round(leadCount/uniq*100)+'%' : '—';
+  document.getElementById('visEmpty').textContent = VISITS.length ? '' : 'ยังไม่มีข้อมูล — รอสร้างตาราง neos_visits + deploy เว็บ';
+  buildVisitChart(rv);
+  renderSources(rv);
+}
+function buildVisitChart(rv){
+  const n = trendDays(), days=[], counts=[];
+  const endTs = (RANGE==='custom') ? (getBounds()?.to ?? Date.now()) : Date.now();
+  for (let i=n-1;i>=0;i--){ const d=new Date(endTs-i*864e5); const key=d.toISOString().slice(0,10); days.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'})); counts.push(rv.filter(v=>(v.created_at||'').slice(0,10)===key).length); }
+  const ctx = document.getElementById('visChart');
+  if (visChart) visChart.destroy();
+  const grad = ctx.getContext('2d').createLinearGradient(0,0,0,200);
+  grad.addColorStop(0,'rgba(139,92,246,.75)'); grad.addColorStop(1,'rgba(139,92,246,.12)');
+  visChart = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:days, datasets:[{ data:counts, backgroundColor:grad, borderColor:'#8B5CF6', borderWidth:1, borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+      scales:{ x:{ grid:{display:false}, ticks:{ color:'#95A3C2', font:{size:10}, maxRotation:0, autoSkip:true, maxTicksLimit:10 } }, y:{ beginAtZero:true, ticks:{ color:'#95A3C2', precision:0 }, grid:{ color:'rgba(30,42,68,.6)' } } } }
+  });
+}
+function renderSources(rv){
+  const el = document.getElementById('sourceList');
+  if (!rv.length){ el.innerHTML = '<div style="color:var(--txt-dim);font-size:13px;padding:16px 0">— ยังไม่มีข้อมูลคนเข้าชม —</div>'; return; }
+  const map = {}; rv.forEach(v=>{ const s=(v.source||'other'); map[s]=(map[s]||0)+1; });
+  const total = rv.length;
+  el.innerHTML = Object.keys(map).sort((a,b)=>map[b]-map[a]).map(s=>{
+    const m = SRC_META[s] || { label:esc(s), ic:'🌐' };
+    const c = map[s], pct = Math.round(c/total*100);
+    return `<div class="src-row"><div class="src-ic">${m.ic}</div><div class="src-main">
+      <div class="src-top"><span class="src-name">${m.label}</span><span class="src-cnt">${c} ครั้ง</span></div>
+      <div class="src-bar"><div class="src-fill" style="width:${pct}%"></div></div>
+      <div class="src-pct">${pct}% ของทั้งหมด</div></div></div>`;
+  }).join('');
+}
+
+// ===== TABLE =====
+function filteredRows(){
   const q = (document.getElementById('search').value||'').toLowerCase().trim();
   const fs = document.getElementById('fStatus').value;
   const fi = document.getElementById('fInterest').value;
-  let rows = LEADS.filter(l=>{
+  return rangedLeads().filter(l=>{
     const st = l.status || 'NEW';
     if (fs && st !== fs) return false;
     if (fi && (l.interest||'') !== fi) return false;
     if (q){ const blob = [l.name,l.contact,l.email,l.phone,l.message,l.interest].join(' ').toLowerCase(); if (!blob.includes(q)) return false; }
     return true;
   });
-  if (!LEADS.length){ document.getElementById('tableArea').innerHTML = '<div class="empty"><div class="em-ic">📭</div>ยังไม่มี Lead เข้ามา<br><small>เมื่อมีคนกรอกฟอร์มในโนวา (เว็บบริษัท) จะขึ้นที่นี่</small></div>'; return; }
-  if (!rows.length){ document.getElementById('tableArea').innerHTML = '<div class="empty"><div class="em-ic">🔍</div>ไม่พบ Lead ตามที่กรอง</div>'; return; }
+}
+function onFilter(){ page=1; renderTable(); }
+
+function renderTable(){
+  const rows = filteredRows();
+  const area = document.getElementById('tableArea'), pagerEl = document.getElementById('pager');
+  pagerEl.innerHTML='';
+  if (!rangedLeads().length){ area.innerHTML = '<div class="empty"><div class="em-ic">📭</div>ยังไม่มี Lead ในช่วงเวลานี้<br><small>เมื่อมีคนกรอกฟอร์มในโนวา (เว็บบริษัท) จะขึ้นที่นี่</small></div>'; return; }
+  if (!rows.length){ area.innerHTML = '<div class="empty"><div class="em-ic">🔍</div>ไม่พบ Lead ตามที่กรอง</div>'; return; }
+
+  const pages = Math.ceil(rows.length / PAGE_SIZE);
+  if (page > pages) page = pages;
+  const slice = rows.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+
   let h = '<div class="table-wrap"><table><thead><tr><th>วันที่</th><th>ชื่อ</th><th>ติดต่อ</th><th>สนใจ</th><th>ข้อความ</th><th>ที่มา</th><th>สถานะ</th></tr></thead><tbody>';
-  h += rows.map(l=>{
+  h += slice.map(l=>{
     const st = l.status || 'NEW';
     const opts = STATUSES.map(s=>`<option value="${s}" ${s===st?'selected':''}>${STATUS_TH[s]}</option>`).join('');
-    return `<tr>
+    return `<tr onclick="openLead('${esc(l.lead_id)}')">
       <td class="td-date">${fmtDateTime(l.created_at)}</td>
       <td class="td-name">${esc(l.name)||'-'}</td>
       <td class="td-contact">${esc(l.contact||l.email||l.phone)||'-'}</td>
       <td>${l.interest?`<span class="pill int">${esc(l.interest)}</span>`:'<span class="pill">-</span>'}</td>
       <td class="td-msg">${esc(l.message)||'<span style="opacity:.4">—</span>'}</td>
       <td><span class="pill">${esc(l.source)||'-'}</span></td>
-      <td><select class="st-sel st-${st}" onchange="updateStatus('${esc(l.lead_id)}', this.value, this)">${opts}</select></td>
+      <td onclick="event.stopPropagation()"><select class="st-sel st-${st}" onchange="updateStatus('${esc(l.lead_id)}', this.value, this)">${opts}</select></td>
     </tr>`;
   }).join('');
   h += '</tbody></table></div>';
-  document.getElementById('tableArea').innerHTML = h;
+  area.innerHTML = h;
+
+  if (pages > 1){
+    pagerEl.innerHTML = `<span>แสดง ${(page-1)*PAGE_SIZE+1}–${Math.min(page*PAGE_SIZE,rows.length)} จาก ${rows.length}</span>
+      <button onclick="goPage(${page-1})" ${page<=1?'disabled':''}>‹</button>
+      <span>${page} / ${pages}</span>
+      <button onclick="goPage(${page+1})" ${page>=pages?'disabled':''}>›</button>`;
+  } else {
+    pagerEl.innerHTML = `<span>ทั้งหมด ${rows.length} รายการ</span>`;
+  }
 }
+function goPage(p){ page=p; renderTable(); window.scrollTo({top:document.querySelector('#tableArea').offsetTop-80,behavior:'smooth'}); }
 
 async function updateStatus(id, status, el){
   try {
-    el.className = 'st-sel st-' + status;
+    if (el) el.className = 'st-sel st-' + status;
     const { error } = await sb.from('neos_leads').update({ status }).eq('lead_id', id);
     if (error) throw error;
     const lead = LEADS.find(l=>l.lead_id===id); if (lead) lead.status = status;
-    renderKPIs();
+    renderKPIs(); buildPipe();
     toast('อัปเดตสถานะ → ' + STATUS_TH[status]);
   } catch(e){ toast('บันทึกไม่สำเร็จ: ' + (e.message||e)); }
+}
+
+// ===== LEAD MODAL =====
+function openLead(id){
+  const l = LEADS.find(x=>x.lead_id===id); if(!l) return;
+  const st = l.status || 'NEW';
+  const contact = l.contact || l.email || l.phone || '';
+  const email = l.email || (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact) ? contact : '');
+  const phoneRaw = l.phone || (/^[0-9+\-\s]{8,}$/.test(contact) ? contact : '');
+  const phone = phoneRaw ? phoneRaw.replace(/[^0-9+]/g,'') : '';
+
+  const rowsHTML = [];
+  const fr = (lbl,val)=> rowsHTML.push(`<div class="frow"><div class="fl">${lbl}</div><div class="fv">${val}</div></div>`);
+  fr('ชื่อ', esc(l.name)||'<span style="opacity:.4">ไม่ระบุ</span>');
+  let cv = esc(contact)||'<span style="opacity:.4">—</span>';
+  if (email) cv = `<a href="mailto:${esc(email)}">${esc(email)}</a>`;
+  fr('ติดต่อ', cv + (phone && email ? `<br><a href="tel:${esc(phone)}">${esc(phoneRaw)}</a>` : ''));
+  if (phone && !email) rowsHTML[rowsHTML.length-1] = `<div class="frow"><div class="fl">ติดต่อ</div><div class="fv"><a href="tel:${esc(phone)}">${esc(contact)}</a></div></div>`;
+  fr('สนใจ', l.interest?`<span class="pill int">${esc(l.interest)}</span>`:'<span style="opacity:.4">—</span>');
+  fr('ที่มา', `<span class="pill">${esc(l.source)||'-'}</span>`);
+  fr('เข้ามาเมื่อ', fmtDateTime(l.created_at));
+
+  // ข้อมูลเพิ่มเติม (ฟิลด์อื่นๆ เช่น สเปก/ราคา จาก Price Calculator)
+  const extra = Object.keys(l).filter(k=>!KNOWN_LABELS[k] && l[k]!=null && String(l[k]).trim()!=='' && k!=='id' && k!=='updated_at');
+  extra.forEach(k=> fr(esc(k), esc(String(l[k]))));
+
+  const msg = l.message ? `<div class="frow" style="display:block"><div class="fl" style="margin-bottom:8px">ข้อความ</div><div class="msgbox">${esc(l.message)}</div></div>` : '';
+  const stOpts = STATUSES.map(s=>`<option value="${s}" ${s===st?'selected':''}>${STATUS_TH[s]}</option>`).join('');
+
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head">
+      <div><h2>${esc(l.name)||'Lead'}</h2><div class="m-sub">Lead ID: ${esc(l.lead_id)}</div></div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      ${rowsHTML.join('')}
+      ${msg}
+      <div class="m-status">
+        <span class="fl">สถานะ:</span>
+        <select class="st-sel st-${st}" id="mStatus" onchange="updateStatus('${esc(l.lead_id)}', this.value, this)">${stOpts}</select>
+      </div>
+      <div class="m-actions">
+        ${email?`<a class="btn-primary" href="mailto:${esc(email)}?subject=${encodeURIComponent('NEO-S — ตอบกลับเรื่องที่คุณสนใจ')}">✉️ ส่งอีเมล</a>`:''}
+        ${phone?`<a class="btn-ghost" href="tel:${esc(phone)}">📞 โทร</a>`:''}
+        <button class="btn-ghost" onclick="copyContact('${esc(contact)}')">📋 คัดลอกติดต่อ</button>
+      </div>
+    </div>`;
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('show'); }
+function copyContact(t){ try{ navigator.clipboard.writeText(t); toast('คัดลอกแล้ว 📋'); }catch(e){ toast('คัดลอกไม่สำเร็จ'); } }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+// ===== EXPORT =====
+function exportCSV(){
+  const rows = filteredRows();
+  if (!rows.length){ toast('ไม่มีข้อมูลให้ export'); return; }
+  const cols = ['created_at','name','contact','email','phone','interest','source','status','message'];
+  const head = ['วันที่','ชื่อ','ติดต่อ','อีเมล','เบอร์','สนใจ','ที่มา','สถานะ','ข้อความ'];
+  const csvEsc = v => { const s=(v==null?'':String(v)).replace(/"/g,'""'); return /[",\n]/.test(s)?`"${s}"`:s; };
+  let csv = '﻿' + head.join(',') + '\n';
+  csv += rows.map(l=> cols.map(c=> csvEsc(c==='status'?(STATUS_TH[l.status]||l.status||'NEW'):l[c])).join(',')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'neos-leads-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Export ' + rows.length + ' รายการแล้ว ✅');
 }
 
 // ===== UTILS =====
@@ -352,6 +725,7 @@ function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg
 // ===== INIT =====
 sb.auth.onAuthStateChange(()=> checkAuth());
 checkAuth();
+if (location.protocol === 'file:') showLoginErr('⚠️ เปิดเป็นไฟล์ในเครื่อง (file://) — login จะไม่ทำงาน · เปิดผ่าน https://nutt1569.github.io/neo-s/admin.html');
 window.addEventListener('focus', ()=>{ if(document.getElementById('app').style.display==='block') loadLeads(); });
 </script>
 </body>
