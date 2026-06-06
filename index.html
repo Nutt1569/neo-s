@@ -188,6 +188,58 @@
   .cta-contacts a { font-size: 14px; color: var(--txt-dim); display: flex; align-items: center; gap: 7px; } .cta-contacts a:hover { color: var(--txt); }
 
   /* ===== FOOTER ===== */
+  /* RESULTS */
+  .res-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; margin-bottom: 40px; }
+  .res-kpi { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 30px 18px; text-align: center; }
+  .res-kpi .k-num { font-size: clamp(28px,4vw,42px); font-weight: 700; line-height: 1; margin-bottom: 10px; }
+  .res-kpi .k-lbl { font-size: 13px; color: var(--txt-dim); line-height: 1.5; }
+  .res-ba { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .res-col { border: 1px solid var(--line); border-radius: 18px; padding: 28px 26px; }
+  .res-col.before { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.25); }
+  .res-col.after { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.25); }
+  .res-col h3 { font-size: 17px; margin-bottom: 18px; }
+  .res-col.before h3 { color: #f87171; }
+  .res-col.after h3 { color: #4ade80; }
+  .res-col ul { list-style: none; }
+  .res-col li { font-size: 14.5px; color: var(--txt-dim); padding: 8px 0 8px 28px; position: relative; line-height: 1.55; }
+  .res-col.before li::before { content: '✕'; position: absolute; left: 0; color: #f87171; font-weight: 700; }
+  .res-col.after li::before { content: '✓'; position: absolute; left: 0; color: #4ade80; font-weight: 700; }
+  @media(max-width:820px){ .res-kpis { grid-template-columns: repeat(2,1fr); } .res-ba { grid-template-columns: 1fr; } }
+
+  /* COMPARE TABLE */
+  .cmp { max-width: 920px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .cmp-row { display: grid; grid-template-columns: 1.1fr 1.3fr 1.3fr; }
+  .cmp-row + .cmp-row { border-top: 1px solid var(--line); }
+  .cmp-row > div { padding: 17px 20px; font-size: 14.5px; line-height: 1.55; }
+  .cmp-row.head > div { font-weight: 700; font-size: 15px; text-align: center; }
+  .cmp-h-emp { background: var(--bg-2); color: var(--txt-dim); }
+  .cmp-h-ai { background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(139,92,246,0.18)); color: var(--txt); }
+  .cmp-feat { font-weight: 600; color: var(--txt); background: var(--bg-2); }
+  .cmp-emp { color: var(--txt-dim); }
+  .cmp-ai { color: var(--txt); background: rgba(34,211,238,0.05); }
+  .cmp-ai b { color: var(--cyan); }
+  .cmp-quote { text-align: center; margin-top: 28px; font-size: clamp(15px,2.2vw,20px); font-style: italic; font-weight: 500; max-width: 800px; margin-left: auto; margin-right: auto; }
+  @media(max-width:760px){
+    .cmp-row { grid-template-columns: 1fr 1fr; }
+    .cmp-feat { grid-column: 1 / -1; text-align: center; }
+    .cmp-row.head .cmp-feat { display: none; }
+  }
+
+  /* mini FAQ */
+  .mini-faq { max-width: 760px; margin: 0 auto; }
+  .faq-item { border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; background: var(--card); overflow: hidden; transition: border-color .2s; }
+  .faq-item:hover { border-color: #2c3d5e; }
+  .faq-item.open { border-color: rgba(34,211,238,0.4); }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; cursor: pointer; color: var(--txt); font-family: inherit; font-size: 15.5px; font-weight: 600; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; line-height: 1.5; }
+  .faq-ar { flex-shrink: 0; color: var(--cyan); font-size: 13px; transition: transform .3s; }
+  .faq-item.open .faq-ar { transform: rotate(180deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+  .faq-item.open .faq-a { max-height: 400px; }
+  .faq-a-in { padding: 0 20px 20px; color: var(--txt-dim); font-size: 14.5px; line-height: 1.75; }
+  .faq-a-in b { color: var(--txt); font-weight: 600; }
+  .faq-more { text-align: center; margin-top: 28px; }
+  .faq-more a { color: var(--cyan); font-weight: 600; font-size: 15px; border: 1px solid rgba(34,211,238,0.4); padding: 11px 26px; border-radius: 999px; display: inline-block; transition: background .2s; }
+  .faq-more a:hover { background: rgba(34,211,238,0.1); }
   footer { border-top: 1px solid var(--line); padding: 44px 0; text-align: center; }
   footer .foot-brand { display: inline-flex; align-items: center; gap: 10px; }
   footer .foot-brand svg { filter: drop-shadow(0 2px 10px rgba(59,130,246,0.4)); }
@@ -324,6 +376,7 @@
       <a href="#pricing">แพ็กเกจ</a>
       <a href="#calculator">คำนวณราคา</a>
       <a href="#roadmap">Roadmap</a>
+      <a href="faq.html">FAQ</a>
       <button class="nav-cta" onclick="openChat()">ปรึกษาฟรี</button>
     </div>
   </div>
@@ -337,6 +390,7 @@
   <a href="#pricing">แพ็กเกจ</a>
   <a href="#calculator">คำนวณราคา</a>
   <a href="#roadmap">Roadmap</a>
+  <a href="#faq">FAQ</a>
 </div>
 
 <!-- ===== HERO ===== -->
@@ -410,6 +464,42 @@
   </div>
 </section>
 
+<!-- ===== RESULTS ===== -->
+<section id="results" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">RESULTS</div>
+      <h2>ผลลัพธ์ที่ธุรกิจคุณ<span class="grad-txt">จะได้รับ</span></h2>
+    </div>
+    <div class="res-kpis reveal">
+      <div class="res-kpi"><div class="k-num grad-txt">24/7</div><div class="k-lbl">ตอบลูกค้า<br>ไม่มีวันหยุด</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">&lt; 10 วิ</div><div class="k-lbl">เวลาตอบกลับ<br>เฉลี่ย</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">100%</div><div class="k-lbl">ตรวจสลิป<br>อัตโนมัติ</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">0</div><div class="k-lbl">ออเดอร์หลุด<br>ช่วงกลางคืน</div></div>
+    </div>
+    <div class="res-ba reveal">
+      <div class="res-col before">
+        <h3>😟 ก่อนใช้ NEO-S</h3>
+        <ul>
+          <li>ทีม 2-3 คนผลัดกันเฝ้าแชททั้งวัน</li>
+          <li>จดออเดอร์มือ ตกหล่น ผิดพลาดบ่อย</li>
+          <li>เช็คสลิปทีละใบ 2-5 นาที/ราย เสี่ยงสลิปปลอม</li>
+          <li>ไม่รู้ยอดขาย-สต็อกแบบเรียลไทม์</li>
+        </ul>
+      </div>
+      <div class="res-col after">
+        <h3>😎 หลังใช้ NEO-S</h3>
+        <ul>
+          <li>AI ตอบลูกค้าทันที ทุกช่วงเวลา</li>
+          <li>บันทึกออเดอร์เข้าระบบอัตโนมัติ ไม่ตกหล่น</li>
+          <li>AI ตรวจสลิป &lt; 10 วินาที กันปลอม 2 ชั้น</li>
+          <li>Dashboard ยอดขาย-สต็อกแบบเรียลไทม์</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== CASE ===== -->
 <section id="case" style="background:var(--bg-2)">
   <div class="wrap">
@@ -432,6 +522,54 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ===== WHY AI (vs พนักงาน) ===== -->
+<section id="whyai">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">WHY AI</div>
+      <h2>จ้างพนักงาน <span class="grad-txt">vs</span> NEO-S AI</h2>
+    </div>
+    <div class="cmp reveal">
+      <div class="cmp-row head">
+        <div class="cmp-feat"></div>
+        <div class="cmp-h-emp">จ้างพนักงาน</div>
+        <div class="cmp-h-ai">NEO-S AI</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-feat">เวลาทำงาน</div>
+        <div class="cmp-emp">8 ชม./วัน มีวันหยุด-ลา-ป่วย</div>
+        <div class="cmp-ai"><b>24 ชม. ทุกวัน</b> ไม่มีวันหยุด</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-feat">งานที่ครอบคลุม</div>
+        <div class="cmp-emp">ขาย+เงิน+สต็อก+การตลาด ต้องใช้ 3-5 คน</div>
+        <div class="cmp-ai"><b>ครบทุกงานใน 1 ระบบ</b></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-feat">ต้นทุนต่อเดือน</div>
+        <div class="cmp-emp">30,000 - 60,000+ บาท</div>
+        <div class="cmp-ai"><b>เริ่มต้นเพียง 4,000 บาท/เดือน</b> แล้วให้ AI ช่วยสร้างยอดขายไปพร้อมกับธุรกิจของคุณ</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-feat">ความแม่นยำ</div>
+        <div class="cmp-emp">เหนื่อย ลืม อารมณ์แปรปรวน</div>
+        <div class="cmp-ai"><b>ทำตามกฎเป๊ะ</b> ข้อมูลครบทุกครั้ง</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-feat">ลาออก / เทรนใหม่</div>
+        <div class="cmp-emp">มีตลอด ต้องสอนงานซ้ำ</div>
+        <div class="cmp-ai"><b>ไม่มี</b> ระบบจำทุกอย่างไว้</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-feat">ลูกค้าเพิ่ม 10 → 1,000 คน</div>
+        <div class="cmp-emp">ต้องจ้างคนเพิ่ม</div>
+        <div class="cmp-ai"><b>สเกลได้ทันที</b> ไม่ต้องจ้างเพิ่ม</div>
+      </div>
+    </div>
+    <p class="cmp-quote grad-txt reveal">"AI ทำงานแทนพนักงานทั้งทีม 24 ชม. ไม่ลา ไม่ป่วย ไม่ลาออก — ในราคาที่ถูกกว่าจ้างคนเดียว"</p>
   </div>
 </section>
 
@@ -538,6 +676,40 @@
       <div class="road-item reveal"><div class="road-phase">PHASE 3</div><div><h3>Omnichannel</h3><p>เชื่อมระบบภายนอกในการขยายตลาดการค้า</p></div></div>
       <div class="road-item reveal"><div class="road-phase">PHASE 4</div><div><h3>AI Marketing</h3><p>สร้างคอนเทนต์ คิดแคมเปญ ยิงโฆษณาอัตโนมัติ</p></div></div>
       <div class="road-item reveal"><div class="road-phase">PHASE 5</div><div><h3>AI Manager</h3><p>รายงานธุรกิจอัจฉริยะ ส่งตรงถึงเจ้าของผ่าน LINE</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MINI FAQ ===== -->
+<section id="faq" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>คำถามที่<span class="grad-txt">พบบ่อย</span></h2>
+      <p>รวมคำถามยอดฮิตก่อนเริ่มต้น — ดูคำตอบทั้งหมดได้ในหน้า FAQ</p>
+    </div>
+    <div class="mini-faq reveal">
+      <div class="faq-item">
+        <button class="faq-q">ติดตั้งนานไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in"><b>7-14 วันทำการ</b>ค่ะ — ดูแลให้ครบ ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้ แล้วอบรมการใช้งานให้</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">พลัง AI แพงไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">คิด<b>ตามทุนจริง ไม่บวกกำไร</b>ค่ะ — 1 แชท (ถาม-ตอบ 1 รอบ) ราว <b>1.4 บาท</b> · เดือนแรกฟรี ~500 แชท · เราได้กำไรจากค่าพัฒนา+ดูแล ไม่ใช่ค่า AI</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">มีค่าใช้จ่ายแอบแฝงไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ไม่มีค่ะ — ทุกแพ็กเกจได้ฟรี Hosting ปีแรก + ติดตั้ง + เทรน + ปรับแบรนด์ + ตรวจสลิป 100/เดือน + พลัง AI เดือนแรกฟรี</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">มีสัญญาผูกมัดไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ทำสัญญา <b>ปีต่อปี</b> ค่ะ — แจ้งเตือนล่วงหน้า 1 เดือนก่อนต่อ ไม่ต่ออัตโนมัติแบบงงๆ · จ่ายรายเดือนช้าได้ไม่เกิน 7 วัน</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">อยากได้แค่เว็บไซต์ ไม่เอา AI ได้ไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in"><b>เฉพาะเว็บไซต์</b> ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) รวมโดเมน+โฮสติ้ง ไม่มีรายเดือน · เพิ่ม AI ทีหลังได้</div></div>
+      </div>
+      <div class="faq-more"><a href="faq.html">ดูคำถามทั้งหมด →</a></div>
     </div>
   </div>
 </section>
@@ -1079,6 +1251,9 @@ const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ===== mini FAQ accordion =====
+document.querySelectorAll('.faq-q').forEach(q => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
 
 // ===== mobile tab bar — scroll spy =====
 (function(){

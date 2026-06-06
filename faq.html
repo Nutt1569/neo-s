@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คำถามที่พบบ่อย (FAQ) — NEO-S | Comtech Solution System</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpolyline points='58,150 58,50 142,150 142,50' fill='none' stroke='%2322D3EE' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="description" content="คำถามที่พบบ่อยเกี่ยวกับระบบ NEO-S — แพ็กเกจ ราคา พลัง AI การติดตั้ง และเงื่อนไข โดย Comtech Solution System">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#070B16; --bg-2:#0C1322; --card:#111A2E; --line:#1E2A44;
+    --txt:#EAF0FF; --txt-dim:#95A3C2; --blue:#3B82F6; --cyan:#22D3EE;
+    --violet:#8B5CF6; --gold:#E2B679;
+    --grad:linear-gradient(120deg, #22D3EE 0%, #3B82F6 45%, #8B5CF6 100%);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family:'IBM Plex Sans Thai','Space Grotesk',sans-serif; background:var(--bg); color:var(--txt); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3,.en { font-family:'Space Grotesk','IBM Plex Sans Thai',sans-serif; }
+  a { text-decoration:none; color:inherit; }
+  .grad-txt { background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .wrap { max-width:920px; margin:0 auto; padding:0 28px; }
+
+  /* nav */
+  nav { position:sticky; top:0; z-index:100; background:rgba(7,11,22,0.82); backdrop-filter:blur(16px); border-bottom:1px solid var(--line); }
+  .nav-in { max-width:1180px; margin:0 auto; padding:0 28px; height:70px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:11px; }
+  .logo-mark { width:40px; height:40px; display:flex; align-items:center; justify-content:center; }
+  .logo-mark svg { filter:drop-shadow(0 2px 10px rgba(59,130,246,0.45)); }
+  .logo-txt { font-weight:700; font-size:19px; letter-spacing:1px; }
+  .nav-links { display:flex; gap:30px; align-items:center; }
+  .nav-links a { font-size:14px; color:var(--txt-dim); transition:color .2s; }
+  .nav-links a:hover { color:var(--txt); }
+  .nav-links a.active { color:var(--cyan); font-weight:600; }
+  .nav-cta { background:var(--grad); color:#050A14 !important; padding:10px 22px; border-radius:10px; font-weight:600; font-size:14px; display:inline-block; transition:transform .2s, box-shadow .2s; }
+  .nav-cta:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(59,130,246,0.45); }
+  @media(max-width:820px){ .nav-links a:not(.nav-cta){ display:none; } }
+
+  /* hero */
+  .faq-hero { text-align:center; padding:70px 0 40px; }
+  .eyebrow { font-size:13px; letter-spacing:3px; text-transform:uppercase; color:var(--cyan); font-weight:600; margin-bottom:14px; }
+  .faq-hero h1 { font-size:clamp(32px, 5vw, 48px); font-weight:700; letter-spacing:-0.5px; margin-bottom:14px; }
+  .faq-hero p { color:var(--txt-dim); font-size:17px; max-width:560px; margin:0 auto; }
+
+  /* faq groups */
+  .faq-main { padding-bottom:70px; }
+  .faq-group { margin-bottom:38px; }
+  .faq-group-title { font-size:15px; font-weight:700; color:var(--txt); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--line); letter-spacing:.3px; }
+  .faq-item { border:1px solid var(--line); border-radius:14px; margin-bottom:12px; background:var(--card); overflow:hidden; transition:border-color .2s; }
+  .faq-item:hover { border-color:#2c3d5e; }
+  .faq-item.open { border-color:rgba(34,211,238,0.4); }
+  .faq-q { width:100%; text-align:left; background:none; border:none; cursor:pointer; color:var(--txt); font-family:inherit; font-size:15.5px; font-weight:600; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; gap:14px; line-height:1.5; }
+  .faq-ar { flex-shrink:0; color:var(--cyan); font-size:13px; transition:transform .3s; }
+  .faq-item.open .faq-ar { transform:rotate(180deg); }
+  .faq-a { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .faq-item.open .faq-a { max-height:600px; }
+  .faq-a-in { padding:0 20px 20px; color:var(--txt-dim); font-size:14.5px; line-height:1.75; }
+  .faq-a-in b { color:var(--txt); font-weight:600; }
+  .faq-a-in ul { margin:8px 0 0; padding-left:4px; list-style:none; }
+  .faq-a-in li { padding:3px 0; }
+  .faq-note { display:block; margin-top:10px; padding:10px 14px; background:var(--bg-2); border-left:3px solid var(--cyan); border-radius:0 8px 8px 0; font-size:13.5px; }
+
+  /* cta */
+  .cta-box { background:linear-gradient(135deg, rgba(59,130,246,0.14), rgba(139,92,246,0.14)); border:1px solid var(--line); border-radius:24px; padding:50px 36px; text-align:center; margin-bottom:70px; }
+  .cta-box h2 { font-size:clamp(24px, 4vw, 34px); margin-bottom:12px; }
+  .cta-box p { color:var(--txt-dim); margin-bottom:26px; font-size:16px; }
+  .btn-primary { background:var(--grad); color:#050A14; padding:15px 32px; border-radius:12px; font-weight:700; font-size:16px; border:none; cursor:pointer; display:inline-block; transition:transform .2s, box-shadow .2s; }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(59,130,246,0.4); }
+
+  /* footer */
+  footer { border-top:1px solid var(--line); padding:44px 0; text-align:center; }
+  footer .foot-brand { display:inline-flex; align-items:center; gap:10px; }
+  footer .foot-brand svg { filter:drop-shadow(0 2px 10px rgba(59,130,246,0.4)); }
+  footer .foot-sub { font-size:9px; letter-spacing:3px; color:var(--txt-dim); text-transform:uppercase; margin:7px 0 16px; }
+  footer p { color:var(--txt-dim); font-size:14px; }
+  footer .copy { font-size:12px; margin-top:10px; opacity:.7; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="ng" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22D3EE"/><stop offset="50%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs></svg>
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="index.html">
+      <div class="logo-mark"><svg viewBox="0 0 200 200" width="40" height="40"><polyline points="58,150 58,50 142,150 142,50" fill="none" stroke="url(#ng)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="logo-txt">NEO-S</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#agents">AI Agents</a>
+      <a href="index.html#pricing">แพ็กเกจ</a>
+      <a href="index.html#calculator">คำนวณราคา</a>
+      <a href="faq.html" class="active">FAQ</a>
+      <a class="nav-cta" href="index.html#contact">ปรึกษาฟรี</a>
+    </div>
+  </div>
+</nav>
+
+<header class="faq-hero">
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h1>คำถามที่<span class="grad-txt">พบบ่อย</span></h1>
+    <p>รวมคำถามที่ลูกค้าถามบ่อย เรื่องระบบ แพ็กเกจ ราคา และการเริ่มต้นใช้งาน — ถ้าไม่เจอคำตอบ ทักโนวาถามได้เลยค่ะ</p>
+  </div>
+</header>
+
+<main class="faq-main">
+  <div class="wrap">
+
+    <div class="faq-group">
+      <div class="faq-group-title">🤖 เกี่ยวกับระบบ</div>
+
+      <div class="faq-item open">
+        <button class="faq-q">NEO-S คืออะไร?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ระบบ AI ที่ช่วยดูแลธุรกิจอัตโนมัติ 24 ชม. — ตอบแชทลูกค้า รับออเดอร์ ส่ง QR ตรวจสลิป และเก็บข้อมูลให้ครบ โดยที่เจ้าของร้านไม่ต้องเฝ้าเอง เหมือนมีพนักงานเก่งๆ ทำงานให้ตลอดวัน</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">AI ตอบลูกค้าได้ดีจริงไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ได้จริงค่ะ — มีระบบ LUMINA Skincare ใช้งานจริงอยู่แล้ว (ลองแชทดูได้) AI แนะนำสินค้า ปิดการขาย และตอบเป็นธรรมชาติเหมือนพนักงานขายที่เก่ง</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ถ้าร้านมีสินค้าเป็นร้อย-เป็นพันรายการ AI จะรวนไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ไม่รวนค่ะ — ระบบ "ค้นเฉพาะสินค้าที่เกี่ยวข้อง" กับคำถามลูกค้า ไม่ได้อ่านทั้งหมดทุกครั้ง จึงตอบไว แม่นยำ แม้สินค้าเยอะ</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">มี AI กี่ตัว แต่ละตัวทำอะไร?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">มี 6 ผู้ช่วย AI ค่ะ — 🛒 <b>AI Sales</b> (ตอบแชท/รับออเดอร์/ปิดการขาย) · 💰 <b>AI Finance</b> (ตรวจสลิป/บันทึกรายรับ) · 📦 <b>AI Inventory</b> (เฝ้าสต็อก/เตือนของหมด) · 🧠 <b>AI Manager</b> (Dashboard/วางแผนกลยุทธ์) · 📣 <b>AI Marketing</b> (ทำรูปโปร/บรอดแคสต์) · 🚚 <b>AI Logistics</b> (ติดตามพัสดุ — เร็วๆ นี้) เลือกได้ตามแพ็กเกจ หรือเลือกทีละตัวก็ได้</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group">
+      <div class="faq-group-title">💰 ราคา / แพ็กเกจ</div>
+
+      <div class="faq-item">
+        <button class="faq-q">มีแพ็กเกจอะไรบ้าง ราคาเท่าไหร่?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">มี 5 แพ็กเกจค่ะ (ราคาด้านล่างเป็น <b>โปรเปิดตัว 22 ท่านแรก</b>):
+          <ul>
+            <li>🥉 <b>STARTER</b> — เว็บไซต์ + AI Sales · ฿17,000 + ฿4,000/เดือน</li>
+            <li>🥈 <b>BUSINESS</b> — + AI Finance · ฿18,000 + ฿4,800/เดือน</li>
+            <li>🥇 <b>PROFESSIONAL</b> — + AI Inventory + AI Manager · ฿24,000 + ฿8,000/เดือน</li>
+            <li>🚀 <b>ADVANCED</b> — + AI Marketing · ฿28,000 + ฿10,000/เดือน</li>
+            <li>🏢 <b>ENTERPRISE</b> — + AI Logistics ครบวงจร · เร็วๆ นี้</li>
+          </ul>
+          <span class="faq-note">ค่าติดตั้งคือ "พัฒนาระบบพร้อมติดตั้ง" จ่ายครั้งเดียว · ค่ารายเดือนคือดูแลระบบต่อเนื่อง</span></div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">โปร "22 ท่านแรก" คืออะไร?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">เป็นโปรเปิดตัวพิเศษค่ะ 🎂 — เฉพาะลูกค้า 22 ท่านแรกเท่านั้น ได้ราคาค่าพัฒนาระบบถูกกว่าปกติ (เช่น PROFESSIONAL จากปกติ ฿46,000 เหลือ ฿24,000 ประหยัด ฿22,000) หลังจากนั้นกลับเป็นราคาปกติ</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">อยากได้แค่เว็บไซต์ ไม่เอา AI ได้ไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in"><b>เฉพาะเว็บไซต์</b> ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) / ฿3,200 (.co.th) <b>รวมโดเมน + โฮสติ้ง</b> ไม่มีค่ารายเดือน · ได้เว็บร้าน + แคตตาล็อก + ระบบแอดมินจัดการ · อยากเพิ่ม AI ทีหลังได้ทุกเมื่อ ไม่ต้องรื้อ</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">เลือก AI ทีละตัวได้ไหม ไม่อยากเหมาทั้งแพ็ก?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ได้ค่ะ — มีเครื่องคำนวณ "ออกแบบทีม AI เอง" บนเว็บ ติ๊กเลือกเฉพาะ AI ที่อยากได้ (เว็บไซต์เป็นฐาน) ระบบคำนวณราคาให้ทันที + มีค่าเช่าระบบ ฿1,500/เดือน</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ราคาขึ้นกับจำนวนสินค้าไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">แพ็กเกจรวม <b>สินค้าไม่เกิน 50 รายการ</b> ค่ะ — เกินจากนั้นคิดเพิ่ม ฿20/รายการ (จ่ายตามจริง ไม่มีกระโดดขั้น) · ถ้าสินค้าเยอะส่ง Excel มาได้ ระบบ import ทีเดียว</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ขอบเขตของเว็บไซต์ครอบคลุมแค่ไหน?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000) · ไม่รวมค่าโดเมน · <b>อยากได้มากกว่านี้</b> (เพิ่มหน้า/ฟีเจอร์พิเศษ) ส่งรายละเอียดให้โนวา ขอใบเสนอราคาได้</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">มีค่าใช้จ่ายแอบแฝงไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ไม่มีค่ะ — ทุกแพ็กเกจได้ <b>ฟรี Hosting ปีแรก + ติดตั้ง + เทรนการใช้งาน + ปรับแบรนด์ (โลโก้/สี/ชื่อ AI) + ตรวจสลิปฟรี 100 สลิป/เดือน + พลัง AI เดือนแรกฟรี</b> ส่วนปีถัดไปคิดตามตกลง แจ้งล่วงหน้าชัดเจน</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group">
+      <div class="faq-group-title">⚡ พลัง AI (ค่าใช้ AI)</div>
+
+      <div class="faq-item">
+        <button class="faq-q">"พลัง AI ⚡" คืออะไร?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">เหมือน "แบตเตอรี่" ของ AI ค่ะ 🔋 — ทุกครั้งที่ AI คุยกับลูกค้าจะใช้พลังนิดหน่อย เปรียบเหมือนเติมเงินมือถือ ใช้ไปเรื่อยๆ ใกล้หมดก็เติม ทำให้ AI ทำงานให้ร้านได้ตลอด</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">พลัง AI คิดเงินยังไง? แพงไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">คิดตามที่ใช้จริง <b>โปร่งใส คิดตามทุน ไม่บวกกำไร</b>ค่ะ — ลูกค้าทักมา 1 ครั้ง (ถาม-ตอบ 1 รอบ) ใช้พลังเพียง <b>ราว 1.4 บาท</b> เท่านั้น · <b>เดือนแรกฟรี ~500 แชท</b> (เหลือเฟือสำหรับร้านเริ่มต้น) · หลังจากนั้นเติมตามจริง เติมเองได้สะดวก
+          <span class="faq-note">💡 เราได้กำไรจากค่าพัฒนาระบบ + ดูแลรายเดือน <b>ไม่ได้กำไรจากค่า AI</b> — ลูกค้าเลยมั่นใจได้ว่าไม่โดนบวกแพง</span></div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ถ้าพลัง AI ใกล้หมด / หมด จะเป็นยังไง?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ไม่ดับเงียบค่ะ — ระบบจะ <b>เตือนเจ้าของร้านผ่าน LINE</b> ตั้งแต่พลังเริ่มน้อย (50% / 20% / ใกล้หมด) ให้เติมทัน · ถ้าหมดจริง AI จะแจ้งลูกค้าสุภาพๆ ว่าเดี๋ยวกลับมาตอบ พร้อมปุ่มให้เจ้าของเติมได้ทันที</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ทำไมไม่รวมค่า AI ไปในรายเดือนเลย?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">เพราะแต่ละร้านใช้ไม่เท่ากันค่ะ — แยกออกมาให้ <b>จ่ายเท่าที่ใช้จริง</b> ร้านเล็กไม่ต้องจ่ายเผื่อร้านใหญ่ ยุติธรรมกว่า + เห็นชัดว่าจ่ายค่าอะไร</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group">
+      <div class="faq-group-title">🚀 การติดตั้ง / เตรียมตัว</div>
+
+      <div class="faq-item">
+        <button class="faq-q">ติดตั้งนานไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in"><b>7-14 วันทำการ</b>ค่ะ — เราดูแลให้ครบ ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้งาน แล้วอบรมการใช้งานให้</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ลูกค้าต้องเตรียมอะไรบ้าง?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">เตรียม ① ข้อมูลสินค้า (ชื่อ/ราคา/รายละเอียด) ② รูปสินค้า ③ โลโก้/ข้อมูลร้าน ④ เบอร์ PromptPay <b>หรือ</b> เลขที่บัญชี + ชื่อบัญชี (สำหรับรับเงินจากลูกค้า)
+          <span class="faq-note">💡 ถ้าสินค้าเยอะ ส่งเป็นไฟล์ Excel มาได้ ระบบ import ทีเดียว ไม่ต้องกรอกทีละรายการ</span></div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ถ้าไม่มีรูปสินค้า / ไม่อยากเขียนคำบรรยายเอง?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">มีบริการเสริมค่ะ — <b>AI ช่วยเขียนคำบรรยายสินค้า</b> ให้น่าซื้อ และ <b>บริการจัดทำรูปสินค้า</b> (คิดค่าบริการเพิ่ม)</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ถ้าผมมีเว็บอยู่แล้ว อยากเพิ่มแค่ AI ได้ไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ได้ค่ะ มีหลายระดับ — ① ฝังแชต AI ในเว็บเดิม (ง่าย ราคาประหยัด) ② ให้ AI อ่านข้อมูลจากระบบเดิม (ต้องประเมินการเชื่อมต่อ) ③ เชื่อมลึกกับระบบ/ERP (ทำเฉพาะเคส) · กดปุ่ม "ขอประเมิน" บนเว็บ โนวาจะเก็บรายละเอียดแล้วทีมงานเสนอราคาให้</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group">
+      <div class="faq-group-title">🔌 การเชื่อมต่อช่องทางอื่น</div>
+
+      <div class="faq-item">
+        <button class="faq-q">เชื่อมกับ LINE / Facebook ได้ไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in"><b>LINE พร้อมใช้งานแล้ว</b>ค่ะ — AI ตอบลูกค้าใน LINE OA ได้ · ส่วน Facebook กำลังพัฒนา (เร็วๆ นี้) จะเป็น add-on ให้เพิ่มได้ ลูกค้าทักจากช่องทางไหน AI ก็ตอบให้</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">เชื่อม Shopee / Lazada / TikTok ได้ไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">อยู่ในแผนพัฒนาค่ะ — ตอนนี้แนะนำเริ่มจากเว็บ + LINE ก่อน</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group">
+      <div class="faq-group-title">🔒 ความปลอดภัย / เงื่อนไข</div>
+
+      <div class="faq-item">
+        <button class="faq-q">ข้อมูลปลอดภัยไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ปลอดภัยค่ะ — API Key ซ่อนในระบบหลังบ้าน + มี Rate Limit กันสแปม + ข้อมูลเก็บใน Supabase (มาตรฐานสากล)</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">การชำระเงินโอนเข้าบัญชีไหน?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">โอนเข้าบัญชีชื่อ <b>"บริษัท คอมเทคโซลูชั่นซิสเต็ม จำกัด"</b> เท่านั้น — บริษัทไม่มีนโยบายรับโอนเข้าบัญชีบุคคล (โปรดระวังมิจฉาชีพสวมรอย)</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">จ่ายเงินยังไง?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">มัดจำ 40% ก่อนเริ่มติดตั้ง · ส่วนที่เหลือ 60% เมื่อส่งมอบงานเสร็จ</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">มีสัญญาผูกมัดไหม / ต่ออายุยังไง?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ทำสัญญา <b>ปีต่อปี (1 ปี)</b> ค่ะ — ก่อนครบกำหนดจะมี <b>แจ้งเตือนล่วงหน้า 1 เดือน</b> เพื่อต่ออายุ ไม่มีการต่อให้อัตโนมัติแบบงงๆ · ค่าบริการรายเดือนจ่าย <b>ล่าช้าได้ไม่เกิน 7 วัน</b></div></div>
+      </div>
+    </div>
+
+    <div class="faq-group">
+      <div class="faq-group-title">🛟 หลังการขาย</div>
+
+      <div class="faq-item">
+        <button class="faq-q">ใช้ไม่เป็นมีสอนไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">มีค่ะ — อบรมการใช้งานตอนส่งมอบ + มี Support ดูแลต่อเนื่องรายเดือน (ดูแลทุกแพ็กเกจเท่ากัน)</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">อยากอัปเกรดแพ็กเกจ / เพิ่ม AI ทีหลังได้ไหม?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ได้ค่ะ — อัปเกรดได้ทุกเมื่อ ไม่ต้องรื้อระบบ เพิ่ม AI ตัวที่อยากได้เข้าไปได้เลย</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">ถ้าระบบมีปัญหา ติดต่อใคร?<span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in">ทีม CSS ดูแลให้ค่ะ — email: kritsada.nutt1981@gmail.com</div></div>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h2>ยังมีคำถามอื่นอีกไหม?</h2>
+      <p>ทักโนวา AI ปรึกษาฟรี ไม่มีค่าใช้จ่าย — หรือดูแพ็กเกจที่เหมาะกับธุรกิจคุณ</p>
+      <a class="btn-primary" href="index.html#contact">คุยกับโนวา AI เลย →</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">
+      <svg viewBox="0 0 200 200" width="34" height="34"><polyline points="58,150 58,50 142,150 142,50" fill="none" stroke="url(#ng)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="logo-txt">NEO-S</span>
+    </div>
+    <div class="foot-sub">Autonomous Business OS</div>
+    <p>ระบบบริหารธุรกิจขับเคลื่อนด้วย AI</p>
+    <p class="copy">© 2026 Comtech Solution System Co., Ltd. — All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+  });
+</script>
+</body>
+</html>
