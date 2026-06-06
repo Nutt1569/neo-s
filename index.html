@@ -407,28 +407,28 @@
 
     <div class="webonly reveal">
       <div>
-        <div class="price-name">🌐 เอาแค่เว็บไซต์ก่อน</div>
+        <div class="price-name">🌐 เอาแค่เว็บไซต์</div>
         <div class="pkg-tag">เว็บร้าน + แคตตาล็อก + แอดมิน · เพิ่ม AI ทีหลังได้ทุกเมื่อ</div>
-        <div class="pkg-fit" style="margin-bottom:0">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)</div>
+        <div class="pkg-fit" style="margin-bottom:0">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)<br>💬 <b style="color:var(--cyan)">อยากได้เกินนี้ (เพิ่มหน้า/ฟีเจอร์)?</b> ส่งรายละเอียดให้โนวา ขอใบเสนอราคาได้เลย</div>
       </div>
       <div style="text-align:right">
         <div class="price-num" style="font-size:30px">฿9,000<small> ค่าทำเว็บ (ครั้งเดียว)</small></div>
         <div class="price-monthly">+ รายปี ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">รวมโดเมน + โฮสติ้ง</b> · ไม่มีรายเดือน</div>
-        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="requestWebOnly()">เลือก</button>
+        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="requestWebOnly()">ขอใบเสนอราคา</button>
       </div>
     </div>
 
     <div class="common-band reveal">
       <div class="cb-title">✨ ทุกแพ็กเกจได้รับ</div>
       <div class="cb-grid">
-        <div>✅ ฟรีตรวจสลิปโอนเงิน 100 สลิป/เดือน</div>
-        <div>⚡ พลัง AI แถมเริ่มต้น ~$20 · เดือนแรกฟรี เติมตามใช้จริง</div>
+        <div>✅ ฟรีตรวจสลิปโอนเงิน 100 สลิป/เดือน <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
+        <div>⚡ พลัง AI แถมเริ่มต้น ~$20 · เดือนแรกฟรี เติมตามใช้จริง <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
         <div>🛠️ ติดตั้ง + เทรนการใช้งาน ฟรี</div>
         <div>🎨 ปรับแบรนด์ตามร้าน (โลโก้/สี/ชื่อ AI)</div>
         <div>📱 รองรับมือถือ (Responsive)</div>
         <div>🌐 ฟรี Hosting ปีแรก</div>
         <div>🔄 อัปเกรดแพ็กเกจทีหลังได้ ไม่ต้องรื้อ</div>
-        <div>🔔 เตือนพลัง AI ใกล้หมด ผ่าน LINE</div>
+        <div>🔔 เตือนพลัง AI ใกล้หมด ผ่าน LINE <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
       </div>
       <div class="cb-note">📐 <b>ขอบเขตเว็บไซต์:</b> 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000) · <b>ไม่รวมค่าโดเมน</b></div>
     </div>
@@ -887,7 +887,7 @@ function requestQuote(){
 // ============================================================
 // 💡 ราคา = โปร 22 ท่านแรก (ตรงกับแพ็กเกจ) · แก้ได้ทุกช่อง
 const AGENTS = [
-  { id:'web',   name:'🌐 เว็บไซต์',     role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          dep:null,    required:true,  install:9000, monthly:1500, status:'live' },
+  { id:'web',   name:'🌐 เว็บไซต์',     role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          dep:null,    required:true,  install:9000, monthly:0, status:'live' },
   { id:'sales', name:'🛒 AI Sales',     role:'แทนพนักงานขาย · ตอบ+รับออเดอร์ 24 ชม.', dep:'web',   required:false, install:9000, monthly:2500, status:'live' },
   { id:'fin',   name:'💰 AI Finance',   role:'แทนคนตรวจสลิป · กันสลิปปลอม/ซ้ำ',       dep:'sales', required:false, install:2500, monthly:800, status:'live' },
   { id:'log',   name:'🚚 AI Logistics', role:'แทนคนตามพัสดุ · แจ้งสถานะจัดส่ง',        dep:'fin',   required:false, install:20000, monthly:2000, status:'soon' },
@@ -935,10 +935,13 @@ function applyPreset(kind){
   const sec = document.getElementById('calculator'); if (sec) sec.scrollIntoView({ behavior:'smooth' });
 }
 function computeAC(){
+  const SYS_RENT = 1500;   // ค่าเช่าระบบ/เดือน (คงที่)
   let install = 0, monthly = 0; const chosen = [];
   AGENTS.forEach(a => { if (acState[a.id]){ install += a.install; monthly += a.monthly; chosen.push(a); } });
-  const lines = chosen.map(a => `<div class="cs-line"><span>${a.name}</span><span>+${baht(a.install)} · +${baht(a.monthly)}/ด.</span></div>`);
-  document.getElementById('calcLines').innerHTML = lines.join('') || '<div class="cs-line"><span style="opacity:.6">ยังไม่ได้เลือก AI</span><span>—</span></div>';
+  monthly += SYS_RENT;
+  let html = chosen.map(a => `<div class="cs-line"><span>${a.name}</span><span>+${baht(a.install)}${a.monthly?(' · +'+baht(a.monthly)+'/ด.'):''}</span></div>`).join('');
+  html += `<div class="cs-line"><span>ค่าเช่าระบบ</span><span>+${baht(SYS_RENT)}/ด.</span></div>`;
+  document.getElementById('calcLines').innerHTML = html;
   document.getElementById('csInstall').textContent = baht(install);
   document.getElementById('csMonthly').textContent = baht(monthly) + '/เดือน';
   acState._install = install; acState._monthly = monthly;
