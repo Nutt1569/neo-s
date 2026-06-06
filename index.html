@@ -140,7 +140,12 @@
   .price-card.soon-card .price-btn { background: var(--bg-2); color: var(--txt-dim); cursor: default; }
   .price-card.soon-card .price-btn:hover { transform: none; }
   .soon-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--gold); color: var(--gold); font-size: 12px; font-weight: 600; padding: 4px 16px; border-radius: 999px; white-space: nowrap; }
-  @media(max-width: 820px){ .case { grid-template-columns: 1fr; padding: 32px; } .case-visual{ display:none; } }
+  @media(max-width: 820px){
+    .case { grid-template-columns: 1fr; padding: 32px; }
+    .case-visual { aspect-ratio: 16/10; }
+    .case-lumina .ln { font-size: clamp(34px, 11vw, 56px); letter-spacing: 8px; padding-left: 8px; }
+    .case-lumina .sk { letter-spacing: 7px; padding-left: 7px; }
+  }
 
   /* ===== PRICING ===== */
   .price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; align-items: stretch; }
@@ -381,7 +386,7 @@
       <div class="agent-card reveal"><div class="ic">🛒</div><h3>AI Sales</h3><p><b style="color:var(--cyan)">ผู้ช่วยฝ่ายขายอัจฉริยะ</b><br>ตอบลูกค้า รับออเดอร์ ปิดการขาย เสนอขายเพิ่ม (upsell) ทุกช่องทาง 24 ชม.</p><span class="badge live">● พร้อมใช้งาน</span></div>
       <div class="agent-card reveal"><div class="ic">💰</div><h3>AI Finance</h3><p><b style="color:var(--cyan)">ผู้ช่วยงานการเงินอัจฉริยะ</b><br>ตรวจสลิปจริง-ปลอม 2 ชั้น กันสลิปซ้ำ ยืนยันยอดอัตโนมัติ</p><span class="badge live">● พร้อมใช้งาน</span></div>
       <div class="agent-card reveal"><div class="ic">🧠</div><h3>AI Manager</h3><p><b style="color:var(--cyan)">ผู้ช่วยจัดการธุรกิจอัจฉริยะ</b><br>รวบรวมข้อมูลจากหลายส่วน สรุปผลการดำเนินงาน และช่วยติดตามภาพรวมขององค์กรแบบเรียลไทม์</p><span class="badge live">● พร้อมใช้งาน</span></div>
-      <div class="agent-card reveal"><div class="ic">📦</div><h3>AI Inventory</h3><p><b style="color:var(--cyan)">ผู้ช่วยจัดการสต็อกสินค้า</b><br>เฝ้าสต็อก เตือนของใกล้หมด กัน "ขายของที่ไม่มี"</p><span class="badge live">● พร้อมใช้งาน</span></div>
+      <div class="agent-card reveal"><div class="ic">📦</div><h3>AI Inventory</h3><p><b style="color:var(--cyan)">ผู้ช่วยจัดการสต็อกสินค้า</b><br>เฝ้าสต็อก เตือนของใกล้หมด กันขายของที่หมดสต็อก</p><span class="badge live">● พร้อมใช้งาน</span></div>
       <div class="agent-card reveal"><div class="ic">📣</div><h3>AI Marketing</h3><p><b style="color:var(--cyan)">ผู้ช่วยงานการตลาดอัจฉริยะ</b><br>เสริมประสิทธิภาพทีมการตลาดด้วย AI</p><span class="badge live">● พร้อมใช้งาน</span></div>
       <div class="agent-card reveal"><div class="ic">🚚</div><h3>AI Logistics</h3><p><b style="color:var(--cyan)">พนักงาน AI ติดตามสถานะการจัดส่ง</b><br>ติดตามพัสดุ แจ้งสถานะจัดส่งให้ลูกค้าอัตโนมัติ</p><span class="badge soon">เร็วๆ นี้</span></div>
     </div>
@@ -442,7 +447,7 @@
 
     <div class="webonly reveal">
       <div>
-        <div class="price-name">🌐 เอาแค่เว็บไซต์</div>
+        <div class="price-name">🌐 เฉพาะเว็บไซต์</div>
         <div class="pkg-tag">เว็บร้าน + แคตตาล็อก + แอดมิน · เพิ่ม AI ทีหลังได้ทุกเมื่อ<br>ระบบจัดการ admin: Dashboard · Orders · Products · Customers · Users</div>
         <div class="pkg-fit" style="margin-bottom:0">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)<br>💬 <b style="color:var(--cyan)">อยากได้เกินนี้ (เพิ่มหน้า/ฟีเจอร์)?</b> ส่งรายละเอียดให้โนวา ขอใบเสนอราคา</div>
       </div>
@@ -1005,13 +1010,13 @@ const PKGS = [
   { icon:'🥈', name:'BUSINESS',     tag:'เว็บไซต์พร้อม AI ฝ่ายขาย + ผู้ช่วยการเงิน',   fit:'ธุรกิจที่มีออเดอร์ประจำทุกวัน', featured:true,
     items:[
       'ทุกอย่างใน STARTER',
-      { head:'💰 AI Finance — ผู้ช่วยการเงิน', sub:['ตรวจสลิปจริง-ปลอม 2 ชั้น','กันสลิปซ้ำ / สลิปปลอม','ยืนยันยอดเงินอัตโนมัติ'] },
+      { head:'💰 AI Finance — ผู้ช่วยการเงิน', sub:['ตรวจสลิปจริง-ปลอม 2 ชั้น','กันสลิปซ้ำ / สลิปปลอม','ยืนยันยอด + บันทึกรายรับเข้าระบบถูกต้อง','สรุปยอดขาย-รายรับ ดูได้ทุกวัน'] },
     ], full:29000, promo:18000, monthly:4800 },
   { icon:'🥇', name:'PROFESSIONAL', tag:'เว็บไซต์พร้อมทีม AI บริหารร้านค้า',           fit:'ร้านที่มีสินค้าจำนวนมาก หรือหลายพนักงาน',
     items:[
       'ทุกอย่างใน BUSINESS',
-      { head:'📦 AI Inventory — ผู้ช่วยจัดการสต็อก', sub:['เฝ้าสต็อกแบบเรียลไทม์','เตือนเมื่อของใกล้หมด','กัน "ขายของที่ไม่มี"'] },
-      { head:'🧠 AI Manager — ผู้ช่วยจัดการธุรกิจ', sub:['Dashboard สรุปผลธุรกิจ','รวบรวมข้อมูลทุกส่วน','ติดตามภาพรวมแบบเรียลไทม์'] },
+      { head:'📦 AI Inventory — ผู้ช่วยจัดการสต็อก', sub:['เฝ้าสต็อกแบบเรียลไทม์','เตือนเมื่อของใกล้หมด','กันขายของที่หมดสต็อก'] },
+      { head:'🧠 AI Manager — ผู้ช่วยจัดการธุรกิจ', sub:['Dashboard สรุปผลธุรกิจแบบเรียลไทม์','รวบรวมข้อมูลจากทุกส่วน','วางแผน + ปรับกลยุทธ์ธุรกิจ','สนับสนุนการตัดสินใจของผู้บริหาร'] },
     ], full:46000, promo:24000, monthly:8000 },
   { icon:'🚀', name:'ADVANCED',     tag:'เว็บไซต์พร้อม AI ทีมการตลาด',                fit:'ร้านที่อยากโตด้วยการตลาด เพิ่มยอด-หาลูกค้าใหม่',
     items:[
