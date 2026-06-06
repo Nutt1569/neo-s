@@ -745,8 +745,8 @@ async function submitLead() {
 // ============================================================
 const CALC = {
   packages: [
-    { id:'Starter',    name:'🥉 Starter',    install:15000, monthly:3500,  credits:'10,000 Credits', includes:[] },
-    { id:'Business',   name:'🥈 Business',   install:25000, monthly:6500,  credits:'30,000 Credits', includes:['line','fb'] },
+    { id:'Starter',    name:'🥉 Starter',    install:15000, monthly:3500,  credits:'10,000', includes:[] },
+    { id:'Business',   name:'🥈 Business',   install:25000, monthly:6500,  credits:'30,000', includes:['line','fb'] },
     { id:'Enterprise', name:'🥇 Enterprise', install:50000, monthly:15000, credits:'ไม่จำกัด', custom:true, includes:['line','fb'], soon:true },
   ],
   // จำนวนสินค้า: รวม 100 รายการในแพ็กเกจ · เกินคิดต่อรายการ (จ่ายตามจริง — ยุติธรรม)
@@ -813,7 +813,7 @@ function computeCalc(){
     ? `รวม ${inc} รายการในแพ็กเกจ · เกิน <b>${extraItems}</b> รายการ × ${baht(rate)} = <b style="color:var(--cyan)">+${baht(extraCost)}</b>`
     : `✅ ไม่เกิน ${inc} รายการ — รวมในแพ็กเกจแล้ว <b style="color:var(--cyan)">ไม่มีค่าเพิ่ม</b>`;
 
-  const lines = [['แพ็กเกจ', pkg.name], ['จำนวนสินค้า', count + ' รายการ'], ['NEO Credits', pkg.credits]];
+  const lines = [['แพ็กเกจ', pkg.name], ['จำนวนสินค้า', count + ' รายการ'], ['พลัง AI ⚡', pkg.credits]];
   CALC.addons.filter(a => incAddons.includes(a.id)).forEach(a =>
     lines.push(['✓ ' + shortName(a.name), a.status === 'soon' ? 'รวม (เร็วๆ นี้)' : 'รวมแล้ว']));
   if (extraItems > 0) lines.push([`+ สินค้าเกิน ${inc} (${extraItems}×${baht(rate)})`, baht(extraCost)]);
