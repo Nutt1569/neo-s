@@ -251,6 +251,25 @@
   .ac-price b { color:var(--txt); font-size:13.5px; }
   @media(max-width:560px){ .ac-item { grid-template-columns:46px 1fr; } .ac-price { grid-column:2; text-align:left; padding-top:4px; } }
 
+  /* 5-package promo cards */
+  #pkgGrid { grid-template-columns:repeat(5,1fr); gap:14px; }
+  @media(max-width:1100px){ #pkgGrid { grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:760px){ #pkgGrid { grid-template-columns:1fr; } }
+  #pkgGrid .price-card { padding:24px 20px; }
+  .pkg-tag { font-size:13px; color:var(--txt); margin-bottom:6px; line-height:1.45; }
+  .pkg-fit { font-size:12px; color:var(--txt-dim); margin-bottom:14px; }
+  .pkg-price { margin:8px 0 16px; }
+  .price-was { text-decoration:line-through; color:var(--txt-dim); font-size:15px; margin-right:8px; }
+  .promo-badge { display:inline-block; background:rgba(226,182,121,.16); color:var(--gold); border:1px solid rgba(226,182,121,.4); font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px; }
+  .price-monthly { font-size:13px; color:var(--txt-dim); margin-top:3px; }
+  .price-card.pkg-soon { opacity:.6; }
+  .webonly { display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; background:var(--card); border:1px dashed var(--line); border-radius:16px; padding:20px 24px; margin-top:20px; }
+  .common-band { background:linear-gradient(160deg,var(--card),var(--bg-2)); border:1px solid var(--line); border-radius:18px; padding:24px 26px; margin-top:20px; }
+  .cb-title { font-size:15px; font-weight:600; margin-bottom:14px; }
+  .cb-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:9px 22px; font-size:13.5px; color:var(--txt-dim); }
+  @media(max-width:680px){ .cb-grid { grid-template-columns:1fr; } }
+  .cb-note { margin-top:14px; padding-top:14px; border-top:1px solid var(--line); font-size:12.5px; color:var(--txt-dim); line-height:1.6; }
+
   /* reveal anim */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s; }
   .reveal.in { opacity: 1; transform: none; }
@@ -380,32 +399,38 @@
 <section id="pricing">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">แพ็กเกจ</div>
-      <h2>เลือกเท่าที่ใช้ · จ่ายเท่าที่จำเป็น</h2>
-      <p>เริ่มจากชุดแนะนำ หรือออกแบบทีม AI เองในเครื่องคำนวณด้านล่าง · ติดตั้งใน 7-14 วันทำการ</p>
+      <div class="eyebrow">🎂 แพ็กเกจ · โปรพิเศษ 22 ท่านแรก</div>
+      <h2>เลือกแพ็กเกจที่ใช่สำหรับธุรกิจคุณ</h2>
+      <p>ราคาโปรเปิดตัว เฉพาะ <b style="color:var(--gold)">22 ท่านแรก</b> เท่านั้น! · หรือออกแบบทีม AI เองด้านล่าง</p>
     </div>
-    <div class="price-grid">
-      <div class="price-card reveal">
-        <div class="price-name">🌐 เว็บไซต์</div>
-        <div class="price-num">฿15,000<small> เริ่มต้น</small></div>
-        <div class="price-sub">+ ฿2,500/เดือน · เหมาะกับคนอยากได้แค่เว็บก่อน</div>
-        <ul class="price-feat"><li>เว็บร้าน + แคตตาล็อก</li><li>ฟอร์มสั่งซื้อ</li><li>Admin จัดการหลังบ้าน</li><li>เพิ่ม AI ทีหลังได้ทุกเมื่อ</li></ul>
-        <button class="price-btn" onclick="applyPreset('web')">ออกแบบชุดนี้ →</button>
+    <div class="price-grid" id="pkgGrid"></div>
+
+    <div class="webonly reveal">
+      <div>
+        <div class="price-name">🌐 เอาแค่เว็บไซต์ก่อน</div>
+        <div class="pkg-tag">เว็บร้าน + แคตตาล็อก + แอดมิน · เพิ่ม AI ทีหลังได้ทุกเมื่อ</div>
+        <div class="pkg-fit" style="margin-bottom:0">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)</div>
       </div>
-      <div class="price-card featured reveal">
-        <div class="price-name">🛒 ขายอัตโนมัติ</div>
-        <div class="price-num">฿60,000<small> เริ่มต้น</small></div>
-        <div class="price-sub">+ ฿7,000/เดือน · เว็บ + AI Sales + AI Finance</div>
-        <ul class="price-feat"><li>ทุกอย่างใน เว็บไซต์</li><li>🛒 AI Sales ตอบ+รับออเดอร์ 24 ชม.</li><li>💰 AI Finance ตรวจสลิปอัตโนมัติ</li><li>⚡ พลัง AI เดือนแรกฟรี</li></ul>
-        <button class="price-btn" onclick="applyPreset('sales')">ออกแบบชุดนี้ →</button>
+      <div style="text-align:right">
+        <div class="price-num" style="font-size:30px">฿9,000<small> ค่าทำเว็บ (ครั้งเดียว)</small></div>
+        <div class="price-monthly">+ รายปี ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">รวมโดเมน + โฮสติ้ง</b> · ไม่มีรายเดือน</div>
+        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="requestWebOnly()">เลือก</button>
       </div>
-      <div class="price-card reveal">
-        <div class="price-name">👑 ครบทีม</div>
-        <div class="price-num">฿100,000<small> เริ่มต้น</small></div>
-        <div class="price-sub">+ ฿13,000/เดือน · เว็บ + AI ครบ 5 ตัว</div>
-        <ul class="price-feat"><li>ทุกอย่าง + 🧠 AI Manager</li><li>📦 Inventory · 📣 Marketing</li><li>Dashboard เรียลไทม์</li><li>⚡ พลัง AI เดือนแรกฟรี</li></ul>
-        <button class="price-btn" onclick="applyPreset('all')">ออกแบบชุดนี้ →</button>
+    </div>
+
+    <div class="common-band reveal">
+      <div class="cb-title">✨ ทุกแพ็กเกจได้รับ</div>
+      <div class="cb-grid">
+        <div>✅ ฟรีตรวจสลิปโอนเงิน 100 สลิป/เดือน</div>
+        <div>⚡ พลัง AI แถมเริ่มต้น ~$20 · เดือนแรกฟรี เติมตามใช้จริง</div>
+        <div>🛠️ ติดตั้ง + เทรนการใช้งาน ฟรี</div>
+        <div>🎨 ปรับแบรนด์ตามร้าน (โลโก้/สี/ชื่อ AI)</div>
+        <div>📱 รองรับมือถือ (Responsive)</div>
+        <div>🌐 ฟรี Hosting ปีแรก</div>
+        <div>🔄 อัปเกรดแพ็กเกจทีหลังได้ ไม่ต้องรื้อ</div>
+        <div>🔔 เตือนพลัง AI ใกล้หมด ผ่าน LINE</div>
       </div>
+      <div class="cb-note">📐 <b>ขอบเขตเว็บไซต์:</b> 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000) · <b>ไม่รวมค่าโดเมน</b></div>
     </div>
   </div>
 </section>
@@ -437,7 +462,7 @@
         <div class="cs-total-row"><span>ค่าติดตั้ง (ครั้งเดียว)</span><span class="cs-amount grad-txt" id="csInstall">฿0</span></div>
         <div class="cs-total-row"><span>รายเดือน</span><span class="cs-amount" id="csMonthly" style="font-size:18px">฿0/เดือน</span></div>
         <button class="btn-primary" id="calcCta" style="width:100%;margin-top:16px" onclick="requestQuote()">ขอใบเสนอราคา →</button>
-        <div class="cs-note">⚡ <b>พลัง AI</b> (ค่า token): เดือนแรกฟรี ~5,000 แชท · จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม<br>* ราคาประเมินเบื้องต้น — ทีม NEO-S ยืนยันในใบเสนอราคาจริง · ปีแรกฟรี Hosting + Domain</div>
+        <div class="cs-note">⚡ <b>พลัง AI</b> (ค่า token): เดือนแรกฟรี ~5,000 แชท · จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม<br>* ราคาประเมินเบื้องต้น — ทีม NEO-S ยืนยันในใบเสนอราคาจริง · ฟรี Hosting ปีแรก (ไม่รวมค่าโดเมน)</div>
       </div>
     </div>
   </div>
@@ -860,14 +885,15 @@ function requestQuote(){
 // à la carte — เลือก AI ต่อตัว (config-driven · แก้ราคาที่ AGENTS)
 // ราคาตั้งต้นอ้างอิงทีม LUMINA (6 มิ.ย.) · status:'soon'→'live' = เปิดขายตัวนั้น
 // ============================================================
+// 💡 ราคา = โปร 22 ท่านแรก (ตรงกับแพ็กเกจ) · แก้ได้ทุกช่อง
 const AGENTS = [
-  { id:'web',   name:'🌐 เว็บไซต์',     role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          dep:null,    required:true,  install:15000, monthly:2500, status:'live' },
-  { id:'sales', name:'🛒 AI Sales',     role:'แทนพนักงานขาย · ตอบ+รับออเดอร์ 24 ชม.', dep:'web',   required:false, install:30000, monthly:2500, status:'live' },
-  { id:'fin',   name:'💰 AI Finance',   role:'แทนคนตรวจสลิป · กันสลิปปลอม/ซ้ำ',       dep:'sales', required:false, install:15000, monthly:2000, status:'live' },
+  { id:'web',   name:'🌐 เว็บไซต์',     role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          dep:null,    required:true,  install:9000, monthly:1500, status:'live' },
+  { id:'sales', name:'🛒 AI Sales',     role:'แทนพนักงานขาย · ตอบ+รับออเดอร์ 24 ชม.', dep:'web',   required:false, install:9000, monthly:2500, status:'live' },
+  { id:'fin',   name:'💰 AI Finance',   role:'แทนคนตรวจสลิป · กันสลิปปลอม/ซ้ำ',       dep:'sales', required:false, install:2500, monthly:800, status:'live' },
   { id:'log',   name:'🚚 AI Logistics', role:'แทนคนตามพัสดุ · แจ้งสถานะจัดส่ง',        dep:'fin',   required:false, install:20000, monthly:2000, status:'soon' },
-  { id:'mgr',   name:'🧠 AI Manager',   role:'แทนผู้ช่วยผู้บริหาร · Dashboard+วางแผน', dep:'web',   required:false, install:25000, monthly:3500, status:'live' },
-  { id:'mkt',   name:'📣 AI Marketing', role:'แทนกราฟิก · ทำรูปโปร+บรอดแคสต์',        dep:'mgr',   required:false, install:10000, monthly:1500, status:'live' },
-  { id:'inv',   name:'📦 AI Inventory', role:'แทนคนเช็คสต็อก · เตือนของใกล้หมด',       dep:'mgr',   required:false, install:5000,  monthly:1000, status:'live' },
+  { id:'mgr',   name:'🧠 AI Manager',   role:'แทนผู้ช่วยผู้บริหาร · Dashboard+วางแผน', dep:'web',   required:false, install:6000, monthly:2500, status:'live' },
+  { id:'mkt',   name:'📣 AI Marketing', role:'แทนกราฟิก · ทำรูปโปร+บรอดแคสต์',        dep:'mgr',   required:false, install:5000, monthly:2200, status:'live' },
+  { id:'inv',   name:'📦 AI Inventory', role:'แทนคนเช็คสต็อก · เตือนของใกล้หมด',       dep:'mgr',   required:false, install:2500, monthly:800, status:'live' },
 ];
 const acState = {};
 AGENTS.forEach(a => acState[a.id] = !!a.required);
@@ -928,7 +954,60 @@ function requestAssess(){
   openChat();
   setTimeout(() => showLeadForm('', '[ขอประเมิน] มีเว็บ/ระบบอยู่แล้ว อยากเพิ่ม AI เข้าหลังบ้านเดิม — ขอประเมิน/Discovery ค่ะ'), 350);
 }
+// ============================================================
+// 5 แพ็กเกจ (โปร 22 ท่านแรก) — config-driven · แก้ราคาที่ PKGS
+// full=ก่อนโปร(ขีดฆ่า) · promo=โปร 22 ท่านแรก · monthly=รายเดือน · soon=ปิดทึบ
+// ============================================================
+const PKGS = [
+  { icon:'🥉', name:'STARTER',      tag:'เว็บไซต์พร้อม AI ผู้ช่วยขาย 24 ชั่วโมง',     fit:'ร้านค้าออนไลน์ ธุรกิจเริ่มต้น และ SME',
+    items:['🌐 เว็บไซต์ร้าน','🛒 AI Sales — ตอบลูกค้า + รับออเดอร์ 24 ชม.'], full:24000, promo:17000, monthly:4000 },
+  { icon:'🥈', name:'BUSINESS',     tag:'เว็บไซต์พร้อม AI ฝ่ายขาย + ผู้ช่วยการเงิน',   fit:'ธุรกิจที่มีออเดอร์ประจำทุกวัน', featured:true,
+    items:['ทุกอย่างใน STARTER','💰 AI Finance — ตรวจสลิป กันสลิปปลอม/ซ้ำ'], full:29000, promo:18000, monthly:4800 },
+  { icon:'🥇', name:'PROFESSIONAL', tag:'เว็บไซต์พร้อมทีม AI บริหารร้านค้า',           fit:'ร้านที่มีสินค้าจำนวนมาก หรือหลายพนักงาน',
+    items:['ทุกอย่างใน BUSINESS','📦 AI Inventory — เฝ้าสต็อก','🧠 AI Manager — Dashboard + วิเคราะห์'], full:46000, promo:24000, monthly:8000 },
+  { icon:'🚀', name:'ADVANCED',     tag:'เว็บไซต์พร้อม AI ทีมการตลาด',                fit:'ร้านที่อยากโตด้วยการตลาด เพิ่มยอด-หาลูกค้าใหม่',
+    items:['ทุกอย่างใน PROFESSIONAL','📣 AI Marketing — ทำรูปโปร + บรอดแคสต์'], full:55000, promo:28000, monthly:10000 },
+  { icon:'🏢', name:'ENTERPRISE',   tag:'เว็บไซต์พร้อม AI บริหารธุรกิจครบวงจร',        fit:'ธุรกิจครบวงจรที่ต้องส่งของเอง / สเกลใหญ่',
+    items:['ทุกอย่างใน ADVANCED','🚚 AI Logistics — จัดส่ง + ติดตามพัสดุ'], soon:true },
+];
+function renderPkgs(){
+  const el = document.getElementById('pkgGrid'); if (!el) return;
+  el.innerHTML = PKGS.map(p => {
+    const feats = `<ul class="price-feat">${p.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    if (p.soon){
+      return `<div class="price-card pkg-soon">
+        <div class="soon-tag">เร็วๆ นี้</div>
+        <div class="price-name">${p.icon} ${p.name}</div>
+        <div class="pkg-tag">${p.tag}</div>
+        <div class="pkg-fit">เหมาะสำหรับ: ${p.fit}</div>
+        ${feats}
+        <button class="price-btn" style="opacity:.55;cursor:default" disabled>เร็วๆ นี้</button>
+      </div>`;
+    }
+    return `<div class="price-card ${p.featured?'featured':''}">
+      <div class="price-name">${p.icon} ${p.name}</div>
+      <div class="pkg-tag">${p.tag}</div>
+      <div class="pkg-fit">เหมาะสำหรับ: ${p.fit}</div>
+      ${feats}
+      <div class="pkg-price">
+        <div><span class="price-was">${baht(p.full)}</span><span class="promo-badge">🎂 22 ท่านแรก</span></div>
+        <div class="price-num">${baht(p.promo)}<small> ค่าติดตั้ง</small></div>
+        <div class="price-monthly">+ ${baht(p.monthly)}/เดือน</div>
+      </div>
+      <button class="price-btn" onclick="selectPkg('${p.name}', ${p.promo}, ${p.monthly})">เลือกแพ็กเกจนี้</button>
+    </div>`;
+  }).join('');
+}
+function selectPkg(name, promo, monthly){
+  openChat();
+  setTimeout(() => showLeadForm('', `[สนใจแพ็กเกจ ${name}] โปร 22 ท่านแรก · ค่าติดตั้ง ${baht(promo)} + ${baht(monthly)}/เดือน`), 350);
+}
+function requestWebOnly(){
+  openChat();
+  setTimeout(() => showLeadForm('', '[สนใจ เว็บไซต์อย่างเดียว] ค่าทำเว็บ ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) / ฿3,200 (.co.th) รวมโดเมน+โฮสติ้ง · ไม่มีรายเดือน'), 350);
+}
 renderAC();
+renderPkgs();
 trackVisit();   // 📊 นับคนเข้าชม + ช่องทางที่มา (วิเคราะห์การตลาดใน Dashboard)
 
 // ===== scroll reveal =====
