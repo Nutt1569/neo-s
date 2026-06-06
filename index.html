@@ -131,8 +131,13 @@
   .price-name { font-size: 16px; font-weight: 600; letter-spacing: 1px; margin-bottom: 6px; }
   .price-num { font-size: 38px; font-weight: 700; margin-bottom: 2px; } .price-num small { font-size: 15px; color: var(--txt-dim); font-weight: 400; }
   .price-sub { font-size: 13px; color: var(--txt-dim); margin-bottom: 22px; }
-  .price-feat { list-style: none; margin-bottom: 26px; flex: 1; } .price-feat li { font-size: 14px; padding: 8px 0; color: var(--txt-dim); display: flex; gap: 10px; }
-  .price-feat li::before { content: '✦'; color: var(--cyan); }
+  .price-feat { list-style: none; margin-bottom: 26px; flex: 1; } .price-feat > li { font-size: 14px; padding: 8px 0; color: var(--txt-dim); display: flex; gap: 10px; }
+  .price-feat > li::before { content: '✦'; color: var(--cyan); flex-shrink: 0; }
+  .feat-body { display: flex; flex-direction: column; gap: 3px; }
+  .feat-head { color: var(--txt); font-weight: 600; }
+  .feat-sub { list-style: none; margin: 4px 0 0; padding: 0; }
+  .feat-sub li { font-size: 12.5px; padding: 2px 0; color: var(--txt-dim); display: flex; gap: 7px; line-height: 1.4; }
+  .feat-sub li::before { content: '•'; color: var(--cyan); opacity: .6; flex-shrink: 0; }
   .price-btn { width: 100%; padding: 13px; border-radius: 11px; font-weight: 600; font-size: 15px; cursor: pointer; border: 1px solid var(--line); background: var(--bg-2); color: var(--txt); transition: all .2s; }
   .price-card.featured .price-btn { background: var(--grad); color: #050A14; border: none; }
   .price-btn:hover { transform: translateY(-2px); }
@@ -964,20 +969,40 @@ function requestAssess(){
 // ============================================================
 const PKGS = [
   { icon:'🥉', name:'STARTER',      tag:'เว็บไซต์พร้อม AI ผู้ช่วยขาย 24 ชั่วโมง',     fit:'ร้านค้าออนไลน์ ธุรกิจเริ่มต้น และ SME',
-    items:['🌐 เว็บไซต์ร้าน','🛒 AI Sales — ตอบลูกค้า + รับออเดอร์ 24 ชม.'], full:24000, promo:17000, monthly:4000 },
+    items:[
+      { head:'🌐 เว็บไซต์ร้าน', sub:['หน้าร้านออนไลน์ + แคตตาล็อกสินค้า','ระบบแอดมินจัดการร้าน'] },
+      { head:'🛒 AI Sales — ผู้ช่วยฝ่ายขาย 24 ชม.', sub:['ตอบแชทลูกค้าทุกช่องทาง','รับออเดอร์ + ปิดการขายอัตโนมัติ','เสนอขายเพิ่ม (upsell) เพิ่มยอด'] },
+    ], full:24000, promo:17000, monthly:4000 },
   { icon:'🥈', name:'BUSINESS',     tag:'เว็บไซต์พร้อม AI ฝ่ายขาย + ผู้ช่วยการเงิน',   fit:'ธุรกิจที่มีออเดอร์ประจำทุกวัน', featured:true,
-    items:['ทุกอย่างใน STARTER','💰 AI Finance — ตรวจสลิป กันสลิปปลอม/ซ้ำ'], full:29000, promo:18000, monthly:4800 },
+    items:[
+      'ทุกอย่างใน STARTER',
+      { head:'💰 AI Finance — ผู้ช่วยการเงิน', sub:['ตรวจสลิปจริง-ปลอม 2 ชั้น','กันสลิปซ้ำ / สลิปปลอม','ยืนยันยอดเงินอัตโนมัติ'] },
+    ], full:29000, promo:18000, monthly:4800 },
   { icon:'🥇', name:'PROFESSIONAL', tag:'เว็บไซต์พร้อมทีม AI บริหารร้านค้า',           fit:'ร้านที่มีสินค้าจำนวนมาก หรือหลายพนักงาน',
-    items:['ทุกอย่างใน BUSINESS','📦 AI Inventory — เฝ้าสต็อก','🧠 AI Manager — Dashboard + วิเคราะห์'], full:46000, promo:24000, monthly:8000 },
+    items:[
+      'ทุกอย่างใน BUSINESS',
+      { head:'📦 AI Inventory — ผู้ช่วยจัดการสต็อก', sub:['เฝ้าสต็อกแบบเรียลไทม์','เตือนเมื่อของใกล้หมด','กัน "ขายของที่ไม่มี"'] },
+      { head:'🧠 AI Manager — ผู้ช่วยจัดการธุรกิจ', sub:['Dashboard สรุปผลธุรกิจ','รวบรวมข้อมูลทุกส่วน','ติดตามภาพรวมแบบเรียลไทม์'] },
+    ], full:46000, promo:24000, monthly:8000 },
   { icon:'🚀', name:'ADVANCED',     tag:'เว็บไซต์พร้อม AI ทีมการตลาด',                fit:'ร้านที่อยากโตด้วยการตลาด เพิ่มยอด-หาลูกค้าใหม่',
-    items:['ทุกอย่างใน PROFESSIONAL','📣 AI Marketing — ทำรูปโปร + บรอดแคสต์'], full:55000, promo:28000, monthly:10000 },
+    items:[
+      'ทุกอย่างใน PROFESSIONAL',
+      { head:'📣 AI Marketing — ผู้ช่วยการตลาด', sub:['ทำรูปโปรโมชัน','บรอดแคสต์หาลูกค้า','เสริมทีมการตลาดด้วย AI'] },
+    ], full:55000, promo:28000, monthly:10000 },
   { icon:'🏢', name:'ENTERPRISE',   tag:'เว็บไซต์พร้อม AI บริหารธุรกิจครบวงจร',        fit:'ธุรกิจครบวงจรที่ต้องส่งของเอง / สเกลใหญ่',
-    items:['ทุกอย่างใน ADVANCED','🚚 AI Logistics — จัดส่ง + ติดตามพัสดุ'], soon:true },
+    items:[
+      'ทุกอย่างใน ADVANCED',
+      { head:'🚚 AI Logistics — ผู้ช่วยจัดส่ง', sub:['ติดตามสถานะพัสดุ','แจ้งสถานะจัดส่งให้ลูกค้าอัตโนมัติ'] },
+    ], soon:true },
 ];
 function renderPkgs(){
   const el = document.getElementById('pkgGrid'); if (!el) return;
   el.innerHTML = PKGS.map(p => {
-    const feats = `<ul class="price-feat">${p.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    const feats = `<ul class="price-feat">${p.items.map(i => {
+      if (typeof i === 'string') return `<li>${i}</li>`;
+      const subs = i.sub ? `<ul class="feat-sub">${i.sub.map(s => `<li>${s}</li>`).join('')}</ul>` : '';
+      return `<li><div class="feat-body"><span class="feat-head">${i.head}</span>${subs}</div></li>`;
+    }).join('')}</ul>`;
     if (p.soon){
       return `<div class="price-card pkg-soon">
         <div class="soon-tag">เร็วๆ นี้</div>
