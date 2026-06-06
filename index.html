@@ -231,6 +231,26 @@
   .cs-note { font-size: 11.5px; color: var(--txt-dim); margin-top: 12px; line-height: 1.5; }
   @media(max-width: 820px){ .calc { grid-template-columns: 1fr; } .calc-summary { position: static; } }
 
+  /* à la carte agent builder */
+  .ac-list { display:flex; flex-direction:column; gap:10px; }
+  .ac-item { display:grid; grid-template-columns:46px 1fr auto; gap:14px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; transition:border-color .2s, background .2s; }
+  .ac-item.on { border-color:var(--blue); background:rgba(59,130,246,0.10); box-shadow:inset 0 0 0 1px var(--blue); }
+  .ac-item.req { border-color:var(--cyan); background:rgba(34,211,238,0.08); }
+  .ac-item.locked { opacity:.5; }
+  .ac-item.soon { opacity:.55; }
+  .ac-tog { width:46px; height:26px; border-radius:13px; background:#2a3550; position:relative; cursor:pointer; flex:0 0 auto; transition:background .2s; }
+  .ac-tog::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .ac-item.on .ac-tog { background:var(--blue); } .ac-item.req .ac-tog { background:var(--cyan); }
+  .ac-item.on .ac-tog::after, .ac-item.req .ac-tog::after { left:23px; }
+  .ac-tog.dis { cursor:not-allowed; }
+  .ac-name { font-size:15px; font-weight:600; }
+  .ac-role { font-size:12px; color:var(--cyan); margin-top:1px; }
+  .ac-dep { font-size:11.5px; color:var(--txt-dim); margin-top:3px; }
+  .ac-dep .lk { color:var(--gold); }
+  .ac-price { text-align:right; font-size:11.5px; color:var(--txt-dim); white-space:nowrap; }
+  .ac-price b { color:var(--txt); font-size:13.5px; }
+  @media(max-width:560px){ .ac-item { grid-template-columns:46px 1fr; } .ac-price { grid-column:2; text-align:left; padding-top:4px; } }
+
   /* reveal anim */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s; }
   .reveal.in { opacity: 1; transform: none; }
@@ -361,31 +381,30 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">แพ็กเกจ</div>
-      <h2>เลือกแพ็กเกจที่ใช่สำหรับธุรกิจคุณ</h2>
-      <p>ทุกแพ็กเกจติดตั้งให้พร้อมใช้ภายใน 7-14 วันทำการ</p>
+      <h2>เลือกเท่าที่ใช้ · จ่ายเท่าที่จำเป็น</h2>
+      <p>เริ่มจากชุดแนะนำ หรือออกแบบทีม AI เองในเครื่องคำนวณด้านล่าง · ติดตั้งใน 7-14 วันทำการ</p>
     </div>
     <div class="price-grid">
       <div class="price-card reveal">
-        <div class="price-name">🥉 STARTER</div>
-        <div class="price-num">฿3,500<small>/เดือน</small></div>
-        <div class="price-sub">ค่าติดตั้ง ฿15,000 · เหมาะกับ SME / ร้านออนไลน์</div>
-        <ul class="price-feat"><li>AI Sales + AI Finance</li><li>พลัง AI 10,000 ⚡/เดือน</li><li>ตอบแชท + รับออเดอร์ + ตรวจสลิป</li><li>Support รายเดือน</li></ul>
-        <button class="price-btn" onclick="openLead('Starter')">เริ่มต้น</button>
+        <div class="price-name">🌐 เว็บไซต์</div>
+        <div class="price-num">฿15,000<small> เริ่มต้น</small></div>
+        <div class="price-sub">+ ฿2,500/เดือน · เหมาะกับคนอยากได้แค่เว็บก่อน</div>
+        <ul class="price-feat"><li>เว็บร้าน + แคตตาล็อก</li><li>ฟอร์มสั่งซื้อ</li><li>Admin จัดการหลังบ้าน</li><li>เพิ่ม AI ทีหลังได้ทุกเมื่อ</li></ul>
+        <button class="price-btn" onclick="applyPreset('web')">ออกแบบชุดนี้ →</button>
       </div>
       <div class="price-card featured reveal">
-        <div class="price-name">🥈 BUSINESS</div>
-        <div class="price-num">฿6,500<small>/เดือน</small></div>
-        <div class="price-sub">ค่าติดตั้ง ฿25,000 · เหมาะกับแบรนด์สินค้า</div>
-        <ul class="price-feat"><li>ทุกอย่างใน Starter</li><li>พลัง AI 30,000 ⚡/เดือน</li><li>เชื่อม LINE / Facebook</li><li>Dashboard สรุปยอด</li><li>Support รายเดือน</li></ul>
-        <button class="price-btn" onclick="openLead('Business')">เลือกแพ็กเกจนี้</button>
+        <div class="price-name">🛒 ขายอัตโนมัติ</div>
+        <div class="price-num">฿60,000<small> เริ่มต้น</small></div>
+        <div class="price-sub">+ ฿7,000/เดือน · เว็บ + AI Sales + AI Finance</div>
+        <ul class="price-feat"><li>ทุกอย่างใน เว็บไซต์</li><li>🛒 AI Sales ตอบ+รับออเดอร์ 24 ชม.</li><li>💰 AI Finance ตรวจสลิปอัตโนมัติ</li><li>⚡ พลัง AI เดือนแรกฟรี</li></ul>
+        <button class="price-btn" onclick="applyPreset('sales')">ออกแบบชุดนี้ →</button>
       </div>
-      <div class="price-card reveal soon-card">
-        <div class="soon-tag">เร็วๆ นี้</div>
-        <div class="price-name">🥇 ENTERPRISE</div>
-        <div class="price-num">฿15,000<small>+/เดือน</small></div>
-        <div class="price-sub">ค่าติดตั้ง ฿50,000+ · เหมาะกับองค์กรขนาดใหญ่</div>
-        <ul class="price-feat"><li>ทุกอย่างใน Business</li><li>พลัง AI ไม่จำกัด ⚡</li><li>AI Agents ครบ 6 ตัว</li><li>Custom integration</li><li>Support รายเดือน</li></ul>
-        <button class="price-btn">เร็วๆ นี้</button>
+      <div class="price-card reveal">
+        <div class="price-name">👑 ครบทีม</div>
+        <div class="price-num">฿100,000<small> เริ่มต้น</small></div>
+        <div class="price-sub">+ ฿13,000/เดือน · เว็บ + AI ครบ 5 ตัว</div>
+        <ul class="price-feat"><li>ทุกอย่าง + 🧠 AI Manager</li><li>📦 Inventory · 📣 Marketing</li><li>Dashboard เรียลไทม์</li><li>⚡ พลัง AI เดือนแรกฟรี</li></ul>
+        <button class="price-btn" onclick="applyPreset('all')">ออกแบบชุดนี้ →</button>
       </div>
     </div>
   </div>
@@ -395,33 +414,30 @@
 <section id="calculator">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">ออกแบบแพ็กเกจ</div>
-      <h2>คำนวณราคาแพ็กเกจของคุณ</h2>
-      <p>เลือกแพ็กเกจ + จำนวนสินค้า + ส่วนเสริม → เห็นราคาทันที แล้วขอใบเสนอราคาได้เลย</p>
+      <div class="eyebrow">ออกแบบเอง · จ่ายเท่าที่ใช้</div>
+      <h2>เลือกทีม AI ของคุณ</h2>
+      <p>ติ๊กเลือก AI ที่ธุรกิจต้องใช้ → เห็นราคาทันที · เริ่มจากเว็บ แล้วเพิ่มทีหลังได้</p>
     </div>
     <div class="calc reveal">
       <div class="calc-form">
         <div class="calc-group">
-          <div class="calc-label"><span>1</span>เลือกแพ็กเกจ</div>
-          <div class="calc-opts" id="calcPkgs"></div>
+          <div class="calc-label"><span>✓</span>เลือก AI (เพิ่ม-ลดได้อิสระ · ตัวที่ผูกกันจะปลดล็อกให้เอง)</div>
+          <div class="ac-list" id="acList"></div>
         </div>
         <div class="calc-group">
-          <div class="calc-label"><span>2</span>จำนวนสินค้า</div>
-          <input type="number" id="calcProductCount" class="calc-num-input" min="1" value="50" oninput="onProductCount()" placeholder="เช่น 50">
-          <div class="calc-prod-note" id="calcProdNote"></div>
-        </div>
-        <div class="calc-group">
-          <div class="calc-label"><span>3</span>ส่วนเสริม (Add-ons)</div>
-          <div class="calc-opts" id="calcAddons"></div>
+          <div style="background:var(--bg-2); border:1px dashed var(--line); border-radius:12px; padding:15px 17px; font-size:13.5px; color:var(--txt-dim)">
+            🔌 <b style="color:var(--txt)">มีเว็บ/ระบบอยู่แล้ว?</b> อยากเพิ่ม AI เข้าหลังบ้านเดิม — เราประเมินให้เป็นรายเคส (แต่ละระบบไม่เหมือนกัน)
+            <div style="margin-top:11px"><button class="btn-ghost" style="padding:10px 20px;font-size:14px" onclick="requestAssess()">ขอประเมิน (ปรึกษาฟรี) →</button></div>
+          </div>
         </div>
       </div>
       <div class="calc-summary">
-        <div class="cs-title">📋 สรุปแพ็กเกจ</div>
+        <div class="cs-title">📋 สรุปทีม AI ของคุณ</div>
         <div class="cs-lines" id="calcLines"></div>
-        <div class="cs-total-row"><span>ราคาเริ่มต้น</span><span class="cs-amount grad-txt" id="csInstall">฿15,000</span></div>
-        <div class="cs-total-row"><span>รายเดือน</span><span class="cs-amount" id="csMonthly" style="font-size:18px">฿3,500/เดือน</span></div>
+        <div class="cs-total-row"><span>ค่าติดตั้ง (ครั้งเดียว)</span><span class="cs-amount grad-txt" id="csInstall">฿0</span></div>
+        <div class="cs-total-row"><span>รายเดือน</span><span class="cs-amount" id="csMonthly" style="font-size:18px">฿0/เดือน</span></div>
         <button class="btn-primary" id="calcCta" style="width:100%;margin-top:16px" onclick="requestQuote()">ขอใบเสนอราคา →</button>
-        <div class="cs-note">* ราคาประเมินเบื้องต้น — ทีม NEO-S จะยืนยันอีกครั้งในใบเสนอราคาจริง ปีแรกฟรี Hosting + Domain</div>
+        <div class="cs-note">⚡ <b>พลัง AI</b> (ค่า token): เดือนแรกฟรี ~5,000 แชท · จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม<br>* ราคาประเมินเบื้องต้น — ทีม NEO-S ยืนยันในใบเสนอราคาจริง · ปีแรกฟรี Hosting + Domain</div>
       </div>
     </div>
   </div>
@@ -840,7 +856,79 @@ function requestQuote(){
   openChat();
   setTimeout(() => showLeadForm(pkg.id, msg), 350);
 }
-renderCalc();
+// ============================================================
+// à la carte — เลือก AI ต่อตัว (config-driven · แก้ราคาที่ AGENTS)
+// ราคาตั้งต้นอ้างอิงทีม LUMINA (6 มิ.ย.) · status:'soon'→'live' = เปิดขายตัวนั้น
+// ============================================================
+const AGENTS = [
+  { id:'web',   name:'🌐 เว็บไซต์',     role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          dep:null,    required:true,  install:15000, monthly:2500, status:'live' },
+  { id:'sales', name:'🛒 AI Sales',     role:'แทนพนักงานขาย · ตอบ+รับออเดอร์ 24 ชม.', dep:'web',   required:false, install:30000, monthly:2500, status:'live' },
+  { id:'fin',   name:'💰 AI Finance',   role:'แทนคนตรวจสลิป · กันสลิปปลอม/ซ้ำ',       dep:'sales', required:false, install:15000, monthly:2000, status:'live' },
+  { id:'log',   name:'🚚 AI Logistics', role:'แทนคนตามพัสดุ · แจ้งสถานะจัดส่ง',        dep:'fin',   required:false, install:20000, monthly:2000, status:'soon' },
+  { id:'mgr',   name:'🧠 AI Manager',   role:'แทนผู้ช่วยผู้บริหาร · Dashboard+วางแผน', dep:'web',   required:false, install:25000, monthly:3500, status:'live' },
+  { id:'mkt',   name:'📣 AI Marketing', role:'แทนกราฟิก · ทำรูปโปร+บรอดแคสต์',        dep:'mgr',   required:false, install:10000, monthly:1500, status:'live' },
+  { id:'inv',   name:'📦 AI Inventory', role:'แทนคนเช็คสต็อก · เตือนของใกล้หมด',       dep:'mgr',   required:false, install:5000,  monthly:1000, status:'live' },
+];
+const acState = {};
+AGENTS.forEach(a => acState[a.id] = !!a.required);
+function acEnabled(a){ if (a.required) return true; if (!a.dep) return true; return acState[a.dep] === true; }
+function acDepName(id){ const d = AGENTS.find(x => x.id === id); return d ? d.name.replace(/^\S+\s/,'') : ''; }
+function renderAC(){
+  const el = document.getElementById('acList'); if (!el) return;
+  el.innerHTML = AGENTS.map(a => {
+    const enabled = acEnabled(a), on = acState[a.id], soon = a.status === 'soon';
+    let cls = 'ac-item';
+    if (a.required) cls += ' req'; else if (soon) cls += ' soon'; else if (!enabled) cls += ' locked'; else if (on) cls += ' on';
+    let dep;
+    if (a.required) dep = '<span style="color:var(--cyan)">● พื้นฐาน (ต้องมี)</span>';
+    else if (soon) dep = '<span class="lk">⏳ เร็วๆ นี้</span>';
+    else if (a.dep && !acState[a.dep]) dep = `<span class="lk">🔒 ต้องเลือก ${acDepName(a.dep)} ก่อน</span>`;
+    else dep = '<span style="color:var(--green)">✓ พร้อมเลือก</span>';
+    const dis = (a.required || soon || !enabled);
+    const click = dis ? '' : `onclick="toggleAgent('${a.id}')"`;
+    return `<div class="${cls}">
+      <div class="ac-tog ${dis?'dis':''}" ${click}></div>
+      <div><div class="ac-name">${a.name}</div><div class="ac-role">${a.role}</div><div class="ac-dep">${dep}</div></div>
+      <div class="ac-price"><b>+${baht(a.install)}</b><br>+${baht(a.monthly)}/ด.</div>
+    </div>`;
+  }).join('');
+  computeAC();
+}
+function toggleAgent(id){
+  const a = AGENTS.find(x => x.id === id);
+  if (!a || a.required || a.status === 'soon' || !acEnabled(a)) return;
+  acState[id] = !acState[id];
+  if (!acState[id]){ let ch = true; while (ch){ ch = false; AGENTS.forEach(c => { if (c.dep && !acState[c.dep] && acState[c.id]){ acState[c.id] = false; ch = true; } }); } }
+  renderAC();
+}
+function applyPreset(kind){
+  AGENTS.forEach(a => acState[a.id] = !!a.required);
+  if (kind === 'sales'){ acState.sales = true; acState.fin = true; }
+  if (kind === 'all'){ AGENTS.forEach(a => { if (a.status === 'live') acState[a.id] = true; }); }
+  renderAC();
+  const sec = document.getElementById('calculator'); if (sec) sec.scrollIntoView({ behavior:'smooth' });
+}
+function computeAC(){
+  let install = 0, monthly = 0; const chosen = [];
+  AGENTS.forEach(a => { if (acState[a.id]){ install += a.install; monthly += a.monthly; chosen.push(a); } });
+  const lines = chosen.map(a => `<div class="cs-line"><span>${a.name}</span><span>+${baht(a.install)} · +${baht(a.monthly)}/ด.</span></div>`);
+  document.getElementById('calcLines').innerHTML = lines.join('') || '<div class="cs-line"><span style="opacity:.6">ยังไม่ได้เลือก AI</span><span>—</span></div>';
+  document.getElementById('csInstall').textContent = baht(install);
+  document.getElementById('csMonthly').textContent = baht(monthly) + '/เดือน';
+  acState._install = install; acState._monthly = monthly;
+}
+function requestQuote(){
+  const chosen = AGENTS.filter(a => acState[a.id]);
+  const names = chosen.map(a => a.name.replace(/^\S+\s/,'')).join(', ');
+  const msg = `[ขอใบเสนอราคา] เลือก: ${names} · ค่าติดตั้ง ${baht(acState._install)} + ${baht(acState._monthly)}/เดือน · (พลัง AI เดือนแรกฟรี)`;
+  openChat();
+  setTimeout(() => showLeadForm('', msg), 350);
+}
+function requestAssess(){
+  openChat();
+  setTimeout(() => showLeadForm('', '[ขอประเมิน] มีเว็บ/ระบบอยู่แล้ว อยากเพิ่ม AI เข้าหลังบ้านเดิม — ขอประเมิน/Discovery ค่ะ'), 350);
+}
+renderAC();
 trackVisit();   // 📊 นับคนเข้าชม + ช่องทางที่มา (วิเคราะห์การตลาดใน Dashboard)
 
 // ===== scroll reveal =====
