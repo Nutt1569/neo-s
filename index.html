@@ -828,7 +828,7 @@ function logChat(role, message){
     fetch(SUPABASE_URL + '/rest/v1/neos_chat_history', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+SUPABASE_ANON, 'Prefer':'return=minimal' },
-      body: JSON.stringify({ session_id:chatSid(), role, message:String(message).slice(0,4000), page:'index' })
+      body: JSON.stringify({ session_id:chatSid(), role, message:String(message).slice(0,4000), page:'index', name:neosChatName||null, phone:neosChatPhone||null })
     }).catch(()=>{});   // ตารางยังไม่มี/ปิด = เงียบ ไม่กระทบเว็บ
   } catch(e){}
 }
@@ -855,13 +855,47 @@ const DEFAULT_A = 'ขอบคุณที่สนใจ NEO-S ค่ะ 😊\
 let chatStarted = false;
 let userMsgCount = 0, leadShown = false, leadSubmitted = false;
 let pendingQuote = null;   // ข้อมูลใบเสนอราคา (set ตอนเลือกแพ็ก/à la carte/เว็บ → ใช้ตอน submitLead ส่งไป Worker /quote)
+let chatGated = false, afterGate = null;            // gate: บังคับชื่อ+เบอร์ก่อนคุย
+let neosChatName = '', neosChatPhone = '';          // เก็บไว้ใส่ใน logChat + prefill ฟอร์ม Lead
 function toggleChat() {
   const w = document.getElementById('chatWin');
   w.classList.toggle('open');
   if (w.classList.contains('open') && !chatStarted) {
     chatStarted = true;
-    botSay('สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S\n\nยินดีช่วยตอบทุกคำถามเรื่องระบบ AI สำหรับธุรกิจค่ะ อยากรู้อะไรถามได้เลยนะคะ 😊');
+    if (!chatGated) showChatGate(); else startChatGreeting();
   }
+}
+function startChatGreeting(){
+  botSay('สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S\n\nยินดีช่วยตอบทุกคำถามเรื่องระบบ AI สำหรับธุรกิจค่ะ อยากรู้อะไรถามได้เลยนะคะ 😊');
+}
+// 🚪 ประตูทางเข้า: ขอชื่อ+เบอร์ก่อนเริ่มคุย (เก็บคอนแทกต์ลงประวัติแชท ลูกค้าไม่หลุดมือ)
+function showChatGate(){
+  const inp = document.getElementById('chatInput'); if(inp) inp.disabled = true;
+  const qk  = document.getElementById('chatQuick'); if(qk) qk.style.display = 'none';
+  const body = document.getElementById('chatBody');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg bot'; wrap.id = 'chatGate';
+  wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="max-width:100%">สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S<br>ก่อนเริ่มคุย ขอชื่อกับเบอร์ไว้ติดต่อกลับหน่อยนะคะ 😊
+    <div class="lead-card" style="margin-top:10px">
+      <input id="gateName" type="text" placeholder="ชื่อ ★" autocomplete="name">
+      <input id="gatePhone" type="tel" inputmode="tel" placeholder="เบอร์โทร ★" autocomplete="tel" onkeydown="if(event.key==='Enter')submitGate()">
+      <button id="gateBtn" onclick="submitGate()">เริ่มแชทกับโนวา 💬</button>
+    </div></div>`;
+  body.appendChild(wrap); body.scrollTop = body.scrollHeight;
+  setTimeout(()=>{ const g=document.getElementById('gateName'); if(g) g.focus(); }, 120);
+}
+function submitGate(){
+  const name  = (document.getElementById('gateName')?.value || '').trim();
+  const phone = (document.getElementById('gatePhone')?.value || '').trim();
+  if (!name)  { alert('ขอชื่อหน่อยนะคะ 😊'); return; }
+  if (phone.replace(/\D/g,'').length < 9) { alert('ขอเบอร์โทรที่ติดต่อได้นะคะ 😊'); return; }
+  neosChatName = name; neosChatPhone = phone; chatGated = true;
+  const gate = document.getElementById('chatGate'); if(gate) gate.remove();
+  const inp = document.getElementById('chatInput'); if(inp){ inp.disabled = false; inp.focus(); }
+  const qk  = document.getElementById('chatQuick'); if(qk) qk.style.display = '';
+  logChat('user', '[เริ่มแชท] ชื่อ: ' + name + ' · เบอร์: ' + phone);   // บันทึกคอนแทกต์ลงประวัติแชท
+  botSay('ยินดีที่ได้รู้จักค่ะ คุณ' + name + ' 😊 อยากรู้อะไรเรื่องระบบ AI ถามโนวาได้เลยนะคะ');
+  if (typeof afterGate === 'function'){ const f = afterGate; afterGate = null; setTimeout(f, 300); }
 }
 function openChat() { const w = document.getElementById('chatWin'); if (!w.classList.contains('open')) toggleChat(); document.getElementById('chatInput').focus(); }
 
@@ -951,6 +985,7 @@ function maybeOfferLead(text) {
 
 function showLeadForm(prefillPkg, prefillMsg) {
   if (leadSubmitted) return;
+  if (!chatGated) { afterGate = () => showLeadForm(prefillPkg, prefillMsg); openChat(); return; }   // ผ่าน gate ชื่อ+เบอร์ก่อน
   if (leadShown) {
     const ex = document.getElementById('leadForm');
     if (ex) {
@@ -1000,6 +1035,9 @@ function showLeadForm(prefillPkg, prefillMsg) {
   body.scrollTop = body.scrollHeight;
   if (prefillPkg) document.getElementById('leadInterest').value = prefillPkg;
   if (prefillMsg) document.getElementById('leadMsg').value = prefillMsg;
+  // เติมชื่อ/เบอร์จาก gate (ลูกค้าไม่ต้องพิมพ์ซ้ำ)
+  if (neosChatName)  { const n=document.getElementById('leadName');    if(n&&!n.value) n.value=neosChatName; }
+  if (neosChatPhone) { const p=document.getElementById('leadContact'); if(p&&!p.value) p.value=neosChatPhone; }
 }
 
 async function saveLead(lead) {

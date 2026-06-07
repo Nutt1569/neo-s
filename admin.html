@@ -1268,12 +1268,14 @@ function renderChats(){
     const preview = (first ? first.message : (s.msgs[0]?.message||'')) || '(ไม่มีข้อความ)';
     const last = s.msgs[s.msgs.length-1];
     const userN = s.msgs.filter(m=>m.role==='user').length;
+    const cRow = s.msgs.find(m=>m.name||m.phone) || {};
+    const contact = (cRow.name||cRow.phone) ? ('👤 '+esc(cRow.name||'-')+(cRow.phone?(' · 📞 '+esc(cRow.phone)):'')) : '';
     return `<div class="chat-ses">
       <div class="chat-ses-head" onclick="toggleChatSes(${i})">
         <div class="cs-ic">💬</div>
         <div class="cs-main">
-          <div class="cs-top"><span class="cs-q">${esc(preview.slice(0,90))}</span><span class="cs-time">${chatTime(last.created_at)}</span></div>
-          <div class="cs-meta">${s.msgs.length} ข้อความ · ลูกค้าพิมพ์ ${userN} · <span class="cs-sid">${esc(s.sid)}</span></div>
+          <div class="cs-top"><span class="cs-q">${contact || esc(preview.slice(0,90))}</span><span class="cs-time">${chatTime(last.created_at)}</span></div>
+          <div class="cs-meta">${contact?('“'+esc(preview.slice(0,55))+'” · '):''}${s.msgs.length} ข้อความ · ลูกค้าพิมพ์ ${userN}</div>
         </div>
         <div class="cs-arrow" id="csArrow${i}">▾</div>
       </div>
