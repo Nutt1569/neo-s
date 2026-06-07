@@ -827,6 +827,7 @@ const DEFAULT_A = 'ขอบคุณที่สนใจ NEO-S ค่ะ 😊\
 
 let chatStarted = false;
 let userMsgCount = 0, leadShown = false, leadSubmitted = false;
+let pendingQuote = null;   // ข้อมูลใบเสนอราคา (set ตอนเลือกแพ็ก/à la carte/เว็บ → ใช้ตอน submitLead ส่งไป Worker /quote)
 function toggleChat() {
   const w = document.getElementById('chatWin');
   w.classList.toggle('open');
@@ -975,6 +976,13 @@ async function submitLead() {
   const btn = document.getElementById('leadBtn');
   if (btn) { btn.textContent = 'กำลังส่ง…'; btn.disabled = true; }
 
+  // เปิดแท็บล่วงหน้าใน user-gesture (กัน popup block) ถ้ามีใบเสนอราคารอออก
+  let quoteWin = null;
+  if (pendingQuote && pendingQuote.items) {
+    quoteWin = window.open('', '_blank');
+    if (quoteWin) quoteWin.document.write('<!DOCTYPE html><meta charset="utf-8"><body style="font-family:sans-serif;color:#555"><p style="padding:50px;text-align:center">กำลังออกใบเสนอราคา… 📄</p></body>');
+  }
+
   const lead = {
     lead_id:  'LEAD-' + Date.now(),
     name,
@@ -993,8 +1001,31 @@ async function submitLead() {
     leadSubmitted = true;
     const msgEl = document.getElementById('leadForm')?.closest('.msg');
     if (msgEl) msgEl.remove();
-    botSay('ขอบคุณมากค่ะ 🙏 ได้รับข้อมูลของคุณ' + name + ' แล้วนะคะ\n\nทีม NEO-S จะติดต่อกลับโดยเร็วที่สุดค่ะ ระหว่างรอ ลองเข้าไปดูระบบจริงที่ LUMINA ได้เลยนะคะ 👉 nutt1569.github.io/lumina 😊');
+
+    if (quoteWin && pendingQuote) {
+      try {
+        const r = await fetch(NOVA_WORKER_URL + '/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone, items: pendingQuote.items, monthlyNote: pendingQuote.monthlyNote })
+        });
+        if (r.ok) {
+          const html = await r.text();
+          quoteWin.document.open(); quoteWin.document.write(html); quoteWin.document.close();
+          botSay('ออกใบเสนอราคาให้แล้วค่ะ 📄✨ (เปิดในแท็บใหม่ — กดปุ่ม "พิมพ์ PDF" บันทึกเก็บได้เลย)\n\nทีม NEO-S จะติดต่อกลับเพื่อยืนยันรายละเอียดค่ะ 😊');
+        } else {
+          quoteWin.close();
+          botSay('ขอบคุณค่ะ 🙏 ได้รับข้อมูลแล้ว — ทีม NEO-S จะส่งใบเสนอราคาให้ทางอีเมล ' + email + ' โดยเร็วค่ะ');
+        }
+      } catch (e) {
+        if (quoteWin) quoteWin.close();
+        botSay('ขอบคุณค่ะ 🙏 ได้รับข้อมูลแล้ว — ทีม NEO-S จะส่งใบเสนอราคาให้ทางอีเมล ' + email + ' โดยเร็วค่ะ');
+      }
+    } else {
+      botSay('ขอบคุณมากค่ะ 🙏 ได้รับข้อมูลของคุณ' + name + ' แล้วนะคะ\n\nทีม NEO-S จะติดต่อกลับโดยเร็วที่สุดค่ะ ระหว่างรอ ลองเข้าไปดูระบบจริงที่ LUMINA ได้เลยนะคะ 👉 nutt1569.github.io/lumina 😊');
+    }
   } else {
+    if (quoteWin) quoteWin.close();
     if (btn) { btn.textContent = 'ลองอีกครั้ง'; btn.disabled = false; }
     botSay('ขออภัยค่ะ ส่งข้อมูลไม่สำเร็จ 🙏 รบกวนทักมาที่ kritsada.nutt1981@gmail.com โดยตรงได้เลยนะคะ');
   }
@@ -1167,11 +1198,19 @@ function computeAC(){
 function requestQuote(){
   const chosen = AGENTS.filter(a => acState[a.id]);
   const names = chosen.map(a => a.name.replace(/^\S+\s/,'')).join(', ');
+  pendingQuote = {
+    items: [
+      { desc:'ค่าพัฒนาระบบ NEO-S (เลือกเอง / à la carte)', subs: chosen.map(a => a.name), qty:1, unit:'ระบบ', price:acState._install },
+      { desc:'ค่าบริการรายเดือน (เดือนแรก · รวมค่าเช่าระบบ)', subs:['ดูแลระบบ + ค่าเช่าระบบ ฿1,500/ด.','พลัง AI เดือนแรกฟรี ให้ลองใช้ก่อน'], qty:1, unit:'เดือน', price:acState._monthly }
+    ],
+    monthlyNote: `เดือนถัดไป: ค่าบริการ ${baht(acState._monthly)}/เดือน + VAT 7%`
+  };
   const msg = `[ขอใบเสนอราคา] เลือก: ${names} · ค่าติดตั้ง ${baht(acState._install)} + ${baht(acState._monthly)}/เดือน · (พลัง AI เดือนแรกฟรี)`;
   openChat();
   setTimeout(() => showLeadForm('', msg), 350);
 }
 function requestAssess(){
+  pendingQuote = null;   // เคส custom — ไม่ออกใบเสนอราคาอัตโนมัติ (ทีมประเมินก่อน)
   openChat();
   setTimeout(() => showLeadForm('', '[ขอประเมิน] มีเว็บ/ระบบอยู่แล้ว อยากเพิ่ม AI เข้าหลังบ้านเดิม — ขอประเมิน/Discovery ค่ะ'), 350);
 }
@@ -1241,10 +1280,23 @@ function renderPkgs(){
   }).join('');
 }
 function selectPkg(name, promo, monthly){
+  const pk = PKGS.find(p => p.name === name);
+  const subs = pk ? pk.items.map(it => typeof it === 'string' ? it : it.head) : [];
+  pendingQuote = {
+    items: [
+      { desc:`ค่าพัฒนาระบบ NEO-S (${name}) — โปร 22 ท่านแรก`, subs, qty:1, unit:'ระบบ', price:promo },
+      { desc:`ค่าบริการรายเดือน NEO-S ${name} (เดือนแรก)`, subs:['ดูแลระบบ + Support รายเดือน','พลัง AI เดือนแรกฟรี ให้ลองใช้ก่อน'], qty:1, unit:'เดือน', price:monthly }
+    ],
+    monthlyNote: `เดือนถัดไป: ค่าบริการ ${baht(monthly)}/เดือน + VAT 7%`
+  };
   openChat();
   setTimeout(() => showLeadForm('', `[สนใจแพ็กเกจ ${name}] โปร 22 ท่านแรก · ค่าติดตั้ง ${baht(promo)} + ${baht(monthly)}/เดือน`), 350);
 }
 function requestWebOnly(){
+  pendingQuote = {
+    items: [{ desc:'จัดทำเว็บไซต์ (เฉพาะเว็บไซต์)', subs:['เว็บร้าน + แคตตาล็อกสินค้า','ระบบแอดมินจัดการร้าน','รวมโดเมน + โฮสติ้ง ปีแรก'], qty:1, unit:'งาน', price:9000 }],
+    monthlyNote: 'ค่าบริการรายปี ฿2,500 (.com) / ฿3,200 (.co.th) รวมโดเมน+โฮสติ้ง · ไม่มีค่ารายเดือน'
+  };
   openChat();
   setTimeout(() => showLeadForm('', '[สนใจ เว็บไซต์อย่างเดียว] ค่าทำเว็บ ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) / ฿3,200 (.co.th) รวมโดเมน+โฮสติ้ง · ไม่มีรายเดือน'), 350);
 }
