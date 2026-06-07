@@ -143,6 +143,7 @@
   .st-WON{ border-color:var(--green); color:var(--green); }
   .st-IN_DEV{ border-color:#F59E0B; color:#F59E0B; }
   .st-DELIVERED{ border-color:#0EA5E9; color:#0EA5E9; }
+  .st-OVERDUE{ border-color:#EF4444; color:#EF4444; }
   .st-LOST{ border-color:var(--txt-dim); color:var(--txt-dim); opacity:.7; }
 
   /* pagination */
@@ -408,6 +409,7 @@
           <option value="WON">ปิดได้ (ตกลง)</option>
           <option value="IN_DEV">กำลังพัฒนาระบบ</option>
           <option value="DELIVERED">ส่งมอบแล้ว</option>
+          <option value="OVERDUE">ค้างชำระ 60%</option>
           <option value="LOST">ไม่สำเร็จ</option>
         </select>
         <select id="fInterest" onchange="onFilter()">
@@ -571,9 +573,11 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
     lock: (name, acquireTimeout, fn) => fn()
   }
 });
-const STATUSES = ['NEW','CONTACTED','QUOTED','WON','IN_DEV','DELIVERED','LOST'];
-const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้ (ตกลง)', IN_DEV:'กำลังพัฒนาระบบ', DELIVERED:'ส่งมอบแล้ว', LOST:'ไม่สำเร็จ' };
-const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', IN_DEV:'#F59E0B', DELIVERED:'#0EA5E9', LOST:'#5b6781' };
+const STATUSES = ['NEW','CONTACTED','QUOTED','WON','IN_DEV','DELIVERED','OVERDUE','LOST'];
+const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้ (ตกลง)', IN_DEV:'กำลังพัฒนาระบบ', DELIVERED:'ส่งมอบแล้ว', OVERDUE:'ค้างชำระ 60%', LOST:'ไม่สำเร็จ' };
+const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', IN_DEV:'#F59E0B', DELIVERED:'#0EA5E9', OVERDUE:'#EF4444', LOST:'#5b6781' };
+// สถานะที่ถือว่า "ปิดดีลแล้ว/จ่ายมัดจำแล้ว" = แปลงเป็นลูกค้าได้
+const CLOSED_STATUSES = ['WON','IN_DEV','DELIVERED','OVERDUE'];
 const KNOWN_LABELS = { name:'ชื่อ', contact:'ติดต่อ', email:'อีเมล', phone:'เบอร์โทร', interest:'สนใจแพ็กเกจ', source:'ที่มา', message:'ข้อความ', status:'สถานะ', created_at:'เข้ามาเมื่อ', lead_id:'Lead ID' };
 
 let LEADS = [], VISITS = [];
@@ -873,8 +877,9 @@ function leadActionItems(){
   const out = [];
   LEADS.forEach(l=>{
     const st = l.status || 'NEW';
-    if (st==='WON' || st==='LOST') return;
     const age = Math.floor((now - new Date(l.created_at).getTime())/864e5);
+    if (st==='OVERDUE') { out.push({ l, age, hot:true, reason:'⚠️ ค้างชำระ 60% — ตามทวงด่วน' }); return; }
+    if (st==='WON' || st==='LOST' || st==='IN_DEV' || st==='DELIVERED') return;
     if (st==='NEW' && age>=3) out.push({ l, age, hot:age>=7, reason:'ยังไม่ติดต่อ '+age+' วัน' });
     else if ((st==='CONTACTED'||st==='QUOTED') && age>=7) out.push({ l, age, hot:age>=14, reason:(st==='QUOTED'?'เสนอราคาแล้วยังไม่ปิด':'ติดต่อแล้วยังไม่คืบ')+' '+age+' วัน' });
   });
@@ -1108,6 +1113,13 @@ async function openQuote(id){
   } catch(e){ if(win) win.close(); toast('เปิดใบเสนอราคาไม่ได้: '+(e.message||e)); }
 }
 
+// แปลง Lead → ลูกค้า: ปิด modal Lead → เปิดฟอร์มเพิ่มลูกค้า → เติมข้อมูลจาก Lead ให้อัตโนมัติ
+function convertToCustomer(leadId){
+  closeModal();
+  showTab('customers');
+  setTimeout(()=>{ openCustomer(); setTimeout(()=>{ try{ prefillFromLead(leadId); }catch(e){} }, 120); }, 120);
+}
+
 function openLead(id){
   const l = LEADS.find(x=>x.lead_id===id); if(!l) return;
   const st = l.status || 'NEW';
@@ -1155,7 +1167,8 @@ function openLead(id){
         </div>
       </div>
       <div class="m-actions">
-        ${l.quote_data?`<button class="btn-primary" style="flex:0 0 auto" onclick="openQuote('${esc(l.lead_id)}')">📄 ดูใบเสนอราคา</button>`:''}
+        ${l.quote_data?`<button class="btn-ghost" style="flex:0 0 auto" onclick="openQuote('${esc(l.lead_id)}')">📄 ดูใบเสนอราคา</button>`:''}
+        ${CLOSED_STATUSES.includes(st)?`<button class="btn-primary" style="flex:0 0 auto" onclick="convertToCustomer('${esc(l.lead_id)}')">➕ แปลงเป็นลูกค้า</button>`:''}
         ${email?`<a class="btn-ghost" href="mailto:${esc(email)}?subject=${encodeURIComponent('NEO-S — ตอบกลับเรื่องที่คุณสนใจ')}">✉️ ส่งอีเมล</a>`:''}
         ${phone?`<a class="btn-ghost" href="tel:${esc(phone)}">📞 โทร</a>`:''}
         <button class="btn-ghost" onclick="copyContact('${esc(contact)}')">📋 คัดลอกติดต่อ</button>
@@ -1475,7 +1488,7 @@ function custLinks(c){
 }
 function openCustomer(id){
   const c = id ? CUSTOMERS.find(x=>x.id===id) : null;
-  const won = LEADS.filter(l=>l.status==='WON');
+  const won = LEADS.filter(l=>CLOSED_STATUSES.includes(l.status));   // ดีลที่ปิด/จ่ายมัดจำแล้ว = แปลงเป็นลูกค้าได้
   const pkgOpts = ['',...PACKAGES].map(p=>`<option value="${p}" ${c&&c.package===p?'selected':''}>${p||'— เลือกแพ็กเกจ —'}</option>`).join('');
   const stOpts  = CUST_STATUS.map(s=>`<option value="${s}" ${(c?c.status===s:s==='trial')?'selected':''}>${CUST_STATUS_TH[s]}</option>`).join('');
   const convert = (!c && won.length) ? crow('แปลงจาก Lead', `<select class="cf" onchange="prefillFromLead(this.value)"><option value="">— กรอกเอง —</option>${won.map(l=>`<option value="${esc(l.lead_id)}">${esc(l.name||'ไม่ระบุ')} · ${esc(l.contact||l.email||'')}</option>`).join('')}</select>`) : '';
