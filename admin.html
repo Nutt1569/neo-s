@@ -1114,10 +1114,17 @@ async function openQuote(id){
 }
 
 // แปลง Lead → ลูกค้า: ปิด modal Lead → เปิดฟอร์มเพิ่มลูกค้า → เติมข้อมูลจาก Lead ให้อัตโนมัติ
+// (poll รอฟอร์ม render เสร็จก่อนค่อยเติม — กัน timing race)
 function convertToCustomer(leadId){
   closeModal();
   showTab('customers');
-  setTimeout(()=>{ openCustomer(); setTimeout(()=>{ try{ prefillFromLead(leadId); }catch(e){} }, 120); }, 120);
+  openCustomer();   // เปิดฟอร์มลูกค้าใหม่ทันที
+  let tries = 0;
+  const fill = () => {
+    if (document.getElementById('cf_name')) { try{ prefillFromLead(leadId); }catch(e){} }
+    else if (tries++ < 25) setTimeout(fill, 80);
+  };
+  setTimeout(fill, 60);
 }
 
 function openLead(id){
