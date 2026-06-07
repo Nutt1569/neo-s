@@ -407,9 +407,6 @@
           <option value="CONTACTED">ติดต่อแล้ว</option>
           <option value="QUOTED">เสนอราคาแล้ว</option>
           <option value="WON">ปิดได้ (ตกลง)</option>
-          <option value="IN_DEV">กำลังพัฒนาระบบ</option>
-          <option value="DELIVERED">ส่งมอบแล้ว</option>
-          <option value="OVERDUE">ค้างชำระ 60%</option>
           <option value="LOST">ไม่สำเร็จ</option>
         </select>
         <select id="fInterest" onchange="onFilter()">
@@ -433,9 +430,9 @@
       </div>
       <div class="kpis six">
         <div class="kpi"><div class="ic">👥</div><div class="num grad-txt" id="cTotal">0</div><div class="lbl">ลูกค้าทั้งหมด</div></div>
-        <div class="kpi"><div class="ic">✅</div><div class="num" style="color:var(--green)" id="cActive">0</div><div class="lbl">Active (ใช้งานอยู่)</div></div>
-        <div class="kpi"><div class="ic">🧪</div><div class="num" style="color:var(--cyan)" id="cTrial">0</div><div class="lbl">ทดลองใช้</div></div>
-        <div class="kpi"><div class="ic">📉</div><div class="num" style="color:var(--red)" id="cChurn">0</div><div class="lbl">เลิกใช้ (Churn)</div></div>
+        <div class="kpi"><div class="ic">✅</div><div class="num" style="color:var(--green)" id="cActive">0</div><div class="lbl">ปิดงาน (บิลรายเดือน)</div></div>
+        <div class="kpi"><div class="ic">🔧</div><div class="num" style="color:#F59E0B" id="cTrial">0</div><div class="lbl">กำลังพัฒนา</div></div>
+        <div class="kpi"><div class="ic">⚠️</div><div class="num" style="color:var(--red)" id="cChurn">0</div><div class="lbl">ค้างชำระ 60%</div></div>
         <div class="kpi"><div class="ic">💰</div><div class="num" style="color:var(--gold)" id="cMRR">฿0</div><div class="lbl">MRR (รายได้/เดือน)</div></div>
         <div class="kpi"><div class="ic">📈</div><div class="num" style="color:var(--violet)" id="cARR">฿0</div><div class="lbl">ARR (คาดการณ์/ปี)</div></div>
       </div>
@@ -573,11 +570,11 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
     lock: (name, acquireTimeout, fn) => fn()
   }
 });
-const STATUSES = ['NEW','CONTACTED','QUOTED','WON','IN_DEV','DELIVERED','OVERDUE','LOST'];
-const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้ (ตกลง)', IN_DEV:'กำลังพัฒนาระบบ', DELIVERED:'ส่งมอบแล้ว', OVERDUE:'ค้างชำระ 60%', LOST:'ไม่สำเร็จ' };
-const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', IN_DEV:'#F59E0B', DELIVERED:'#0EA5E9', OVERDUE:'#EF4444', LOST:'#5b6781' };
-// สถานะที่ถือว่า "ปิดดีลแล้ว/จ่ายมัดจำแล้ว" = แปลงเป็นลูกค้าได้
-const CLOSED_STATUSES = ['WON','IN_DEV','DELIVERED','OVERDUE'];
+// Lead = funnel การขายล้วน · งานหลังปิดดีล (พัฒนา/ส่งมอบ/ค้างชำระ) ไปอยู่ฝั่งลูกค้า (CUST_STATUS)
+const STATUSES = ['NEW','CONTACTED','QUOTED','WON','LOST'];
+const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้ (ตกลง)', LOST:'ไม่สำเร็จ' };
+const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', LOST:'#5b6781' };
+const CLOSED_STATUSES = ['WON'];   // Lead ที่ปิดได้ = แปลงเป็นลูกค้าได้
 const KNOWN_LABELS = { name:'ชื่อ', contact:'ติดต่อ', email:'อีเมล', phone:'เบอร์โทร', interest:'สนใจแพ็กเกจ', source:'ที่มา', message:'ข้อความ', status:'สถานะ', created_at:'เข้ามาเมื่อ', lead_id:'Lead ID' };
 
 let LEADS = [], VISITS = [];
@@ -877,9 +874,8 @@ function leadActionItems(){
   const out = [];
   LEADS.forEach(l=>{
     const st = l.status || 'NEW';
+    if (st==='WON' || st==='LOST') return;
     const age = Math.floor((now - new Date(l.created_at).getTime())/864e5);
-    if (st==='OVERDUE') { out.push({ l, age, hot:true, reason:'⚠️ ค้างชำระ 60% — ตามทวงด่วน' }); return; }
-    if (st==='WON' || st==='LOST' || st==='IN_DEV' || st==='DELIVERED') return;
     if (st==='NEW' && age>=3) out.push({ l, age, hot:age>=7, reason:'ยังไม่ติดต่อ '+age+' วัน' });
     else if ((st==='CONTACTED'||st==='QUOTED') && age>=7) out.push({ l, age, hot:age>=14, reason:(st==='QUOTED'?'เสนอราคาแล้วยังไม่ปิด':'ติดต่อแล้วยังไม่คืบ')+' '+age+' วัน' });
   });
@@ -897,7 +893,7 @@ function renderOverview(){
   if (!document.getElementById('page-overview')) return;
   const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
   const won    = LEADS.filter(l=>l.status==='WON').length;
-  const active = CUSTOMERS.filter(c=>c.status==='active');
+  const active = CUSTOMERS.filter(c=>c.status===CUST_MRR_STATUS);
   const mrr    = active.reduce((s,c)=>s+(Number(c.monthly_fee)||0),0);
   const actions= leadActionItems();
   const ups    = upsellItems();
@@ -1214,9 +1210,11 @@ function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg
 
 // ===== CUSTOMERS (ตาราง neos_customers — admin จัดการเอง) =====
 let CUSTOMERS = [];
-const CUST_STATUS = ['trial','active','paused','churned'];
-const CUST_STATUS_TH = { trial:'ทดลอง', active:'ใช้งานอยู่', paused:'พัก', churned:'เลิกใช้' };
-const CUST_STATUS_COLOR = { trial:'#22D3EE', active:'#34D399', paused:'#E2B679', churned:'#5b6781' };
+// สถานะลูกค้า = lifecycle งาน (จ่ายมัดจำแล้ว=ลูกค้า) · 'done'=ปิดงาน/ส่งมอบ=เริ่มบิลรายเดือน(MRR)
+const CUST_STATUS = ['dev','overdue','done','paused','churned'];
+const CUST_STATUS_TH = { dev:'กำลังพัฒนาระบบ', overdue:'ค้างชำระ 60%', done:'ปิดงาน (ส่งมอบแล้ว)', paused:'พัก', churned:'เลิกใช้', active:'ใช้งานอยู่', trial:'ทดลอง' };
+const CUST_STATUS_COLOR = { dev:'#F59E0B', overdue:'#EF4444', done:'#34D399', paused:'#E2B679', churned:'#5b6781', active:'#34D399', trial:'#22D3EE' };
+const CUST_MRR_STATUS = 'done';   // สถานะที่เริ่มคิด MRR (ส่งมอบ+บิลรายเดือน)
 const PACKAGES = ['Starter','Business','Enterprise'];
 
 const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','AI Marketing','AI Manager'];
@@ -1446,13 +1444,13 @@ async function loadCustomers(){
 }
 
 function renderCust(){
-  const active = CUSTOMERS.filter(c=>c.status==='active');
+  const active = CUSTOMERS.filter(c=>c.status===CUST_MRR_STATUS);
   const mrr = active.reduce((s,c)=> s + (Number(c.monthly_fee)||0), 0);
   document.getElementById('cTotal').textContent  = CUSTOMERS.length;
   document.getElementById('cActive').textContent = active.length;
   document.getElementById('cMRR').textContent    = '฿' + mrr.toLocaleString('en-US');
-  document.getElementById('cTrial').textContent  = CUSTOMERS.filter(c=>c.status==='trial').length;
-  document.getElementById('cChurn').textContent  = CUSTOMERS.filter(c=>c.status==='churned').length;
+  document.getElementById('cTrial').textContent  = CUSTOMERS.filter(c=>c.status==='dev').length;
+  document.getElementById('cChurn').textContent  = CUSTOMERS.filter(c=>c.status==='overdue').length;
   document.getElementById('cARR').textContent    = '฿' + (mrr*12).toLocaleString('en-US');
   renderAdoption();
 
@@ -1468,16 +1466,17 @@ function renderCust(){
   const area = document.getElementById('custTableArea');
   if (!CUSTOMERS.length){ area.innerHTML = '<div class="empty"><div class="em-ic">👥</div>ยังไม่มีลูกค้า<br><small>กด "+ เพิ่มลูกค้า" หรือแปลงจาก Lead ที่ปิดได้ (WON)</small></div>'; return; }
   if (!rows.length){ area.innerHTML = '<div class="empty"><div class="em-ic">🔍</div>ไม่พบลูกค้าตามที่กรอง</div>'; return; }
-  let h = '<div class="table-wrap"><table><thead><tr><th>ธุรกิจ</th><th>แพ็กเกจ</th><th>ค่ารายเดือน</th><th>สถานะ</th><th>เริ่มใช้</th><th>เครดิต</th><th>ลิงก์</th></tr></thead><tbody>';
+  let h = '<div class="table-wrap"><table><thead><tr><th>ธุรกิจ</th><th>แพ็กเกจ</th><th>ค่ารายเดือน</th><th>สถานะงาน</th><th>📦 ส่งมอบ</th><th>💰 เก็บเงิน</th><th>เครดิต</th><th>ลิงก์</th></tr></thead><tbody>';
   h += rows.map(c=>{
-    const st = c.status||'trial';
+    const st = c.status||'dev';
     const credit = (c.credit_quota||0) ? `${c.credit_used||0}/${c.credit_quota}` : '-';
     return `<tr onclick="openCustomer('${esc(c.id)}')">
       <td class="td-name">${esc(c.name)||'-'}<div style="font-size:11.5px;color:var(--txt-dim);font-weight:400">${esc(c.contact||c.email||'')}</div></td>
       <td>${c.package?`<span class="pill int">${esc(c.package)}</span>`:'<span class="pill">-</span>'}</td>
       <td style="color:var(--gold);font-weight:600">${c.monthly_fee?('฿'+Number(c.monthly_fee).toLocaleString('en-US')):'-'}</td>
-      <td><span class="pill" style="border-color:${CUST_STATUS_COLOR[st]};color:${CUST_STATUS_COLOR[st]}">${CUST_STATUS_TH[st]}</span></td>
-      <td class="td-date">${c.start_date?fmtDate(c.start_date):'-'}</td>
+      <td><span class="pill" style="border-color:${CUST_STATUS_COLOR[st]};color:${CUST_STATUS_COLOR[st]}">${CUST_STATUS_TH[st]||st}</span></td>
+      <td class="td-date">${c.delivered_date?fmtDate(c.delivered_date):'-'}</td>
+      <td class="td-date">${c.billing_date?fmtDate(c.billing_date):'-'}</td>
       <td class="td-date">${credit}</td>
       <td onclick="event.stopPropagation()" style="white-space:nowrap;font-size:16px">${custLinks(c)}</td>
     </tr>`;
@@ -1497,7 +1496,7 @@ function openCustomer(id){
   const c = id ? CUSTOMERS.find(x=>x.id===id) : null;
   const won = LEADS.filter(l=>CLOSED_STATUSES.includes(l.status));   // ดีลที่ปิด/จ่ายมัดจำแล้ว = แปลงเป็นลูกค้าได้
   const pkgOpts = ['',...PACKAGES].map(p=>`<option value="${p}" ${c&&c.package===p?'selected':''}>${p||'— เลือกแพ็กเกจ —'}</option>`).join('');
-  const stOpts  = CUST_STATUS.map(s=>`<option value="${s}" ${(c?c.status===s:s==='trial')?'selected':''}>${CUST_STATUS_TH[s]}</option>`).join('');
+  const stOpts  = CUST_STATUS.map(s=>`<option value="${s}" ${(c?c.status===s:s==='dev')?'selected':''}>${CUST_STATUS_TH[s]}</option>`).join('');
   const convert = (!c && won.length) ? crow('แปลงจาก Lead', `<select class="cf" onchange="prefillFromLead(this.value)"><option value="">— กรอกเอง —</option>${won.map(l=>`<option value="${esc(l.lead_id)}">${esc(l.name||'ไม่ระบุ')} · ${esc(l.contact||l.email||'')}</option>`).join('')}</select>`) : '';
   document.getElementById('custModal').innerHTML = `
     <div class="modal-head">
@@ -1515,7 +1514,9 @@ function openCustomer(id){
       ${crow('แพ็กเกจ', `<select class="cf" id="cf_package">${pkgOpts}</select>`)}
       ${crow('ค่าติดตั้ง (฿)', `<input class="cf" id="cf_install" type="number" min="0" value="${c?(c.install_fee||0):0}">`)}
       ${crow('ค่ารายเดือน (฿)', `<input class="cf" id="cf_monthly" type="number" min="0" value="${c?(c.monthly_fee||0):0}">`)}
-      ${crow('สถานะ', `<select class="cf" id="cf_status">${stOpts}</select>`)}
+      ${crow('🔧 สถานะงาน', `<select class="cf" id="cf_status">${stOpts}</select>`)}
+      ${crow('📦 ส่งมอบงานวันที่', `<input class="cf" id="cf_delivered" type="date" value="${c&&c.delivered_date?c.delivered_date:''}">`)}
+      ${crow('💰 เรียกเก็บรายเดือนวันที่', `<input class="cf" id="cf_billing" type="date" value="${c&&c.billing_date?c.billing_date:''}">`)}
       ${crow('Agent ที่ใช้', PRODUCT_AGENTS.map(a=>`<label class="cf_agbox"><input type="checkbox" class="cf_agent" value="${a}" ${c&&(c.agents||'').split(',').map(s=>s.trim()).includes(a)?'checked':''}> ${a}</label>`).join(''))}
       ${crow('วันเริ่มใช้', `<input class="cf" id="cf_start" type="date" value="${c&&c.start_date?c.start_date:''}">`)}
       ${crow('เข้าใช้ล่าสุด', `<input class="cf" id="cf_lastactive" type="datetime-local" value="${c&&c.last_active?String(c.last_active).slice(0,16):''}">`)}
@@ -1552,8 +1553,10 @@ async function saveCustomer(){
     package: v('cf_package') || null,
     install_fee: Number(v('cf_install'))||0,
     monthly_fee: Number(v('cf_monthly'))||0,
-    status:  v('cf_status') || 'trial',
+    status:  v('cf_status') || 'dev',
     start_date: v('cf_start') || null,
+    delivered_date: v('cf_delivered') || null,
+    billing_date:   v('cf_billing')   || null,
     credit_quota: Number(v('cf_quota'))||0,
     credit_used:  Number(v('cf_used'))||0,
     notes: v('cf_notes').trim() || null,
@@ -1627,8 +1630,8 @@ function buildReport(){
   const leadsNew = LEADS.filter(l=>(l.status||'NEW')==='NEW').length;
   const leads7   = LEADS.filter(l=> new Date(l.created_at).getTime() >= d7).length;
   const won      = LEADS.filter(l=>l.status==='WON').length;
-  const custActive = CUSTOMERS.filter(c=>c.status==='active').length;
-  const mrr = CUSTOMERS.filter(c=>c.status==='active').reduce((s,c)=>s+(Number(c.monthly_fee)||0),0);
+  const custActive = CUSTOMERS.filter(c=>c.status===CUST_MRR_STATUS).length;
+  const mrr = CUSTOMERS.filter(c=>c.status===CUST_MRR_STATUS).reduce((s,c)=>s+(Number(c.monthly_fee)||0),0);
   const low = CREDITS.map(c=>{ const q=Number(c.quota)||0,u=Number(c.used)||0; return { p:c.provider, pct:q?Math.round(Math.max(0,q-u)/q*100):0 }; }).filter(x=>x.pct<50).sort((a,b)=>a.pct-b.pct);
   let credLine;
   if (!CREDITS.length) credLine = '— ยังไม่ได้ใส่ข้อมูลเครดิต —';
