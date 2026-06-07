@@ -1187,25 +1187,36 @@ function computeAC(){
   const SYS_RENT = 1500;   // ค่าเช่าระบบ/เดือน (คงที่)
   let install = 0, monthly = 0; const chosen = [];
   AGENTS.forEach(a => { if (acState[a.id]){ install += a.install; monthly += a.monthly; chosen.push(a); } });
-  monthly += SYS_RENT;
+  const aiCount = chosen.filter(a => a.id !== 'web').length;   // จำนวน AI จริง (ไม่นับเว็บ)
+  if (aiCount > 0) monthly += SYS_RENT;   // คิดค่าเช่าระบบเฉพาะเมื่อมี AI · เว็บอย่างเดียว = ไม่มีรายเดือน
   let html = chosen.map(a => `<div class="cs-line"><span>${a.name}</span><span>+${baht(a.install)}${a.monthly?(' · +'+baht(a.monthly)+'/ด.'):''}</span></div>`).join('');
-  html += `<div class="cs-line"><span>ค่าเช่าระบบ</span><span>+${baht(SYS_RENT)}/ด.</span></div>`;
+  if (aiCount > 0) html += `<div class="cs-line"><span>ค่าเช่าระบบ</span><span>+${baht(SYS_RENT)}/ด.</span></div>`;
+  else html += `<div class="cs-line"><span>โดเมน + โฮสติ้ง (ปีถัดไป)</span><span>${baht(2500)}/ปี</span></div>`;
   document.getElementById('calcLines').innerHTML = html;
   document.getElementById('csInstall').textContent = baht(install);
-  document.getElementById('csMonthly').textContent = baht(monthly) + '/เดือน';
-  acState._install = install; acState._monthly = monthly;
+  document.getElementById('csMonthly').textContent = aiCount > 0 ? (baht(monthly) + '/เดือน') : 'ไม่มีรายเดือน';
+  acState._install = install; acState._monthly = monthly; acState._aiCount = aiCount;
 }
 function requestQuote(){
   const chosen = AGENTS.filter(a => acState[a.id]);
   const names = chosen.map(a => a.name.replace(/^\S+\s/,'')).join(', ');
-  pendingQuote = {
-    items: [
-      { desc:'ค่าพัฒนาระบบ NEO-S (เลือกเอง / à la carte)', subs: chosen.map(a => a.name), qty:1, unit:'ระบบ', price:acState._install },
-      { desc:'ค่าบริการรายเดือน (เดือนแรก · รวมค่าเช่าระบบ)', subs:['ดูแลระบบ + ค่าเช่าระบบ ฿1,500/ด.','พลัง AI เดือนแรกฟรี ให้ลองใช้ก่อน'], qty:1, unit:'เดือน', price:acState._monthly }
-    ],
-    monthlyNote: `เดือนถัดไป: ค่าบริการ ${baht(acState._monthly)}/เดือน + VAT 7%`
-  };
-  const msg = `[ขอใบเสนอราคา] เลือก: ${names} · ค่าติดตั้ง ${baht(acState._install)} + ${baht(acState._monthly)}/เดือน · (พลัง AI เดือนแรกฟรี)`;
+  const aiCount = chosen.filter(a => a.id !== 'web').length;
+  if (aiCount === 0) {
+    // เว็บไซต์อย่างเดียว (ไม่มี AI) — ไม่มีรายเดือน · โดเมน+โฮสต์ปีถัดไป
+    pendingQuote = {
+      items: [{ desc:'จัดทำเว็บไซต์ (เฉพาะเว็บไซต์ · ไม่มี AI)', subs:['เว็บร้าน + แคตตาล็อกสินค้า','ระบบแอดมินจัดการร้าน','รวมโดเมน + โฮสติ้ง ปีแรก'], qty:1, unit:'งาน', price:acState._install }],
+      monthlyNote: 'ค่าโดเมน + โฮสติ้ง ปีถัดไป ฿2,500/ปี · ไม่มีค่ารายเดือน'
+    };
+  } else {
+    pendingQuote = {
+      items: [
+        { desc:'ค่าพัฒนาระบบ NEO-S (เลือกเอง / à la carte)', subs: chosen.map(a => a.name), qty:1, unit:'ระบบ', price:acState._install },
+        { desc:'ค่าบริการรายเดือน (เดือนแรก · รวมค่าเช่าระบบ)', subs:['ดูแลระบบ + ค่าเช่าระบบ ฿1,500/ด.','พลัง AI เดือนแรกฟรี ให้ลองใช้ก่อน'], qty:1, unit:'เดือน', price:acState._monthly }
+      ],
+      monthlyNote: `เดือนถัดไป: ค่าบริการ ${baht(acState._monthly)}/เดือน + VAT 7%`
+    };
+  }
+  const msg = `[ขอใบเสนอราคา] เลือก: ${names} · ค่าติดตั้ง ${baht(acState._install)}${aiCount>0?(' + '+baht(acState._monthly)+'/เดือน'):' · เว็บอย่างเดียว ไม่มีรายเดือน'} · (พลัง AI เดือนแรกฟรี)`;
   openChat();
   setTimeout(() => showLeadForm('', msg), 350);
 }
