@@ -927,22 +927,34 @@ function showLeadForm(prefillPkg, prefillMsg) {
   wrap.className = 'msg bot';
   wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="padding:0;background:none;max-width:100%">
     <div class="lead-card" id="leadForm">
-      <h4>📩 รับใบเสนอราคา / ให้ทีมติดต่อกลับ</h4>
-      <div class="lead-note">กรอกอีเมลเพื่อ<b>รับใบเสนอราคา</b> + ทีม NEO-S ติดต่อกลับพร้อมรายละเอียดค่ะ</div>
-      <input id="leadName" type="text" placeholder="ชื่อ *" autocomplete="name">
-      <input id="leadEmail" type="email" placeholder="อีเมล * (สำหรับรับใบเสนอราคา)" autocomplete="email">
+      <h4>📩 รับใบเสนอราคา + บอกความต้องการ</h4>
+      <div class="lead-note">กรอกคร่าวๆ เพื่อ<b>รับใบเสนอราคา</b> + ทีมเตรียมข้อมูลให้ตรงธุรกิจคุณค่ะ (★ จำเป็น)</div>
+      <input id="leadName" type="text" placeholder="ชื่อ ★" autocomplete="name">
+      <input id="leadEmail" type="email" placeholder="อีเมล ★ (รับใบเสนอราคา)" autocomplete="email">
       <input id="leadContact" type="text" placeholder="เบอร์โทร (ถ้ามี)" autocomplete="tel">
-      <select id="leadInterest">
-        <option value="">แพ็กเกจที่สนใจ (ถ้ามี)</option>
-        <option>STARTER</option>
-        <option>BUSINESS</option>
-        <option>PROFESSIONAL</option>
-        <option>ADVANCED</option>
-        <option>ENTERPRISE</option>
-        <option>เฉพาะเว็บไซต์</option>
-        <option>ยังไม่แน่ใจ</option>
+      <select id="leadBizType">
+        <option value="">ประเภทธุรกิจ</option>
+        <option>ร้านค้าออนไลน์</option>
+        <option>ร้านอาหาร / คาเฟ่</option>
+        <option>แบรนด์สินค้า</option>
+        <option>บริการ / รับงาน</option>
+        <option>อื่นๆ</option>
       </select>
-      <textarea id="leadMsg" rows="2" placeholder="ธุรกิจของคุณ / สิ่งที่อยากให้ AI ช่วย (ถ้ามี)"></textarea>
+      <input id="leadProducts" type="text" placeholder="ขายอะไร · ประมาณกี่รายการ (เช่น เสื้อผ้า ~50 แบบ)">
+      <select id="leadHasWeb">
+        <option value="">มีเว็บ / ระบบเดิมไหม</option>
+        <option>ยังไม่มี เริ่มใหม่</option>
+        <option>มีเว็บแล้ว อยากเพิ่ม AI</option>
+      </select>
+      <div style="font-size:13px;color:var(--txt-dim);margin:4px 0 2px">อยากให้ AI ช่วยอะไร (เลือกได้หลายข้อ):</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px 14px;font-size:13px;margin-bottom:5px">
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="ตอบแชท/ขาย"> ตอบแชท/ขาย</label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="ตรวจสลิป/การเงิน"> ตรวจสลิป/การเงิน</label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="จัดการสต็อก"> จัดการสต็อก</label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="การตลาด"> การตลาด</label>
+      </div>
+      <textarea id="leadMsg" rows="2" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+      <input type="hidden" id="leadInterest">
       <button id="leadBtn" onclick="submitLead()">ส่งข้อมูล</button>
     </div></div>`;
   body.appendChild(wrap);
@@ -972,7 +984,18 @@ async function submitLead() {
   if (!name || !email) { alert('กรอกชื่อและอีเมลด้วยนะคะ 😊'); return; }
   if (!email.includes('@') || !email.includes('.')) { alert('กรอกอีเมลให้ถูกต้องนะคะ (สำหรับส่งใบเสนอราคา) 😊'); return; }
   const interest = document.getElementById('leadInterest').value;
-  const message  = document.getElementById('leadMsg').value.trim();
+  const bizType  = document.getElementById('leadBizType')?.value || '';
+  const products = document.getElementById('leadProducts')?.value.trim() || '';
+  const hasWeb   = document.getElementById('leadHasWeb')?.value || '';
+  const aiNeeds  = Array.from(document.querySelectorAll('.ai-need:checked')).map(c => c.value);
+  const extra    = document.getElementById('leadMsg').value.trim();
+  const reqParts = [];
+  if (bizType)  reqParts.push('ธุรกิจ: ' + bizType);
+  if (products) reqParts.push('ขาย: ' + products);
+  if (hasWeb)   reqParts.push('เว็บเดิม: ' + hasWeb);
+  if (aiNeeds.length) reqParts.push('AI ที่อยากได้: ' + aiNeeds.join(', '));
+  if (extra)    reqParts.push('หมายเหตุ: ' + extra);
+  const message = reqParts.join(' | ');
   const btn = document.getElementById('leadBtn');
   if (btn) { btn.textContent = 'กำลังส่ง…'; btn.disabled = true; }
 
