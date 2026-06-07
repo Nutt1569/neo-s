@@ -814,6 +814,33 @@ function trackVisit(){
   } catch(e){}
 }
 
+// 💬 ประวัติแชทโนวา → Supabase (ตาราง neos_chat_history, INSERT only · anon)
+//    + ความจำบทสนทนา (chatTurns) ส่งให้โนวาตอบต่อเนื่อง (Dify workflow stateless ต้องแนบเอง)
+let neosChatSid = null;
+function chatSid(){
+  if (neosChatSid) return neosChatSid;
+  neosChatSid = 's-' + Math.random().toString(36).slice(2,11) + Date.now().toString(36);
+  return neosChatSid;
+}
+function logChat(role, message){
+  try {
+    if (!message) return;
+    fetch(SUPABASE_URL + '/rest/v1/neos_chat_history', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+SUPABASE_ANON, 'Prefer':'return=minimal' },
+      body: JSON.stringify({ session_id:chatSid(), role, message:String(message).slice(0,4000), page:'index' })
+    }).catch(()=>{});   // ตารางยังไม่มี/ปิด = เงียบ ไม่กระทบเว็บ
+  } catch(e){}
+}
+const chatTurns = [];   // ความจำบทสนทนา (ส่งให้โนวาเพื่อตอบต่อเนื่อง + จำ pre-qualify)
+function composeForNova(latest){
+  const hist = chatTurns.slice(-12);   // เก็บ ~12 turn ล่าสุด พอให้จำบริบท ไม่เปลือง token
+  if (!hist.length) return latest;
+  const lines = hist.map(t => (t.role==='user'?'ลูกค้า':'โนวา') + ': ' + t.text).join('\n');
+  return 'นี่คือบทสนทนาก่อนหน้าระหว่างลูกค้ากับคุณ (โนวา) — ใช้เพื่อตอบต่อเนื่องและจำสิ่งที่ลูกค้าบอกไว้:\n'
+    + lines + '\n\nข้อความล่าสุดจากลูกค้า: ' + latest;
+}
+
 // ===== คำตอบสำเร็จรูป (offline fallback) =====
 const CANNED = [
   { k: ['ทำอะไร','คือ','อะไรได้','feature','ฟีเจอร์'], a: 'NEO-S เป็นระบบ AI ที่ช่วยธุรกิจคุณค่ะ ✨\n\n• ตอบแชทลูกค้า 24 ชม.\n• รับออเดอร์ + ส่ง QR อัตโนมัติ\n• ตรวจสลิปการโอนเงิน\n• บันทึกข้อมูลลงระบบกลาง\n\nมี AI 6 ตัวช่วยกันค่ะ ตอนนี้ AI Sales / Finance / Manager / Inventory / Marketing พร้อมใช้แล้ว เหลือ Logistics เร็วๆ นี้ค่ะ 😊' },
@@ -866,24 +893,36 @@ function localAnswer(text) {
 
 async function reply(text) {
   typing(true);
+  logChat('user', text);                  // เก็บประวัติแชท (ฝั่งลูกค้า)
+  const novaMsg = composeForNova(text);   // แนบบทสนทนาก่อนหน้า → โนวาจำได้
+  chatTurns.push({ role:'user', text });
   // ถ้าตั้ง Worker URL ของ Dify ไว้ → เรียก AI จริง
   if (NOVA_WORKER_URL) {
     try {
       const r = await fetch(NOVA_WORKER_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputs: { customer_message: text }, response_mode: 'blocking', user: 'neos-web-visitor' })
+        body: JSON.stringify({ inputs: { customer_message: novaMsg }, response_mode: 'blocking', user: chatSid() })
       });
       const d = await r.json();
       const out = d?.data?.outputs || d?.outputs || {};
-      const ans = out.output || out.text || '';
+      const ans = (out.output || out.text || '') || localAnswer(text);
       typing(false);
-      botSay(ans || localAnswer(text));
+      botSay(ans);
+      chatTurns.push({ role:'bot', text: ans });
+      logChat('bot', ans);
       maybeOfferLead(text);
       return;
     } catch(e) { /* ตก fallback */ }
   }
   // offline fallback
-  setTimeout(() => { typing(false); botSay(localAnswer(text)); maybeOfferLead(text); }, 700);
+  setTimeout(() => {
+    typing(false);
+    const ans = localAnswer(text);
+    botSay(ans);
+    chatTurns.push({ role:'bot', text: ans });
+    logChat('bot', ans);
+    maybeOfferLead(text);
+  }, 700);
 }
 
 function sendMsg() {

@@ -273,6 +273,7 @@
       <button class="tab" id="tab-customers" onclick="showTab('customers')">👥 ลูกค้า</button>
       <button class="tab" id="tab-credits" onclick="showTab('credits')">🔋 เครดิต LLM</button>
       <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
+      <button class="tab" id="tab-chat" onclick="showTab('chat')">💬 ประวัติแชท</button>
     </div>
 
     <!-- ===== OVERVIEW PAGE ===== -->
@@ -495,6 +496,43 @@
         <div class="m-actions" style="margin-top:14px"><button class="btn-primary" style="flex:0 0 auto" onclick="saveReportCfg()">💾 บันทึกการตั้งค่า</button></div>
       </div>
     </div>
+
+    <!-- ===== CHAT HISTORY PAGE ===== -->
+    <style>
+      .chat-ses{border:1px solid rgba(30,42,68,.6);border-radius:12px;margin-bottom:10px;overflow:hidden;background:rgba(13,20,38,.4)}
+      .chat-ses-head{display:flex;align-items:center;gap:12px;padding:13px 15px;cursor:pointer}
+      .chat-ses-head:hover{background:rgba(30,42,68,.35)}
+      .cs-ic{font-size:18px}
+      .cs-main{flex:1;min-width:0}
+      .cs-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+      .cs-q{font-weight:600;font-size:14px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .cs-time{font-size:11.5px;color:var(--txt-dim);white-space:nowrap;flex:0 0 auto}
+      .cs-meta{font-size:11.5px;color:var(--txt-dim);margin-top:3px}
+      .cs-sid{opacity:.55;font-family:monospace}
+      .cs-arrow{color:var(--txt-dim);font-size:13px}
+      .chat-ses-body{padding:10px 15px 14px;border-top:1px solid rgba(30,42,68,.5);background:rgba(7,12,26,.5)}
+      .cmsg{display:flex;gap:9px;margin:9px 0;align-items:flex-start}
+      .cmsg.user{flex-direction:row-reverse}
+      .cm-av{font-size:15px;flex:0 0 auto}
+      .cm-bub{max-width:75%;padding:9px 13px;border-radius:13px;font-size:13.5px;line-height:1.55}
+      .cmsg.bot .cm-bub{background:rgba(30,42,68,.55);color:var(--txt);border-top-left-radius:4px}
+      .cmsg.user .cm-bub{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border-top-right-radius:4px}
+    </style>
+    <div id="page-chat" style="display:none">
+      <div class="page-head">
+        <div><h1>💬 ประวัติแชทโนวา</h1><div class="sub">บทสนทนาลูกค้ากับโนวาบนเว็บ — แยกตามห้องแชท (session) · ดูว่าลูกค้าถามอะไร สนใจอะไร</div></div>
+        <button class="nav-btn refresh" onclick="loadChats(true)">🔄 รีเฟรช</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="ic">💬</div><div class="num grad-txt" id="chSessions">0</div><div class="lbl">ห้องแชท (session)</div></div>
+        <div class="kpi"><div class="ic">✉️</div><div class="num" style="color:var(--cyan)" id="chMsgs">0</div><div class="lbl">ข้อความทั้งหมด</div></div>
+        <div class="kpi"><div class="ic">🧑</div><div class="num" style="color:var(--blue)" id="chUserMsgs">0</div><div class="lbl">ข้อความจากลูกค้า</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">🗂️ ห้องแชทล่าสุด <span class="spacer"></span><span style="font-size:11.5px;color:var(--txt-dim);font-weight:400">คลิกห้องเพื่อกางบทสนทนา</span></div>
+        <div id="chatSessions"><div class="loading">กำลังโหลด…</div></div>
+      </div>
+    </div><!-- /page-chat -->
   </div>
 </div>
 
@@ -1143,7 +1181,7 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['overview','leads','customers','credits','report'].forEach(p=>{
+  ['overview','leads','customers','credits','report','chat'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
@@ -1151,6 +1189,68 @@ function showTab(which){
   if (which==='customers') loadCustomers();
   if (which==='credits')   loadCredits();
   if (which==='report')    openReport();
+  if (which==='chat')      loadChats();
+}
+
+// ===== CHAT HISTORY (ประวัติแชทโนวา · ตาราง neos_chat_history) =====
+let CHAT_ROWS = null;
+async function loadChats(manual){
+  const wrap = document.getElementById('chatSessions');
+  if (manual || !CHAT_ROWS){
+    wrap.innerHTML = '<div class="loading">กำลังโหลด…</div>';
+    try {
+      const { data, error } = await sb.from('neos_chat_history')
+        .select('*').order('created_at', { ascending:true }).limit(2000);
+      if (error) throw error;
+      CHAT_ROWS = data || [];
+    } catch(e){
+      wrap.innerHTML = '<div class="empty"><div class="em-ic">⚠️</div>โหลดไม่ได้ / ตารางยังไม่เปิด<br><small>รัน SQL <code>neos_chat_history</code> ก่อนนะคะ · '+esc(e.message||String(e))+'</small></div>';
+      return;
+    }
+  }
+  renderChats();
+}
+function chatTime(ts){ try{ return new Date(ts).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ts||''; } }
+function renderChats(){
+  const rows = CHAT_ROWS || [];
+  const map = new Map();
+  rows.forEach(r=>{ if(!map.has(r.session_id)) map.set(r.session_id, []); map.get(r.session_id).push(r); });
+  const sessions = [...map.entries()].map(([sid,msgs])=>({ sid, msgs }));
+  sessions.sort((a,b)=> new Date(b.msgs[b.msgs.length-1].created_at) - new Date(a.msgs[a.msgs.length-1].created_at));
+  document.getElementById('chSessions').textContent = sessions.length;
+  document.getElementById('chMsgs').textContent = rows.length;
+  document.getElementById('chUserMsgs').textContent = rows.filter(r=>r.role==='user').length;
+  const wrap = document.getElementById('chatSessions');
+  if(!sessions.length){ wrap.innerHTML = '<div class="empty"><div class="em-ic">💬</div>ยังไม่มีประวัติแชท<br><small>เมื่อมีคนคุยกับโนวาบนเว็บ จะขึ้นที่นี่</small></div>'; return; }
+  window.__CHAT_SES = sessions;
+  wrap.innerHTML = sessions.map((s,i)=>{
+    const first = s.msgs.find(m=>m.role==='user');
+    const preview = (first ? first.message : (s.msgs[0]?.message||'')) || '(ไม่มีข้อความ)';
+    const last = s.msgs[s.msgs.length-1];
+    const userN = s.msgs.filter(m=>m.role==='user').length;
+    return `<div class="chat-ses">
+      <div class="chat-ses-head" onclick="toggleChatSes(${i})">
+        <div class="cs-ic">💬</div>
+        <div class="cs-main">
+          <div class="cs-top"><span class="cs-q">${esc(preview.slice(0,90))}</span><span class="cs-time">${chatTime(last.created_at)}</span></div>
+          <div class="cs-meta">${s.msgs.length} ข้อความ · ลูกค้าพิมพ์ ${userN} · <span class="cs-sid">${esc(s.sid)}</span></div>
+        </div>
+        <div class="cs-arrow" id="csArrow${i}">▾</div>
+      </div>
+      <div class="chat-ses-body" id="csBody${i}" style="display:none"></div>
+    </div>`;
+  }).join('');
+}
+function toggleChatSes(i){
+  const b = document.getElementById('csBody'+i), a = document.getElementById('csArrow'+i);
+  const open = b.style.display==='none';
+  if (open && !b.dataset.filled){
+    const s = (window.__CHAT_SES||[])[i];
+    b.innerHTML = (s?s.msgs:[]).map(m=>`<div class="cmsg ${m.role==='user'?'user':'bot'}"><div class="cm-av">${m.role==='user'?'🧑':'✨'}</div><div class="cm-bub">${esc(m.message||'').replace(/\n/g,'<br>')}</div></div>`).join('');
+    b.dataset.filled = '1';
+  }
+  b.style.display = open?'block':'none';
+  if(a) a.textContent = open?'▴':'▾';
 }
 
 // ===== AGENT ADOPTION (ตัวไหนลูกค้าใช้เยอะ) =====
