@@ -926,15 +926,19 @@ function showLeadForm(prefillPkg, prefillMsg) {
   wrap.className = 'msg bot';
   wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="padding:0;background:none;max-width:100%">
     <div class="lead-card" id="leadForm">
-      <h4>📩 ฝากข้อมูลให้ทีมติดต่อกลับ</h4>
-      <div class="lead-note">ทีม NEO-S จะติดต่อกลับพร้อมรายละเอียด + ใบเสนอราคาให้ค่ะ</div>
+      <h4>📩 รับใบเสนอราคา / ให้ทีมติดต่อกลับ</h4>
+      <div class="lead-note">กรอกอีเมลเพื่อ<b>รับใบเสนอราคา</b> + ทีม NEO-S ติดต่อกลับพร้อมรายละเอียดค่ะ</div>
       <input id="leadName" type="text" placeholder="ชื่อ *" autocomplete="name">
-      <input id="leadContact" type="text" placeholder="อีเมล หรือ เบอร์โทร *" autocomplete="email">
+      <input id="leadEmail" type="email" placeholder="อีเมล * (สำหรับรับใบเสนอราคา)" autocomplete="email">
+      <input id="leadContact" type="text" placeholder="เบอร์โทร (ถ้ามี)" autocomplete="tel">
       <select id="leadInterest">
         <option value="">แพ็กเกจที่สนใจ (ถ้ามี)</option>
-        <option>Starter</option>
-        <option>Business</option>
-        <option>Enterprise</option>
+        <option>STARTER</option>
+        <option>BUSINESS</option>
+        <option>PROFESSIONAL</option>
+        <option>ADVANCED</option>
+        <option>ENTERPRISE</option>
+        <option>เฉพาะเว็บไซต์</option>
         <option>ยังไม่แน่ใจ</option>
       </select>
       <textarea id="leadMsg" rows="2" placeholder="ธุรกิจของคุณ / สิ่งที่อยากให้ AI ช่วย (ถ้ามี)"></textarea>
@@ -961,20 +965,22 @@ async function saveLead(lead) {
 }
 
 async function submitLead() {
-  const name    = document.getElementById('leadName').value.trim();
-  const contact = document.getElementById('leadContact').value.trim();
-  if (!name || !contact) { alert('กรอกชื่อและช่องทางติดต่อด้วยนะคะ 😊'); return; }
+  const name  = document.getElementById('leadName').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  const phone = document.getElementById('leadContact').value.trim();
+  if (!name || !email) { alert('กรอกชื่อและอีเมลด้วยนะคะ 😊'); return; }
+  if (!email.includes('@') || !email.includes('.')) { alert('กรอกอีเมลให้ถูกต้องนะคะ (สำหรับส่งใบเสนอราคา) 😊'); return; }
   const interest = document.getElementById('leadInterest').value;
   const message  = document.getElementById('leadMsg').value.trim();
-  const isEmail  = contact.includes('@');
   const btn = document.getElementById('leadBtn');
   if (btn) { btn.textContent = 'กำลังส่ง…'; btn.disabled = true; }
 
   const lead = {
     lead_id:  'LEAD-' + Date.now(),
-    name, contact,
-    email:    isEmail ? contact : null,
-    phone:    isEmail ? null : contact,
+    name,
+    contact:  email,
+    email,
+    phone:    phone || null,
     interest: interest || null,
     message:  message || null,
     source:   'website-nova'
