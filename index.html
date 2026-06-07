@@ -972,14 +972,14 @@ function showLeadForm(prefillPkg, prefillMsg) {
       <input id="leadEmail" type="email" placeholder="อีเมล ★ (รับใบเสนอราคา)" autocomplete="email">
       <input id="leadContact" type="text" placeholder="เบอร์โทร (ถ้ามี)" autocomplete="tel">
       <select id="leadBizType">
-        <option value="">ประเภทธุรกิจ</option>
+        <option value="">ประเภทธุรกิจ ★</option>
         <option>ร้านค้าออนไลน์</option>
         <option>ร้านอาหาร / คาเฟ่</option>
         <option>แบรนด์สินค้า</option>
         <option>บริการ / รับงาน</option>
         <option>อื่นๆ</option>
       </select>
-      <input id="leadProducts" type="text" placeholder="ขายอะไร · ประมาณกี่รายการ (เช่น เสื้อผ้า ~50 แบบ)">
+      <input id="leadProducts" type="text" placeholder="ขายอะไร · ประมาณกี่รายการ ★ (เช่น เสื้อผ้า ~50 แบบ)">
       <select id="leadHasWeb">
         <option value="">มีเว็บ / ระบบเดิมไหม</option>
         <option>ยังไม่มี เริ่มใหม่</option>
@@ -1028,6 +1028,8 @@ async function submitLead() {
   const hasWeb   = document.getElementById('leadHasWeb')?.value || '';
   const aiNeeds  = Array.from(document.querySelectorAll('.ai-need:checked')).map(c => c.value);
   const extra    = document.getElementById('leadMsg').value.trim();
+  if (!bizType)  { alert('เลือกประเภทธุรกิจด้วยนะคะ จะได้เสนอให้ตรง 😊'); return; }
+  if (!products) { alert('บอกหน่อยนะคะว่าขายอะไร · ประมาณกี่รายการ 😊'); return; }
   const reqParts = [];
   if (bizType)  reqParts.push('ธุรกิจ: ' + bizType);
   if (products) reqParts.push('ขาย: ' + products);
@@ -1053,7 +1055,11 @@ async function submitLead() {
     phone:    phone || null,
     interest: interest || null,
     message:  message || null,
-    source:   'website-nova'
+    source:   'website-nova',
+    // เก็บใบเสนอราคาที่ลูกค้าได้ → admin กดเปิดดู/พิมพ์ PDF ภายหลังได้ (ใบเดียวกัน)
+    quote_data: (pendingQuote && pendingQuote.items)
+      ? { items: pendingQuote.items, monthlyNote: pendingQuote.monthlyNote || null, name, email, phone: phone || null }
+      : null
   };
 
   let ok = false;

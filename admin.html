@@ -141,6 +141,8 @@
   .st-CONTACTED{ border-color:var(--blue); color:var(--blue); }
   .st-QUOTED{ border-color:var(--violet); color:var(--violet); }
   .st-WON{ border-color:var(--green); color:var(--green); }
+  .st-IN_DEV{ border-color:#F59E0B; color:#F59E0B; }
+  .st-DELIVERED{ border-color:#0EA5E9; color:#0EA5E9; }
   .st-LOST{ border-color:var(--txt-dim); color:var(--txt-dim); opacity:.7; }
 
   /* pagination */
@@ -403,7 +405,9 @@
           <option value="NEW">ใหม่</option>
           <option value="CONTACTED">ติดต่อแล้ว</option>
           <option value="QUOTED">เสนอราคาแล้ว</option>
-          <option value="WON">ปิดได้</option>
+          <option value="WON">ปิดได้ (ตกลง)</option>
+          <option value="IN_DEV">กำลังพัฒนาระบบ</option>
+          <option value="DELIVERED">ส่งมอบแล้ว</option>
           <option value="LOST">ไม่สำเร็จ</option>
         </select>
         <select id="fInterest" onchange="onFilter()">
@@ -555,6 +559,7 @@
 const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
 const ADMIN_EMAILS  = ['kritsada.nutt1981@gmail.com', 'kritsada.msit04@gmail.com'];
+const QUOTE_WORKER_URL = 'https://neos-sales-proxy.kritsada-nutt1981.workers.dev';  // re-gen ใบเสนอราคาจาก quote_data
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: {
@@ -566,9 +571,9 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
     lock: (name, acquireTimeout, fn) => fn()
   }
 });
-const STATUSES = ['NEW','CONTACTED','QUOTED','WON','LOST'];
-const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้', LOST:'ไม่สำเร็จ' };
-const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', LOST:'#5b6781' };
+const STATUSES = ['NEW','CONTACTED','QUOTED','WON','IN_DEV','DELIVERED','LOST'];
+const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้ (ตกลง)', IN_DEV:'กำลังพัฒนาระบบ', DELIVERED:'ส่งมอบแล้ว', LOST:'ไม่สำเร็จ' };
+const STATUS_COLOR = { NEW:'#22D3EE', CONTACTED:'#3B82F6', QUOTED:'#8B5CF6', WON:'#34D399', IN_DEV:'#F59E0B', DELIVERED:'#0EA5E9', LOST:'#5b6781' };
 const KNOWN_LABELS = { name:'ชื่อ', contact:'ติดต่อ', email:'อีเมล', phone:'เบอร์โทร', interest:'สนใจแพ็กเกจ', source:'ที่มา', message:'ข้อความ', status:'สถานะ', created_at:'เข้ามาเมื่อ', lead_id:'Lead ID' };
 
 let LEADS = [], VISITS = [];
@@ -1087,6 +1092,22 @@ function logStatusEvent(leadId, from, to){
 }
 
 // ===== LEAD MODAL =====
+// เปิดใบเสนอราคาของ Lead (re-generate จาก quote_data ผ่าน Worker → ใบเดียวกับลูกค้า มีลายเซ็น/ตรา · พิมพ์ PDF ได้)
+async function openQuote(id){
+  const l = LEADS.find(x=>x.lead_id===id);
+  if(!l || !l.quote_data){ toast('Lead นี้ไม่มีใบเสนอราคา'); return; }
+  let qd = l.quote_data;
+  if (typeof qd === 'string'){ try { qd = JSON.parse(qd); } catch(e){ toast('ข้อมูลใบเสนอราคาเสีย'); return; } }
+  if (!qd || !Array.isArray(qd.items) || !qd.items.length){ toast('ใบเสนอราคาไม่มีรายการ'); return; }
+  const win = window.open('', '_blank');   // เปิดใน user-gesture กัน popup block
+  if (win) win.document.write('<!DOCTYPE html><meta charset="utf-8"><body style="font-family:sans-serif;color:#555"><p style="padding:50px;text-align:center">กำลังเปิดใบเสนอราคา… 📄</p></body>');
+  try {
+    const r = await fetch(QUOTE_WORKER_URL + '/quote', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(qd) });
+    if (r.ok){ const html = await r.text(); if(win){ win.document.open(); win.document.write(html); win.document.close(); } }
+    else { if(win) win.close(); toast('เปิดใบเสนอราคาไม่ได้ ('+r.status+')'); }
+  } catch(e){ if(win) win.close(); toast('เปิดใบเสนอราคาไม่ได้: '+(e.message||e)); }
+}
+
 function openLead(id){
   const l = LEADS.find(x=>x.lead_id===id); if(!l) return;
   const st = l.status || 'NEW';
@@ -1107,7 +1128,7 @@ function openLead(id){
   fr('เข้ามาเมื่อ', fmtDateTime(l.created_at));
 
   // ข้อมูลเพิ่มเติม (ฟิลด์อื่นๆ เช่น สเปก/ราคา จาก Price Calculator)
-  const extra = Object.keys(l).filter(k=>!KNOWN_LABELS[k] && l[k]!=null && String(l[k]).trim()!=='' && k!=='id' && k!=='updated_at');
+  const extra = Object.keys(l).filter(k=>!KNOWN_LABELS[k] && l[k]!=null && String(l[k]).trim()!=='' && k!=='id' && k!=='updated_at' && k!=='quote_data');
   extra.forEach(k=> fr(esc(k), esc(String(l[k]))));
 
   const msg = l.message ? `<div class="frow" style="display:block"><div class="fl" style="margin-bottom:8px">ข้อความ</div><div class="msgbox">${esc(l.message)}</div></div>` : '';
@@ -1134,7 +1155,8 @@ function openLead(id){
         </div>
       </div>
       <div class="m-actions">
-        ${email?`<a class="btn-primary" href="mailto:${esc(email)}?subject=${encodeURIComponent('NEO-S — ตอบกลับเรื่องที่คุณสนใจ')}">✉️ ส่งอีเมล</a>`:''}
+        ${l.quote_data?`<button class="btn-primary" style="flex:0 0 auto" onclick="openQuote('${esc(l.lead_id)}')">📄 ดูใบเสนอราคา</button>`:''}
+        ${email?`<a class="btn-ghost" href="mailto:${esc(email)}?subject=${encodeURIComponent('NEO-S — ตอบกลับเรื่องที่คุณสนใจ')}">✉️ ส่งอีเมล</a>`:''}
         ${phone?`<a class="btn-ghost" href="tel:${esc(phone)}">📞 โทร</a>`:''}
         <button class="btn-ghost" onclick="copyContact('${esc(contact)}')">📋 คัดลอกติดต่อ</button>
       </div>
