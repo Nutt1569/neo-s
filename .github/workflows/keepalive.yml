@@ -1,0 +1,36 @@
+# ===================================================================
+# Supabase Keep-Alive  —  กัน Supabase free project "พักตัว" (pause)
+# ===================================================================
+# ปัญหา: project แผนฟรีถ้าไม่มี "query เข้า DB" ภายใน 7 วัน จะถูก pause (ต้องกดปลุก ~30 วิ)
+# วิธีแก้: workflow นี้ยิง query อ่านเบาๆ เข้า Supabase ทุกวัน -> DB ขยับ -> ตัวจับเวลา 7 วันรีเซ็ต -> ไม่พัก
+#
+# 📍 ตำแหน่งไฟล์ใน repo (สำคัญ): .github/workflows/keepalive.yml   (วางผิดที่ = ไม่ทำงาน)
+#
+# 📝 หมายเหตุก่อนแก้:
+#  - anon key ด้านล่าง = PUBLIC อยู่แล้ว (ฝังใน index.html ของเว็บ) ไม่ใช่ความลับ -> ใส่ตรงๆ ได้ ไม่ต้องตั้ง secret
+#  - ทำไมอ่านตาราง products: ตาราง neos_* เปิดให้ anon แค่สิทธิ์ INSERT (SELECT คืน 401)
+#    ส่วน products (storefront) anon อ่านได้ HTTP 200 + เป็น query เข้า DB จริง = รีเซ็ตตัวจับเวลาได้ชัวร์
+#    (ทดสอบยิงจริง 9 มิ.ย. 2026 -> 200 OK)
+#  - products เป็นตารางของ LUMINA (ใช้ Supabase project เดียวกัน) ถ้า LUMINA เปลี่ยน/ลบชื่อตารางนี้
+#    keep-alive จะ fail (เห็นเป็นสีแดงในแท็บ Actions) -> ค่อยสลับไปอ่าน neos_health แทน
+#  - ถ้าอยากให้ self-contained (ไม่ผูก LUMINA): สร้างตาราง neos_health (1 แถว + เปิด SELECT ให้ anon)
+#    แล้วเปลี่ยน URL บรรทัดล่างเป็น  .../rest/v1/neos_health?select=ok&limit=1
+# ===================================================================
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '23 2 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST (read-only, keeps the shared DB active)
+        run: |
+          KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o"
+          URL="https://hdpjwegiorofmferhlhq.supabase.co/rest/v1/products?select=product_id&limit=1"
+          CODE=$(curl -sS -o /dev/null -w "%{http_code}" "$URL" -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          echo "Supabase keep-alive ping -> HTTP $CODE (200 = DB ขยับแล้ว, project ไม่พัก)"
+          if [ "$CODE" != "200" ]; then echo "::error::keep-alive FAILED (HTTP $CODE)"; exit 1; fi
