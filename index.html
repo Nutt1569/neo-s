@@ -363,12 +363,12 @@
 <!-- ===== NAV ===== -->
 <nav>
   <div class="nav-in">
-    <div class="logo">
+    <a class="logo" href="index.html">
       <div class="logo-mark"><svg viewBox="0 0 200 200" width="40" height="40"><polyline points="58,150 58,50 142,150 142,50" fill="none" stroke="url(#ng)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div>
         <div class="logo-txt">NEO-S</div>
       </div>
-    </div>
+    </a>
     <div class="nav-links">
       <a href="#agents">AI Agents</a>
       <a href="#how">วิธีทำงาน</a>
@@ -722,7 +722,7 @@
       <p>ปรึกษาฟรี ไม่มีค่าใช้จ่าย — ทีม NEO-S พร้อมออกแบบระบบให้ธุรกิจคุณ</p>
       <button class="btn-primary" onclick="openChat()">คุยกับโนวา AI เลย →</button>
       <div class="cta-contacts">
-        <a href="mailto:kritsada.nutt1981@gmail.com">✉️ kritsada.nutt1981@gmail.com</a>
+        <a href="mailto:info@neos-css.com">✉️ info@neos-css.com</a>
         <a href="https://nutt1569.github.io/lumina" target="_blank">🌐 ดูระบบตัวอย่าง</a>
       </div>
     </div>
@@ -850,7 +850,7 @@ const CANNED = [
   { k: ['line','ไลน์','facebook','เฟส','tiktok','ติ๊กต็อก','ช่องทาง'], a: 'ตอนนี้พร้อมใช้ เว็บ + LINE OA ค่ะ 📱\n\nลูกค้าทักผ่านเว็บหรือ LINE → AI ตอบ + รับออเดอร์ + ตรวจสลิป อัตโนมัติ ข้อมูลรวมอยู่ที่เดียว\n\nส่วน Facebook / TikTok กำลังพัฒนา เร็วๆ นี้ค่ะ 🔜 เพิ่มให้ทีหลังได้เลยนะคะ' },
   { k: ['พลัง','เครดิต','credit','neo credit','โทเคน','token','คิดเงินยังไง','คิดเงินไง'], a: 'พลัง AI ⚡ เหมือนแบตมือถือของ AI เลยค่ะ 🔋\n\nทุกครั้งที่ AI ตอบลูกค้า 1 ครั้ง = ใช้พลังนิดเดียว · ใกล้หมดก็แค่เติม เหมือนเติมเงินมือถือ ไม่ซับซ้อนเลยค่ะ\n\n✨ เดือนแรกแถมพลังให้ลองฟรี + ระบบเตือนก่อนหมดทุกครั้ง ไม่มีสะดุดค่ะ 😊' },
 ];
-const DEFAULT_A = 'ขอบคุณที่สนใจ NEO-S ค่ะ 😊\n\nโนวาช่วยตอบเรื่องระบบ AI ได้เลยนะคะ — ลองถามเรื่องฟีเจอร์ ราคา หรือขอดูตัวอย่างระบบได้ค่ะ\n\nหรือถ้าอยากคุยกับทีมโดยตรง ทักได้ที่ kritsada.nutt1981@gmail.com ค่ะ';
+const DEFAULT_A = 'ขอบคุณที่สนใจ NEO-S ค่ะ 😊\n\nโนวาช่วยตอบเรื่องระบบ AI ได้เลยนะคะ — ลองถามเรื่องฟีเจอร์ ราคา หรือขอดูตัวอย่างระบบได้ค่ะ\n\nหรือถ้าอยากคุยกับทีมโดยตรง ทักได้ที่ info@neos-css.com ค่ะ';
 
 let chatStarted = false;
 let userMsgCount = 0, leadShown = false, leadSubmitted = false;
@@ -1133,7 +1133,7 @@ async function submitLead() {
   } else {
     if (quoteWin) quoteWin.close();
     if (btn) { btn.textContent = 'ลองอีกครั้ง'; btn.disabled = false; }
-    botSay('ขออภัยค่ะ ส่งข้อมูลไม่สำเร็จ 🙏 รบกวนทักมาที่ kritsada.nutt1981@gmail.com โดยตรงได้เลยนะคะ');
+    botSay('ขออภัยค่ะ ส่งข้อมูลไม่สำเร็จ 🙏 รบกวนทักมาที่ info@neos-css.com โดยตรงได้เลยนะคะ');
   }
 }
 
