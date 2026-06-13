@@ -551,6 +551,7 @@
       <div class="sub" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
         <span>🟢 70–100%</span><span>🟡 30–69%</span><span>🔴 1–29%</span><span>⚪ 0%</span>
       </div>
+      <div id="aipRate" class="sub" style="margin:0 0 12px;font-size:13px"></div>
       <div id="aipOut"><div class="loading">ใส่ ADMIN_KEY แล้วกด "โหลด"</div></div>
     </div>
   </div>
@@ -1255,7 +1256,13 @@ const AIP_WORKER='https://neos-control-plane.kritsada-nutt1981.workers.dev';
 const AIP_AGENTS=['sale','manager','marketing','inventory','finance','logistic','graphic','video'];
 const AIP_LABEL={sale:'Sale',manager:'Manager',marketing:'Marketing',inventory:'Inventory',finance:'Finance',logistic:'Logistic',graphic:'Graphic',video:'Video'};
 function aipColor(v){ if(v<=0)return'#888780'; if(v<=29)return'#E24B4A'; if(v<=69)return'#EF9F27'; return'#639922'; }
-let AIP_LOADED=false;
+let AIP_LOADED=false, AIP_FX=null;
+function aipEffRate(){ return AIP_FX ? Number(AIP_FX.usd_thb)*(1+Number(AIP_FX.fee_pct)/100) : 0; }
+function renderRate(){
+  const el=document.getElementById('aipRate'); if(!el) return;
+  if(!AIP_FX){ el.textContent=''; return; }
+  el.innerHTML='💱 เรตวันนี้ <b>'+Number(AIP_FX.usd_thb).toFixed(2)+'฿/$</b> + ค่าแปลง '+Number(AIP_FX.fee_pct)+'% = ลูกค้าจ่าย <b style="color:#4ea1ff">'+aipEffRate().toFixed(2)+'฿/$</b>'+(AIP_FX.fetched_at?' · อัปเดตเรต '+new Date(AIP_FX.fetched_at).toLocaleString('th-TH'):'');
+}
 async function loadAIPower(manual){
   const keyInput=document.getElementById('aipKey');
   const saved=localStorage.getItem('neos_admin_key');
@@ -1270,7 +1277,7 @@ async function loadAIPower(manual){
     const r=await fetch(AIP_WORKER+'/admin/overview',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({admin_key:key})});
     const d=await r.json();
     if(!r.ok||!d.ok){ out.innerHTML='<div class="empty"><div class="em-ic">🔒</div>'+esc((d&&d.error)||String(r.status))+'<br><small>เช็ค ADMIN_KEY อีกที</small></div>'; st.textContent=''; AIP_LOADED=false; return; }
-    AIP_LOADED=true; renderAIPower(d.rows||[]); st.textContent='อัปเดต '+new Date().toLocaleString('th-TH');
+    AIP_LOADED=true; AIP_FX=d.fx||null; renderRate(); renderAIPower(d.rows||[]); st.textContent='อัปเดต '+new Date().toLocaleString('th-TH');
   }catch(e){ out.innerHTML='<div class="empty"><div class="em-ic">⚠️</div>โหลดไม่ได้<br><small>'+esc(String(e))+'</small></div>'; st.textContent=''; }
 }
 function renderAIPower(rows){
@@ -1291,7 +1298,7 @@ function renderAIPower(rows){
       h+='<td style="text-align:center"><div style="display:inline-flex;flex-direction:column;align-items:center;gap:3px">'
         +'<div style="width:16px;height:42px;background:rgba(150,150,150,.25);border-radius:4px;display:flex;flex-direction:column-reverse;overflow:hidden"><div style="width:100%;height:'+Math.max(0,Math.min(100,pct))+'%;background:'+c+'"></div></div>'
         +'<span style="font-size:11px;font-weight:600;color:'+c+'">'+pct+'%</span>'
-        +'<span style="font-size:10px;color:#999">$'+remain.toFixed(2)+'</span></div></td>';
+        +'<span style="font-size:10px;color:#999">$'+remain.toFixed(2)+'</span>'+(AIP_FX?'<span style="font-size:10px;color:#4ea1ff">฿'+(remain*aipEffRate()).toFixed(0)+'</span>':'')+'</div></td>';
     }
     h+='</tr>';
   }
