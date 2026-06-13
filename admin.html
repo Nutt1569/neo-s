@@ -277,6 +277,7 @@
       <button class="tab" id="tab-credits" onclick="showTab('credits')">🔋 เครดิต LLM</button>
       <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
       <button class="tab" id="tab-chat" onclick="showTab('chat')">💬 ประวัติแชท</button>
+      <button class="tab" id="tab-aipower" onclick="showTab('aipower')">🔋 พลัง AI ลูกค้า</button>
     </div>
 
     <!-- ===== OVERVIEW PAGE ===== -->
@@ -536,6 +537,22 @@
         <div id="chatSessions"><div class="loading">กำลังโหลด…</div></div>
       </div>
     </div><!-- /page-chat -->
+
+    <!-- ===== พลัง AI ลูกค้า (NEOS Control Plane) ===== -->
+    <div id="page-aipower" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div><h1>🔋 พลัง AI ลูกค้า</h1><div class="sub">พลัง AI ที่ลูกค้าแต่ละเจ้าใช้ · ดึงสดจาก Control Plane (แท่งสี = สถานะคงเหลือ)</div></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0">
+        <input id="aipKey" type="password" placeholder="ADMIN_KEY" style="padding:9px 12px;border:1px solid #ccc;border-radius:8px;min-width:220px">
+        <button onclick="loadAIPower(true)" style="padding:9px 18px;border:0;border-radius:8px;background:#2a64c7;color:#fff;cursor:pointer">โหลด</button>
+        <span id="aipStatus" class="sub"></span>
+      </div>
+      <div class="sub" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+        <span>🟢 70–100%</span><span>🟡 30–69%</span><span>🔴 1–29%</span><span>⚪ 0%</span>
+      </div>
+      <div id="aipOut"><div class="loading">ใส่ ADMIN_KEY แล้วกด "โหลด"</div></div>
+    </div>
   </div>
 </div>
 
@@ -1221,7 +1238,7 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['overview','leads','customers','credits','report','chat'].forEach(p=>{
+  ['overview','leads','customers','credits','report','chat','aipower'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
@@ -1230,6 +1247,55 @@ function showTab(which){
   if (which==='credits')   loadCredits();
   if (which==='report')    openReport();
   if (which==='chat')      loadChats();
+  if (which==='aipower')   loadAIPower();
+}
+
+// ===== พลัง AI ลูกค้า (NEOS Control Plane · ผ่าน worker /admin/overview) =====
+const AIP_WORKER='https://neos-control-plane.kritsada-nutt1981.workers.dev';
+const AIP_AGENTS=['sale','manager','marketing','inventory','finance','logistic','graphic','video'];
+const AIP_LABEL={sale:'Sale',manager:'Manager',marketing:'Marketing',inventory:'Inventory',finance:'Finance',logistic:'Logistic',graphic:'Graphic',video:'Video'};
+function aipColor(v){ if(v<=0)return'#888780'; if(v<=29)return'#E24B4A'; if(v<=69)return'#EF9F27'; return'#639922'; }
+let AIP_LOADED=false;
+async function loadAIPower(manual){
+  const keyInput=document.getElementById('aipKey');
+  const saved=localStorage.getItem('neos_admin_key');
+  if(saved && !keyInput.value) keyInput.value=saved;
+  const key=keyInput.value.trim();
+  const st=document.getElementById('aipStatus'), out=document.getElementById('aipOut');
+  if(!key){ if(manual) st.textContent='ใส่ ADMIN_KEY ก่อนค่ะ'; return; }
+  if(!manual && AIP_LOADED) return;
+  localStorage.setItem('neos_admin_key',key);
+  st.textContent='กำลังโหลด…';
+  try{
+    const r=await fetch(AIP_WORKER+'/admin/overview',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({admin_key:key})});
+    const d=await r.json();
+    if(!r.ok||!d.ok){ out.innerHTML='<div class="empty"><div class="em-ic">🔒</div>'+esc((d&&d.error)||String(r.status))+'<br><small>เช็ค ADMIN_KEY อีกที</small></div>'; st.textContent=''; AIP_LOADED=false; return; }
+    AIP_LOADED=true; renderAIPower(d.rows||[]); st.textContent='อัปเดต '+new Date().toLocaleString('th-TH');
+  }catch(e){ out.innerHTML='<div class="empty"><div class="em-ic">⚠️</div>โหลดไม่ได้<br><small>'+esc(String(e))+'</small></div>'; st.textContent=''; }
+}
+function renderAIPower(rows){
+  const t={};
+  for(const row of rows){ const slug=(row.neos_tenants&&row.neos_tenants.slug)||'?'; const name=(row.neos_tenants&&row.neos_tenants.name)||slug; (t[slug]=t[slug]||{name,pools:{}}).pools[row.pool_key]=row; }
+  const slugs=Object.keys(t).sort(), out=document.getElementById('aipOut');
+  if(!slugs.length){ out.innerHTML='<div class="empty"><div class="em-ic">🔋</div>ยังไม่มีลูกค้า/พลังในระบบ</div>'; return; }
+  let h='<div class="table-wrap"><table><thead><tr><th style="text-align:left">ลูกค้า</th>';
+  for(const a of AIP_AGENTS) h+='<th style="text-align:center">'+AIP_LABEL[a]+'</th>';
+  h+='</tr></thead><tbody>';
+  for(const slug of slugs){
+    h+='<tr><td style="font-weight:600">'+esc(t[slug].name)+'</td>';
+    for(const a of AIP_AGENTS){
+      const p=t[slug].pools[a];
+      if(!p){ h+='<td style="text-align:center"><span style="color:#aaa;font-size:11px">—</span></td>'; continue; }
+      const alloc=Number(p.allocated_usd), spent=Number(p.spent_usd), remain=alloc-spent;
+      const pct=alloc>0?Math.round(remain/alloc*1000)/10:0, c=aipColor(pct);
+      h+='<td style="text-align:center"><div style="display:inline-flex;flex-direction:column;align-items:center;gap:3px">'
+        +'<div style="width:16px;height:42px;background:rgba(150,150,150,.25);border-radius:4px;display:flex;flex-direction:column-reverse;overflow:hidden"><div style="width:100%;height:'+Math.max(0,Math.min(100,pct))+'%;background:'+c+'"></div></div>'
+        +'<span style="font-size:11px;font-weight:600;color:'+c+'">'+pct+'%</span>'
+        +'<span style="font-size:10px;color:#999">$'+remain.toFixed(2)+'</span></div></td>';
+    }
+    h+='</tr>';
+  }
+  out.innerHTML=h+'</tbody></table></div>';
 }
 
 // ===== CHAT HISTORY (ประวัติแชทโนวา · ตาราง neos_chat_history) =====
