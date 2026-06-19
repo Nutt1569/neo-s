@@ -794,6 +794,21 @@ const NOVA_WORKER_URL = 'https://neos-sales-proxy.kritsada-nutt1981.workers.dev'
 const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
 
+// ⚙️ ตั้งค่าหน้าเว็บ (ควบคุมจากแท็บ "เครื่องมือ" ในแอดมิน · ตาราง neos_settings)
+//    default = บังคับกรอกชื่อ+เบอร์ (พฤติกรรมเดิม) เผื่อตารางยังไม่ถูกสร้าง = เว็บไม่พัง
+let NEOS_CFG = { chat_require_contact: true, chat_enabled: true };
+function loadNeosSettings(){
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/neos_settings?id=eq.1&select=chat_require_contact,chat_enabled', {
+      headers:{ 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+SUPABASE_ANON }
+    }).then(r=>r.json()).then(rows=>{
+      const c = Array.isArray(rows) && rows[0];
+      if (c){ NEOS_CFG.chat_require_contact = (c.chat_require_contact !== false); NEOS_CFG.chat_enabled = (c.chat_enabled !== false); }
+    }).catch(()=>{});
+  } catch(e){}
+}
+loadNeosSettings();
+
 // 📊 นับคนเข้าชมเว็บ → Supabase (ตาราง neos_visits) เพื่อวิเคราะห์ช่องทางการตลาด
 function detectSource(){
   const p = new URLSearchParams(location.search);
@@ -845,7 +860,7 @@ function logChat(role, message){
     fetch(SUPABASE_URL + '/rest/v1/neos_chat_history', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+SUPABASE_ANON, 'Prefer':'return=minimal' },
-      body: JSON.stringify({ session_id:chatSid(), role, message:String(message).slice(0,4000), page:'index', name:neosChatName||null, phone:neosChatPhone||null })
+      body: JSON.stringify({ session_id:chatSid(), role, message:String(message).slice(0,4000), page:'index', channel:'web', name:neosChatName||null, phone:neosChatPhone||null })
     }).catch(()=>{});   // ตารางยังไม่มี/ปิด = เงียบ ไม่กระทบเว็บ
   } catch(e){}
 }
@@ -879,7 +894,9 @@ function toggleChat() {
   w.classList.toggle('open');
   if (w.classList.contains('open') && !chatStarted) {
     chatStarted = true;
-    if (!chatGated) showChatGate(); else startChatGreeting();
+    // ถ้าแอดมินปิด "บังคับกรอกชื่อ+เบอร์" → คุยได้เลยไม่ต้องกรอก
+    if (!chatGated && NEOS_CFG.chat_require_contact) showChatGate();
+    else { chatGated = true; startChatGreeting(); }
   }
 }
 function startChatGreeting(){
