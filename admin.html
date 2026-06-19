@@ -278,6 +278,7 @@
       <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
       <button class="tab" id="tab-chat" onclick="showTab('chat')">💬 ประวัติแชท</button>
       <button class="tab" id="tab-aipower" onclick="showTab('aipower')">🔋 พลัง AI ลูกค้า</button>
+      <button class="tab" id="tab-tools" onclick="showTab('tools')">🛠 เครื่องมือ</button>
     </div>
 
     <!-- ===== OVERVIEW PAGE ===== -->
@@ -524,7 +525,7 @@
     </style>
     <div id="page-chat" style="display:none">
       <div class="page-head">
-        <div><h1>💬 ประวัติแชทโนวา</h1><div class="sub">บทสนทนาลูกค้ากับโนวาบนเว็บ — แยกตามห้องแชท (session) · ดูว่าลูกค้าถามอะไร สนใจอะไร</div></div>
+        <div><h1>💬 ประวัติแชทลูกค้า</h1><div class="sub">บทสนทนาลูกค้ากับโนวา — เว็บ 🌐 · LINE 💚 · Facebook 📘 · แยกตามห้องแชท + โชว์ IP + บล็อกได้</div></div>
         <button class="nav-btn refresh" onclick="loadChats(true)">🔄 รีเฟรช</button>
       </div>
       <div class="kpis">
@@ -533,12 +534,50 @@
         <div class="kpi"><div class="ic">🧑</div><div class="num" style="color:var(--blue)" id="chUserMsgs">0</div><div class="lbl">ข้อความจากลูกค้า</div></div>
       </div>
       <div class="panel">
-        <div class="panel-title">🗂️ ห้องแชทล่าสุด <span class="spacer"></span><span style="font-size:11.5px;color:var(--txt-dim);font-weight:400">คลิกห้องเพื่อกางบทสนทนา</span></div>
+        <div class="panel-title">🗂️ ห้องแชทล่าสุด <span class="spacer"></span>
+          <span class="seg" id="chFilter">
+            <button class="on" onclick="setChFilter('all',this)">ทั้งหมด</button>
+            <button onclick="setChFilter('web',this)">🌐 เว็บ</button>
+            <button onclick="setChFilter('line',this)">💚 LINE</button>
+            <button onclick="setChFilter('fb',this)">📘 FB</button>
+          </span>
+        </div>
         <div id="chatSessions"><div class="loading">กำลังโหลด…</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">🚫 IP / ผู้ใช้ที่บล็อก <span class="spacer"></span><button class="nav-btn" onclick="loadBlocked(true)">🔄</button></div>
+        <div id="blockedList"><div class="loading">กำลังโหลด…</div></div>
       </div>
     </div><!-- /page-chat -->
 
     <!-- ===== พลัง AI ลูกค้า (NEOS Control Plane) ===== -->
+    <!-- ===== TOOLS / SETTINGS PAGE ===== -->
+    <style>
+    .tool-row{display:flex;align-items:center;gap:16px;padding:15px 4px;border-bottom:1px solid var(--line)}
+    .tool-row:last-child{border-bottom:none}
+    .tool-info{flex:1;min-width:0}
+    .tool-label{font-weight:600;font-size:14.5px}
+    .tool-desc{font-size:12px;color:var(--txt-dim);margin-top:3px;line-height:1.5}
+    .tgl{width:48px;height:27px;border-radius:999px;border:1px solid var(--line);background:var(--bg-2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .tgl.on{background:linear-gradient(120deg,#22D3EE,#3B82F6);border-color:transparent}
+    .tgl-dot{position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .2s}
+    .tgl.on .tgl-dot{left:23px}
+    </style>
+    <div id="page-tools" style="display:none">
+      <div class="page-head">
+        <div><h1>🛠 เครื่องมือ &amp; ตั้งค่าหน้าเว็บ</h1><div class="sub">สวิตช์ควบคุมพฤติกรรมเว็บ neos-css.com แบบเรียลไทม์ · สลับแล้วบันทึกทันที (เว็บเปลี่ยนตามเมื่อลูกค้าโหลดหน้า)</div></div>
+        <button class="nav-btn refresh" onclick="loadTools()">🔄 รีเฟรช</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">💬 แชตโนวา (เว็บบริษัท)</div>
+        <div id="toolsWrap"><div class="loading">กำลังโหลด…</div></div>
+      </div>
+      <div class="panel" style="opacity:.55">
+        <div class="panel-title">🔜 เครื่องมือเพิ่มเติม (ออกแบบเผื่อไว้)</div>
+        <div class="sub" style="font-size:12.5px;line-height:1.7">ช่องนี้เตรียมรองรับ: 📢 แถบประกาศหน้าเว็บ (ตั้งข้อความเอง) · 🚧 โหมดปิดปรับปรุงชั่วคราว · 🔘 เปิด/ปิดปุ่ม CTA ต่างๆ · 🎨 สลับธีม/แบนเนอร์ — เพิ่มสวิตช์ใหม่ได้เลยแค่ใส่ใน <code>NEOS_TOOLS</code> + คอลัมน์ใน <code>neos_settings</code></div>
+      </div>
+    </div>
+
     <div id="page-aipower" style="display:none">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
         <div><h1>🔋 พลัง AI ลูกค้า</h1><div class="sub">พลัง AI ที่ลูกค้าแต่ละเจ้าใช้ · ดึงสดจาก Control Plane (แท่งสี = สถานะคงเหลือ)</div></div>
@@ -1239,7 +1278,7 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['overview','leads','customers','credits','report','chat','aipower'].forEach(p=>{
+  ['overview','leads','customers','credits','report','chat','aipower','tools'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
@@ -1249,6 +1288,43 @@ function showTab(which){
   if (which==='report')    openReport();
   if (which==='chat')      loadChats();
   if (which==='aipower')   loadAIPower();
+  if (which==='tools')     loadTools();
+}
+
+// ===== TOOLS / SETTINGS (ตาราง neos_settings · ควบคุมหน้าเว็บ) =====
+// เพิ่มสวิตช์ใหม่ = ใส่ที่นี่ + เพิ่มคอลัมน์ boolean ใน neos_settings + ให้ index.html อ่าน
+const NEOS_TOOLS = [
+  { key:'chat_require_contact', label:'บังคับกรอกชื่อ + เบอร์ก่อนแชต', desc:'ปิด = ลูกค้าคุยกับโนวาได้เลยไม่ต้องกรอก (คนคุยเยอะขึ้น แต่ได้คอนแทกต์น้อยลง) · เปิด = เก็บชื่อ+เบอร์ทุกคนก่อนเริ่ม' },
+  { key:'chat_enabled',         label:'เปิดแชตโนวาบนเว็บ',           desc:'ปิด = ซ่อนกล่องแชตทั้งหมดบนหน้าเว็บ' },
+];
+let TOOLS_CFG = null;
+async function loadTools(){
+  const wrap=document.getElementById('toolsWrap'); if(!wrap) return; wrap.innerHTML='<div class="loading">กำลังโหลด…</div>';
+  try {
+    const { data, error } = await sb.from('neos_settings').select('*').eq('id',1).maybeSingle();
+    if(error) throw error;
+    TOOLS_CFG = data || { chat_require_contact:true, chat_enabled:true };
+    renderTools();
+  } catch(e){
+    wrap.innerHTML = '<div class="empty"><div class="em-ic">⚠️</div>โหลดไม่ได้ / ตารางยังไม่เปิด<br><small>รัน SQL <code>neos_tools_chat_migration_19มิย2026.sql</code> ก่อนนะคะ · '+esc(e.message||String(e))+'</small></div>';
+  }
+}
+function renderTools(){
+  const wrap=document.getElementById('toolsWrap'); if(!wrap) return;
+  wrap.innerHTML = NEOS_TOOLS.map(t=>{
+    const on = TOOLS_CFG && TOOLS_CFG[t.key] !== false;
+    return `<div class="tool-row"><div class="tool-info"><div class="tool-label">${t.label}</div><div class="tool-desc">${t.desc}</div></div>
+      <button class="tgl ${on?'on':''}" onclick="setTool('${t.key}',${!on})" aria-label="${esc(t.label)}"><span class="tgl-dot"></span></button></div>`;
+  }).join('');
+}
+async function setTool(key, val){
+  try {
+    const patch={ id:1, updated_at:new Date().toISOString() }; patch[key]=val;
+    const { error } = await sb.from('neos_settings').upsert(patch, { onConflict:'id' });
+    if(error) throw error;
+    if(!TOOLS_CFG) TOOLS_CFG={}; TOOLS_CFG[key]=val; renderTools();
+    toast((val?'เปิด':'ปิด')+' "'+(NEOS_TOOLS.find(t=>t.key===key)||{}).label+'" แล้ว');
+  } catch(e){ toast('บันทึกไม่สำเร็จ: '+(e.message||e)); }
 }
 
 // ===== พลัง AI ลูกค้า (NEOS Control Plane · ผ่าน worker /admin/overview) =====
@@ -1305,8 +1381,34 @@ function renderAIPower(rows){
   out.innerHTML=h+'</tbody></table></div>';
 }
 
-// ===== CHAT HISTORY (ประวัติแชทโนวา · ตาราง neos_chat_history) =====
-let CHAT_ROWS = null;
+// ===== CHAT HISTORY (ประวัติแชท web/LINE/FB · ตาราง neos_chat_history + บล็อก neos_blocked) =====
+let CHAT_ROWS = null, CH_FILTER = 'all', BLOCKED = [];
+const CH_META = { web:{label:'🌐 เว็บ',kind:'ip'}, line:{label:'💚 LINE',kind:'line'}, fb:{label:'📘 FB',kind:'fb'} };
+function chChannel(s){ return (s.msgs.find(m=>m.channel)||{}).channel || 'web'; }
+function chIdent(s){ return (s.msgs.find(m=>m.ip)||{}).ip || ''; }
+function isBlocked(kind,val){ return !!(BLOCKED||[]).find(b=>b.kind===kind && b.value===val); }
+function blockIdOf(kind,val){ const b=(BLOCKED||[]).find(x=>x.kind===kind && x.value===val); return b?b.id:null; }
+function setChFilter(f, btn){ CH_FILTER=f; [...document.querySelectorAll('#chFilter button')].forEach(b=>b.classList.toggle('on', b===btn)); renderChats(); }
+async function loadBlocked(manual){
+  try { const { data, error } = await sb.from('neos_blocked').select('*').order('created_at',{ascending:false}); if(error) throw error; BLOCKED = data||[]; }
+  catch(e){ BLOCKED = []; }
+  renderBlocked();
+}
+function renderBlocked(){
+  const el=document.getElementById('blockedList'); if(!el) return;
+  if(!BLOCKED.length){ el.innerHTML='<div style="color:var(--txt-dim);font-size:13px;padding:6px 0">ยังไม่มีใครถูกบล็อก</div>'; return; }
+  el.innerHTML = BLOCKED.map(b=>`<div class="tool-row" style="padding:10px 4px"><div class="tool-info"><div class="tool-label" style="font-size:13.5px">${(CH_META[b.kind==='ip'?'web':b.kind]||CH_META.web).label} <code>${esc(b.value)}</code></div><div class="tool-desc">บล็อกเมื่อ ${chatTime(b.created_at)}${b.note?(' · '+esc(b.note)):''}</div></div><button class="nav-btn" onclick="unblockChat(${b.id})">ปลดบล็อก</button></div>`).join('');
+}
+async function blockChat(kind, val){
+  if(!val) return;
+  if(!confirm('บล็อก '+val+' ?\nผู้ใช้นี้จะคุยกับโนวาไม่ได้อีก (เว็บ/FB) จนกว่าจะปลดบล็อก')) return;
+  try { const { error } = await sb.from('neos_blocked').upsert({ kind, value:String(val) }, { onConflict:'kind,value' }); if(error) throw error; toast('บล็อกแล้ว 🚫'); await loadBlocked(); renderChats(); }
+  catch(e){ toast('บล็อกไม่สำเร็จ: '+(e.message||e)); }
+}
+async function unblockChat(id){
+  try { const { error } = await sb.from('neos_blocked').delete().eq('id',id); if(error) throw error; toast('ปลดบล็อกแล้ว'); await loadBlocked(); renderChats(); }
+  catch(e){ toast('ปลดบล็อกไม่สำเร็จ'); }
+}
 async function loadChats(manual){
   const wrap = document.getElementById('chatSessions');
   if (manual || !CHAT_ROWS){
@@ -1321,6 +1423,7 @@ async function loadChats(manual){
       return;
     }
   }
+  await loadBlocked();
   renderChats();
 }
 function chatTime(ts){ try{ return new Date(ts).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ts||''; } }
@@ -1334,22 +1437,29 @@ function renderChats(){
   document.getElementById('chMsgs').textContent = rows.length;
   document.getElementById('chUserMsgs').textContent = rows.filter(r=>r.role==='user').length;
   const wrap = document.getElementById('chatSessions');
-  if(!sessions.length){ wrap.innerHTML = '<div class="empty"><div class="em-ic">💬</div>ยังไม่มีประวัติแชท<br><small>เมื่อมีคนคุยกับโนวาบนเว็บ จะขึ้นที่นี่</small></div>'; return; }
-  window.__CHAT_SES = sessions;
-  wrap.innerHTML = sessions.map((s,i)=>{
+  if(!sessions.length){ wrap.innerHTML = '<div class="empty"><div class="em-ic">💬</div>ยังไม่มีประวัติแชท<br><small>เมื่อมีคนคุยกับโนวา (เว็บ/LINE/FB) จะขึ้นที่นี่</small></div>'; return; }
+  const shown = CH_FILTER==='all' ? sessions : sessions.filter(s=>chChannel(s)===CH_FILTER);
+  window.__CHAT_SES = shown;
+  if(!shown.length){ wrap.innerHTML = '<div class="empty"><div class="em-ic">🔍</div>ไม่มีแชทช่องทางนี้</div>'; return; }
+  wrap.innerHTML = shown.map((s,i)=>{
     const first = s.msgs.find(m=>m.role==='user');
     const preview = (first ? first.message : (s.msgs[0]?.message||'')) || '(ไม่มีข้อความ)';
     const last = s.msgs[s.msgs.length-1];
     const userN = s.msgs.filter(m=>m.role==='user').length;
     const cRow = s.msgs.find(m=>m.name||m.phone) || {};
     const contact = (cRow.name||cRow.phone) ? ('👤 '+esc(cRow.name||'-')+(cRow.phone?(' · 📞 '+esc(cRow.phone)):'')) : '';
+    const ch = chChannel(s), meta = CH_META[ch] || CH_META.web;
+    const idval = chIdent(s), kind = meta.kind, blocked = idval && isBlocked(kind, idval);
+    const ipTxt = idval ? (' · <span class="pill" style="font-size:10px;color:var(--txt-dim)">'+(ch==='web'?'IP ':'')+esc(idval.slice(0,28))+'</span>') : '';
+    const blockBtn = idval ? `<button class="nav-btn" style="font-size:11px;padding:5px 9px;${blocked?'color:#F87171;border-color:#F87171':''}" onclick="event.stopPropagation(); ${blocked?`unblockChat(${blockIdOf(kind,idval)})`:`blockChat('${kind}','${esc(idval)}')`}">${blocked?'✅ ปลด':'🚫 บล็อก'}</button>` : '';
     return `<div class="chat-ses">
       <div class="chat-ses-head" onclick="toggleChatSes(${i})">
-        <div class="cs-ic">💬</div>
+        <div class="cs-ic">${meta.label.split(' ')[0]}</div>
         <div class="cs-main">
-          <div class="cs-top"><span class="cs-q">${contact || esc(preview.slice(0,90))}</span><span class="cs-time">${chatTime(last.created_at)}</span></div>
-          <div class="cs-meta">${contact?('“'+esc(preview.slice(0,55))+'” · '):''}${s.msgs.length} ข้อความ · ลูกค้าพิมพ์ ${userN}</div>
+          <div class="cs-top"><span class="cs-q">${contact || esc(preview.slice(0,80))} <span class="pill" style="font-size:9.5px;padding:1px 7px">${meta.label}</span></span><span class="cs-time">${chatTime(last.created_at)}</span></div>
+          <div class="cs-meta">${contact?('“'+esc(preview.slice(0,46))+'” · '):''}${s.msgs.length} ข้อความ · ลูกค้าพิมพ์ ${userN}${ipTxt}</div>
         </div>
+        ${blockBtn}
         <div class="cs-arrow" id="csArrow${i}">▾</div>
       </div>
       <div class="chat-ses-body" id="csBody${i}" style="display:none"></div>
