@@ -274,7 +274,6 @@
       <button class="tab on" id="tab-overview" onclick="showTab('overview')">🏠 ภาพรวม</button>
       <button class="tab" id="tab-leads" onclick="showTab('leads')">📥 Leads</button>
       <button class="tab" id="tab-customers" onclick="showTab('customers')">👥 ลูกค้า</button>
-      <button class="tab" id="tab-credits" onclick="showTab('credits')">🔋 เครดิต LLM</button>
       <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
       <button class="tab" id="tab-chat" onclick="showTab('chat')">💬 ประวัติแชท</button>
       <button class="tab" id="tab-aipower" onclick="showTab('aipower')">🔋 พลัง AI ลูกค้า</button>
@@ -459,27 +458,6 @@
       </div>
     </div><!-- /page-customers -->
 
-    <!-- ===== CREDITS PAGE ===== -->
-    <div id="page-credits" style="display:none">
-      <div class="page-head">
-        <div><h1>🔋 เครดิต / งบ LLM</h1><div class="sub">เฝ้าเครดิต API ที่ CSS ใช้ — ใกล้หมด เอเลน่า (AI Manager) จะเตือนนัท</div></div>
-        <button class="nav-btn" onclick="openCredit()">+ เพิ่ม provider</button>
-      </div>
-      <div id="creditCards" class="cred-grid"></div>
-      <div class="panel" style="margin-top:22px">
-        <div class="panel-title">📈 ประวัติการใช้รายวัน
-          <span class="spacer"></span>
-          <span class="mini-seg" id="chMode">
-            <button class="on" onclick="setCreditMode('daily',this)" style="font-size:12px;padding:4px 11px">ใช้ต่อวัน</button>
-            <button onclick="setCreditMode('cumulative',this)" style="font-size:12px;padding:4px 11px">สะสม</button>
-          </span>
-        </div>
-        <div class="chart-wrap"><canvas id="creditHistChart"></canvas></div>
-        <div id="creditHistEmpty" class="ov-empty" style="display:none">ยังไม่มีประวัติ — ระบบเริ่มเก็บ snapshot ตั้งแต่วันนี้ กลับมาดูพรุ่งนี้จะเห็นเทรนด์ 📊</div>
-        <div style="font-size:11.5px;color:var(--txt-dim);margin-top:10px;border-top:1px solid rgba(30,42,68,.5);padding-top:10px">📌 <b>เฟสนี้:</b> เก็บประวัติในเครื่องนี้ก่อน (localStorage) · <b>เฟสถัดไป:</b> ต่อ Worker cron → เก็บ Supabase กลาง = ของจริงข้ามเครื่อง + แยกรายลูกค้า (automation เต็ม)</div>
-      </div>
-    </div><!-- /page-credits -->
-
     <!-- ===== REPORT (เอเลน่า) PAGE ===== -->
     <div id="page-report" style="display:none">
       <div class="page-head">
@@ -619,6 +597,24 @@
         </table>
       </div>
       <div id="mpSummary" class="sub" style="margin-top:10px"></div>
+
+      <!-- ── งบ vendor LLM (ยุบรวมจากแท็บเดิม · เตือนก่อนบัญชี vendor หมด) ── -->
+      <div class="page-head" style="margin-top:30px;border-top:1px solid var(--line);padding-top:22px">
+        <div><h2 style="font-size:19px">💳 งบ vendor LLM</h2><div class="sub">ยอดคงเหลือรายบัญชี AI ที่ CSS เติมไว้ (OpenAI/Anthropic/Gemini/Dify) — ใกล้หมด เอเลน่าเตือน · กรอกเอง</div></div>
+        <button class="nav-btn" onclick="openCredit()">+ เพิ่ม provider</button>
+      </div>
+      <div id="creditCards" class="cred-grid"></div>
+      <div class="panel" style="margin-top:22px">
+        <div class="panel-title">📈 ประวัติการใช้รายวัน
+          <span class="spacer"></span>
+          <span class="mini-seg" id="chMode">
+            <button class="on" onclick="setCreditMode('daily',this)" style="font-size:12px;padding:4px 11px">ใช้ต่อวัน</button>
+            <button onclick="setCreditMode('cumulative',this)" style="font-size:12px;padding:4px 11px">สะสม</button>
+          </span>
+        </div>
+        <div class="chart-wrap"><canvas id="creditHistChart"></canvas></div>
+        <div id="creditHistEmpty" class="ov-empty" style="display:none">ยังไม่มีประวัติ — ระบบเริ่มเก็บ snapshot ตั้งแต่วันนี้ กลับมาดูพรุ่งนี้จะเห็นเทรนด์ 📊</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1305,17 +1301,16 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['overview','leads','customers','credits','report','chat','aipower','mypower','tools'].forEach(p=>{
+  ['overview','leads','customers','report','chat','aipower','mypower','tools'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
   if (which==='overview')  renderOverview();
   if (which==='customers') loadCustomers();
-  if (which==='credits')   loadCredits();
   if (which==='report')    openReport();
   if (which==='chat')      loadChats();
   if (which==='aipower')   loadAIPower();
-  if (which==='mypower')   loadMyPower();
+  if (which==='mypower')   { loadMyPower(); loadCredits(); }   // พลัง AI ของเรา + งบ vendor (ยุบรวม)
   if (which==='tools')     loadTools();
 }
 
