@@ -977,28 +977,31 @@ function localAnswer(text) {
 
 async function reply(text) {
   typing(true);
-  logChat('user', text);                  // เก็บประวัติแชท (ฝั่งลูกค้า)
   const novaMsg = composeForNova(text);   // แนบบทสนทนาก่อนหน้า → โนวาจำได้
   chatTurns.push({ role:'user', text });
   // ถ้าตั้ง Worker URL ของ Dify ไว้ → เรียก AI จริง
+  // 🔎 worker เป็นคน log ประวัติ (user+bot) พร้อม IP จาก CF-Connecting-IP → แอดมินบล็อก IP ได้
+  //    จึงแนบ raw_message/name/phone ไปให้ worker · ไม่ logChat ซ้ำฝั่ง client ใน AI path
   if (NOVA_WORKER_URL) {
     try {
       const r = await fetch(NOVA_WORKER_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputs: { customer_message: novaMsg }, response_mode: 'blocking', user: chatSid() })
+        body: JSON.stringify({ inputs: { customer_message: novaMsg }, response_mode: 'blocking', user: chatSid(), raw_message: text, name: neosChatName||null, phone: neosChatPhone||null })
       });
       const d = await r.json();
       const out = d?.data?.outputs || d?.outputs || {};
-      const ans = (out.output || out.text || '') || localAnswer(text);
+      const novaRaw = out.output || out.text || '';
+      const ans = novaRaw || localAnswer(text);
       typing(false);
       botSay(ans);
       chatTurns.push({ role:'bot', text: ans });
-      logChat('bot', ans);
+      if (!novaRaw) logChat('bot', ans);   // worker ไม่มีคำตอบ (ใช้ fallback) → client log bot เอง (worker log user+IP ให้แล้ว)
       maybeOfferLead(text);
       return;
     } catch(e) { /* ตก fallback */ }
   }
-  // offline fallback
+  // offline fallback — worker ไม่ตอบ (ยังไม่ตั้ง URL/เน็ตล่ม) → log ฝั่ง client (ไม่มี IP)
+  logChat('user', text);
   setTimeout(() => {
     typing(false);
     const ans = localAnswer(text);
