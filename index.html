@@ -58,6 +58,8 @@
   .nav-links a:hover { color: var(--txt); }
   .nav-cta { background: var(--grad); color: #050A14; padding: 10px 22px; border-radius: 10px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; transition: transform .2s, box-shadow .2s; }
   .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.45); }
+  .lang-btn { background: var(--bg-2); color: var(--txt); border: 1px solid var(--line); border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 600; cursor: pointer; transition: border-color .2s, color .2s; white-space: nowrap; }
+  .lang-btn:hover { border-color: var(--cyan); color: var(--cyan); }
   @media(max-width: 820px){ .nav-links a:not(.nav-cta){ display:none; } }
   /* ===== MOBILE TAB BAR ===== */
   .mtabs { display: none; }
@@ -398,13 +400,14 @@
     </a>
     <div class="nav-links">
       <a href="#agents">AI Agents</a>
-      <a href="#how">วิธีทำงาน</a>
-      <a href="#case">ผลงาน</a>
-      <a href="#pricing">แพ็กเกจ</a>
-      <a href="#calculator">คำนวณราคา</a>
+      <a href="#how" data-i18n="nav.how">วิธีทำงาน</a>
+      <a href="#case" data-i18n="nav.case">ผลงาน</a>
+      <a href="#pricing" data-i18n="nav.pricing">แพ็กเกจ</a>
+      <a href="#calculator" data-i18n="nav.calc">คำนวณราคา</a>
       <a href="#roadmap">Roadmap</a>
       <a href="faq.html">FAQ</a>
-      <button class="nav-cta" onclick="openChat()">ปรึกษาฟรี</button>
+      <button class="lang-btn" id="langToggle" onclick="toggleLang()" aria-label="Switch language">🌐 EN</button>
+      <button class="nav-cta" onclick="openChat()" data-i18n="nav.cta">ปรึกษาฟรี</button>
     </div>
   </div>
 </nav>
@@ -412,10 +415,10 @@
 <!-- ===== MOBILE TAB BAR (เฉพาะมือถือ) ===== -->
 <div class="mtabs" id="mtabs">
   <a href="#agents">AI Agents</a>
-  <a href="#how">วิธีทำงาน</a>
-  <a href="#case">ผลงาน</a>
-  <a href="#pricing">แพ็กเกจ</a>
-  <a href="#calculator">คำนวณราคา</a>
+  <a href="#how" data-i18n="nav.how">วิธีทำงาน</a>
+  <a href="#case" data-i18n="nav.case">ผลงาน</a>
+  <a href="#pricing" data-i18n="nav.pricing">แพ็กเกจ</a>
+  <a href="#calculator" data-i18n="nav.calc">คำนวณราคา</a>
   <a href="#roadmap">Roadmap</a>
   <a href="#faq">FAQ</a>
 </div>
@@ -424,17 +427,17 @@
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="wrap">
-    <div class="hero-badge"><span class="dot"></span> Autonomous Business OS · ขับเคลื่อนด้วย AI Agent</div>
-    <h1>ให้ <span class="grad-txt">AI</span> ดูแลธุรกิจคุณ<br>ตลอด 24 ชั่วโมง</h1>
-    <p>NEO-S คือระบบบริหารธุรกิจที่ขับเคลื่อนด้วย AI Agent — <span style="white-space:nowrap">ตอบแชทลูกค้า</span> <span style="white-space:nowrap">รับออเดอร์</span> <span style="white-space:nowrap">ตรวจสลิป</span> และจัดการหลังบ้าน อัตโนมัติ ไม่มีวันหยุด</p>
+    <div class="hero-badge"><span class="dot"></span> <span data-i18n="hero.badge">Autonomous Business OS · ขับเคลื่อนด้วย AI Agent</span></div>
+    <h1 data-i18n="hero.title">ให้ <span class="grad-txt">AI</span> ดูแลธุรกิจคุณ<br>ตลอด 24 ชั่วโมง</h1>
+    <p data-i18n="hero.sub">NEO-S คือระบบบริหารธุรกิจที่ขับเคลื่อนด้วย AI Agent — <span style="white-space:nowrap">ตอบแชทลูกค้า</span> <span style="white-space:nowrap">รับออเดอร์</span> <span style="white-space:nowrap">ตรวจสลิป</span> และจัดการหลังบ้าน อัตโนมัติ ไม่มีวันหยุด</p>
     <div class="hero-btns">
-      <button class="btn-primary" onclick="openChat()">เริ่มปรึกษาฟรี →</button>
-      <a class="btn-ghost" href="https://nutt1569.github.io/lumina" target="_blank">ดูระบบจริง (LUMINA)</a>
+      <button class="btn-primary" onclick="openChat()" data-i18n="hero.cta1">เริ่มปรึกษาฟรี →</button>
+      <a class="btn-ghost" href="https://nutt1569.github.io/lumina" target="_blank" data-i18n="hero.cta2">ดูระบบจริง (LUMINA)</a>
     </div>
     <div class="hero-stats">
-      <div><div class="hs-num grad-txt">24/7</div><div class="hs-lbl">ทำงานไม่มีหยุด</div></div>
+      <div><div class="hs-num grad-txt">24/7</div><div class="hs-lbl" data-i18n="hero.stat1">ทำงานไม่มีหยุด</div></div>
       <div><div class="hs-num grad-txt">6</div><div class="hs-lbl">AI Agents</div></div>
-      <div><div class="hs-num grad-txt">7-14</div><div class="hs-lbl">วัน ติดตั้งเสร็จ</div></div>
+      <div><div class="hs-num grad-txt">7-14</div><div class="hs-lbl" data-i18n="hero.stat3">วัน ติดตั้งเสร็จ</div></div>
     </div>
   </div>
 </header>
@@ -443,14 +446,14 @@
 <section id="pain">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">ปัญหาที่ทุกธุรกิจเจอ</div>
-      <h2>ยอดขายหลุดมือ เพราะตอบลูกค้าไม่ทัน</h2>
-      <p>ทุกแชทที่ตอบช้า คือลูกค้าที่หายไป — NEO-S แก้ปัญหานี้ให้คุณ</p>
+      <div class="eyebrow" data-i18n="pain.eyebrow">ปัญหาที่ทุกธุรกิจเจอ</div>
+      <h2 data-i18n="pain.h2">ยอดขายหลุดมือ เพราะตอบลูกค้าไม่ทัน</h2>
+      <p data-i18n="pain.p">ทุกแชทที่ตอบช้า คือลูกค้าที่หายไป — NEO-S แก้ปัญหานี้ให้คุณ</p>
     </div>
     <div class="pain-grid">
-      <div class="pain-card reveal"><div class="ic">🌙</div><h3>ลูกค้าทักตอนดึก ไม่มีคนตอบ</h3><p>ลูกค้าทักมาตี 2 อยากซื้อ แต่กว่าจะตอบเช้าก็เปลี่ยนใจไปแล้ว</p></div>
-      <div class="pain-card reveal"><div class="ic">🧾</div><h3>ตรวจสลิปเองทุกวัน เสียเวลา</h3><p>นั่งเช็คสลิปทีละใบ ตรวจยอด จดออเดอร์ — งาน manual กินเวลาทั้งวัน</p></div>
-      <div class="pain-card reveal"><div class="ic">📉</div><h3>ออเดอร์ตกหล่น ข้อมูลกระจัดกระจาย</h3><p>ออเดอร์อยู่ในแชทบ้าง สมุดบ้าง Excel บ้าง — หาที ปวดหัวที</p></div>
+      <div class="pain-card reveal"><div class="ic">🌙</div><h3 data-i18n="pain.c1h">ลูกค้าทักตอนดึก ไม่มีคนตอบ</h3><p data-i18n="pain.c1p">ลูกค้าทักมาตี 2 อยากซื้อ แต่กว่าจะตอบเช้าก็เปลี่ยนใจไปแล้ว</p></div>
+      <div class="pain-card reveal"><div class="ic">🧾</div><h3 data-i18n="pain.c2h">ตรวจสลิปเองทุกวัน เสียเวลา</h3><p data-i18n="pain.c2p">นั่งเช็คสลิปทีละใบ ตรวจยอด จดออเดอร์ — งาน manual กินเวลาทั้งวัน</p></div>
+      <div class="pain-card reveal"><div class="ic">📉</div><h3 data-i18n="pain.c3h">ออเดอร์ตกหล่น ข้อมูลกระจัดกระจาย</h3><p data-i18n="pain.c3p">ออเดอร์อยู่ในแชทบ้าง สมุดบ้าง Excel บ้าง — หาที ปวดหัวที</p></div>
     </div>
   </div>
 </section>
@@ -459,17 +462,17 @@
 <section id="agents" style="background:var(--bg-2)">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">ทีม AI ของคุณ</div>
-      <h2>6 AI Agents ทำงานแทนคุณ</h2>
-      <p>แต่ละ Agent เชี่ยวชาญเฉพาะด้าน ทำงานประสานกันเหมือนทีมงานจริง</p>
+      <div class="eyebrow" data-i18n="agents.eyebrow">ทีม AI ของคุณ</div>
+      <h2 data-i18n="agents.h2">6 AI Agents ทำงานแทนคุณ</h2>
+      <p data-i18n="agents.p">แต่ละ Agent เชี่ยวชาญเฉพาะด้าน ทำงานประสานกันเหมือนทีมงานจริง</p>
     </div>
     <div class="agent-grid">
-      <div class="agent-card reveal"><div class="ic">🛒</div><h3>AI Sales</h3><p><b style="color:var(--cyan)">ผู้ช่วยฝ่ายขายอัจฉริยะ</b><br>ตอบลูกค้า รับออเดอร์ ปิดการขาย เสนอขายเพิ่ม (upsell) ทุกช่องทาง 24 ชม.</p><span class="badge live">● พร้อมใช้งาน</span></div>
-      <div class="agent-card reveal"><div class="ic">💰</div><h3>AI Finance</h3><p><b style="color:var(--cyan)">ผู้ช่วยงานการเงินอัจฉริยะ</b><br>ตรวจสลิปจริง-ปลอม 2 ชั้น กันสลิปซ้ำ ยืนยันยอดอัตโนมัติ</p><span class="badge live">● พร้อมใช้งาน</span></div>
-      <div class="agent-card reveal"><div class="ic">🧠</div><h3>AI Manager</h3><p><b style="color:var(--cyan)">ผู้ช่วยจัดการธุรกิจอัจฉริยะ</b><br>รวบรวมข้อมูลจากหลายส่วน สรุปผลการดำเนินงาน และช่วยติดตามภาพรวมขององค์กรแบบเรียลไทม์</p><span class="badge live">● พร้อมใช้งาน</span></div>
-      <div class="agent-card reveal"><div class="ic">📦</div><h3>AI Inventory</h3><p><b style="color:var(--cyan)">ผู้ช่วยจัดการสต็อกสินค้า</b><br>เฝ้าสต็อก เตือนของใกล้หมด กันขายของที่หมดสต็อก</p><span class="badge live">● พร้อมใช้งาน</span></div>
-      <div class="agent-card reveal"><div class="ic">📣</div><h3>AI Marketing</h3><p><b style="color:var(--cyan)">ผู้ช่วยงานการตลาดอัจฉริยะ</b><br>เสริมประสิทธิภาพทีมการตลาดด้วย AI</p><span class="badge live">● พร้อมใช้งาน</span></div>
-      <div class="agent-card reveal"><div class="ic">🚚</div><h3>AI Logistics</h3><p><b style="color:var(--cyan)">พนักงาน AI ติดตามสถานะการจัดส่ง</b><br>ติดตามพัสดุ แจ้งสถานะจัดส่งให้ลูกค้าอัตโนมัติ</p><span class="badge soon">เร็วๆ นี้</span></div>
+      <div class="agent-card reveal"><div class="ic">🛒</div><h3>AI Sales</h3><p data-i18n="agents.sales"><b style="color:var(--cyan)">ผู้ช่วยฝ่ายขายอัจฉริยะ</b><br>ตอบลูกค้า รับออเดอร์ ปิดการขาย เสนอขายเพิ่ม (upsell) ทุกช่องทาง 24 ชม.</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
+      <div class="agent-card reveal"><div class="ic">💰</div><h3>AI Finance</h3><p data-i18n="agents.fin"><b style="color:var(--cyan)">ผู้ช่วยงานการเงินอัจฉริยะ</b><br>ตรวจสลิปจริง-ปลอม 2 ชั้น กันสลิปซ้ำ ยืนยันยอดอัตโนมัติ</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
+      <div class="agent-card reveal"><div class="ic">🧠</div><h3>AI Manager</h3><p data-i18n="agents.mgr"><b style="color:var(--cyan)">ผู้ช่วยจัดการธุรกิจอัจฉริยะ</b><br>รวบรวมข้อมูลจากหลายส่วน สรุปผลการดำเนินงาน และช่วยติดตามภาพรวมขององค์กรแบบเรียลไทม์</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
+      <div class="agent-card reveal"><div class="ic">📦</div><h3>AI Inventory</h3><p data-i18n="agents.inv"><b style="color:var(--cyan)">ผู้ช่วยจัดการสต็อกสินค้า</b><br>เฝ้าสต็อก เตือนของใกล้หมด กันขายของที่หมดสต็อก</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
+      <div class="agent-card reveal"><div class="ic">📣</div><h3>AI Marketing</h3><p data-i18n="agents.mkt"><b style="color:var(--cyan)">ผู้ช่วยงานการตลาดอัจฉริยะ</b><br>เสริมประสิทธิภาพทีมการตลาดด้วย AI</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
+      <div class="agent-card reveal"><div class="ic">🚚</div><h3>AI Logistics</h3><p data-i18n="agents.log"><b style="color:var(--cyan)">พนักงาน AI ติดตามสถานะการจัดส่ง</b><br>ติดตามพัสดุ แจ้งสถานะจัดส่งให้ลูกค้าอัตโนมัติ</p><span class="badge soon" data-i18n="badge.soon">เร็วๆ นี้</span></div>
     </div>
   </div>
 </section>
@@ -478,15 +481,15 @@
 <section id="how">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">เริ่มต้นง่าย</div>
-      <h2>เริ่มใช้ NEO-S ใน 4 ขั้นตอน</h2>
-      <p>เราดูแลให้ทุกขั้น ตั้งแต่ปรึกษาจนระบบพร้อมใช้จริง</p>
+      <div class="eyebrow" data-i18n="how.eyebrow">เริ่มต้นง่าย</div>
+      <h2 data-i18n="how.h2">เริ่มใช้ NEO-S ใน 4 ขั้นตอน</h2>
+      <p data-i18n="how.p">เราดูแลให้ทุกขั้น ตั้งแต่ปรึกษาจนระบบพร้อมใช้จริง</p>
     </div>
     <div class="how-row">
-      <div class="how-step reveal"><div class="how-num">1</div><h3>ปรึกษาฟรี</h3><p>คุยกับทีม บอกธุรกิจ + สิ่งที่อยากให้ AI ช่วย — ไม่มีค่าใช้จ่าย</p></div>
-      <div class="how-step reveal"><div class="how-num">2</div><h3>เลือกทีม AI</h3><p>เลือก AI Agent ที่ธุรกิจคุณต้องใช้ พร้อมใบเสนอราคาชัดเจน</p></div>
-      <div class="how-step reveal"><div class="how-num">3</div><h3>เราติดตั้งให้</h3><p>ตั้งระบบ เชื่อมต่อ ปรับแบรนด์ ทดสอบ ภายใน 7-14 วันทำการ</p></div>
-      <div class="how-step reveal"><div class="how-num">4</div><h3>ใช้งาน + ดูแลต่อ</h3><p>ส่งมอบพร้อมอบรม — ดูแลใกล้ชิดหลังใช้งานจริง</p></div>
+      <div class="how-step reveal"><div class="how-num">1</div><h3 data-i18n="how.s1h">ปรึกษาฟรี</h3><p data-i18n="how.s1p">คุยกับทีม บอกธุรกิจ + สิ่งที่อยากให้ AI ช่วย — ไม่มีค่าใช้จ่าย</p></div>
+      <div class="how-step reveal"><div class="how-num">2</div><h3 data-i18n="how.s2h">เลือกทีม AI</h3><p data-i18n="how.s2p">เลือก AI Agent ที่ธุรกิจคุณต้องใช้ พร้อมใบเสนอราคาชัดเจน</p></div>
+      <div class="how-step reveal"><div class="how-num">3</div><h3 data-i18n="how.s3h">เราติดตั้งให้</h3><p data-i18n="how.s3p">ตั้งระบบ เชื่อมต่อ ปรับแบรนด์ ทดสอบ ภายใน 7-14 วันทำการ</p></div>
+      <div class="how-step reveal"><div class="how-num">4</div><h3 data-i18n="how.s4h">ใช้งาน + ดูแลต่อ</h3><p data-i18n="how.s4p">ส่งมอบพร้อมอบรม — ดูแลใกล้ชิดหลังใช้งานจริง</p></div>
     </div>
   </div>
 </section>
@@ -496,31 +499,31 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">RESULTS</div>
-      <h2>ผลลัพธ์ที่ธุรกิจคุณ<span class="grad-txt">จะได้รับ</span></h2>
+      <h2 data-i18n="res.h2">ผลลัพธ์ที่ธุรกิจคุณ<span class="grad-txt">จะได้รับ</span></h2>
     </div>
     <div class="res-kpis reveal">
-      <div class="res-kpi"><div class="k-num grad-txt">24/7</div><div class="k-lbl">ตอบลูกค้า<br>ไม่มีวันหยุด</div></div>
-      <div class="res-kpi"><div class="k-num grad-txt">&lt; 10 วิ</div><div class="k-lbl">เวลาตอบกลับ<br>เฉลี่ย</div></div>
-      <div class="res-kpi"><div class="k-num grad-txt">100%</div><div class="k-lbl">ตรวจสลิป<br>อัตโนมัติ</div></div>
-      <div class="res-kpi"><div class="k-num grad-txt">0</div><div class="k-lbl">ออเดอร์หลุด<br>ช่วงกลางคืน</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">24/7</div><div class="k-lbl" data-i18n="res.k1">ตอบลูกค้า<br>ไม่มีวันหยุด</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">&lt; 10 วิ</div><div class="k-lbl" data-i18n="res.k2">เวลาตอบกลับ<br>เฉลี่ย</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">100%</div><div class="k-lbl" data-i18n="res.k3">ตรวจสลิป<br>อัตโนมัติ</div></div>
+      <div class="res-kpi"><div class="k-num grad-txt">0</div><div class="k-lbl" data-i18n="res.k4">ออเดอร์หลุด<br>ช่วงกลางคืน</div></div>
     </div>
     <div class="res-ba reveal">
       <div class="res-col before">
-        <h3>😟 ก่อนใช้ NEO-S</h3>
+        <h3 data-i18n="res.beforeH">😟 ก่อนใช้ NEO-S</h3>
         <ul>
-          <li>ทีม 2-3 คนผลัดกันเฝ้าแชททั้งวัน</li>
-          <li>จดออเดอร์มือ ตกหล่น ผิดพลาดบ่อย</li>
-          <li>เช็คสลิปทีละใบ 2-5 นาที/ราย เสี่ยงสลิปปลอม</li>
-          <li>ไม่รู้ยอดขาย-สต็อกแบบเรียลไทม์</li>
+          <li data-i18n="res.b1">ทีม 2-3 คนผลัดกันเฝ้าแชททั้งวัน</li>
+          <li data-i18n="res.b2">จดออเดอร์มือ ตกหล่น ผิดพลาดบ่อย</li>
+          <li data-i18n="res.b3">เช็คสลิปทีละใบ 2-5 นาที/ราย เสี่ยงสลิปปลอม</li>
+          <li data-i18n="res.b4">ไม่รู้ยอดขาย-สต็อกแบบเรียลไทม์</li>
         </ul>
       </div>
       <div class="res-col after">
-        <h3>😎 หลังใช้ NEO-S</h3>
+        <h3 data-i18n="res.afterH">😎 หลังใช้ NEO-S</h3>
         <ul>
-          <li>AI ตอบลูกค้าทันที ทุกช่วงเวลา</li>
-          <li>บันทึกออเดอร์เข้าระบบอัตโนมัติ ไม่ตกหล่น</li>
-          <li>AI ตรวจสลิป &lt; 10 วินาที กันปลอม 2 ชั้น</li>
-          <li>Dashboard ยอดขาย-สต็อกแบบเรียลไทม์</li>
+          <li data-i18n="res.a1">AI ตอบลูกค้าทันที ทุกช่วงเวลา</li>
+          <li data-i18n="res.a2">บันทึกออเดอร์เข้าระบบอัตโนมัติ ไม่ตกหล่น</li>
+          <li data-i18n="res.a3">AI ตรวจสลิป &lt; 10 วินาที กันปลอม 2 ชั้น</li>
+          <li data-i18n="res.a4">Dashboard ยอดขาย-สต็อกแบบเรียลไทม์</li>
         </ul>
       </div>
     </div>
@@ -533,14 +536,14 @@
     <div class="case reveal">
       <div>
         <div class="case-tag">CASE STUDY · LUMINA SKINCARE</div>
-        <h3>แบรนด์สกินแคร์ที่ให้ AI ดูแลการขายทั้งหมด</h3>
-        <p>LUMINA ใช้ NEO-S เป็นพนักงานขาย AI ชื่อ "ลูเม่" — ตอบลูกค้า รับออเดอร์ ตรวจสลิป และเก็บข้อมูลลงระบบ ครบวงจร ทำงานจริงทุกวัน</p>
+        <h3 data-i18n="case.h3">แบรนด์สกินแคร์ที่ให้ AI ดูแลการขายทั้งหมด</h3>
+        <p data-i18n="case.p">LUMINA ใช้ NEO-S เป็นพนักงานขาย AI ชื่อ "ลูเม่" — ตอบลูกค้า รับออเดอร์ ตรวจสลิป และเก็บข้อมูลลงระบบ ครบวงจร ทำงานจริงทุกวัน</p>
         <div class="case-metrics">
-          <div><div class="cm-num grad-txt">24/7</div><div class="cm-lbl">ตอบลูกค้า</div></div>
-          <div><div class="cm-num grad-txt">100%</div><div class="cm-lbl">อัตโนมัติ</div></div>
-          <div><div class="cm-num grad-txt">0</div><div class="cm-lbl">คนเฝ้าแชท</div></div>
+          <div><div class="cm-num grad-txt">24/7</div><div class="cm-lbl" data-i18n="case.m1">ตอบลูกค้า</div></div>
+          <div><div class="cm-num grad-txt">100%</div><div class="cm-lbl" data-i18n="case.m2">อัตโนมัติ</div></div>
+          <div><div class="cm-num grad-txt">0</div><div class="cm-lbl" data-i18n="case.m3">คนเฝ้าแชท</div></div>
         </div>
-        <div style="margin-top:26px"><a class="btn-ghost" href="https://nutt1569.github.io/lumina" target="_blank">เปิดดูระบบจริง →</a></div>
+        <div style="margin-top:26px"><a class="btn-ghost" href="https://nutt1569.github.io/lumina" target="_blank" data-i18n="case.cta">เปิดดูระบบจริง →</a></div>
       </div>
       <div class="case-visual">
         <div class="case-lumina">
@@ -557,46 +560,46 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">WHY AI</div>
-      <h2>จ้างพนักงาน <span class="grad-txt">vs</span> NEO-S AI</h2>
+      <h2 data-i18n="whyai.h2">จ้างพนักงาน <span class="grad-txt">vs</span> NEO-S AI</h2>
     </div>
     <div class="cmp reveal">
       <div class="cmp-row head">
         <div class="cmp-feat"></div>
-        <div class="cmp-h-emp">จ้างพนักงาน</div>
+        <div class="cmp-h-emp" data-i18n="whyai.hEmp">จ้างพนักงาน</div>
         <div class="cmp-h-ai">NEO-S AI</div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-feat">เวลาทำงาน</div>
-        <div class="cmp-emp">8 ชม./วัน มีวันหยุด-ลา-ป่วย</div>
-        <div class="cmp-ai"><b>24 ชม. ทุกวัน</b> ไม่มีวันหยุด</div>
+        <div class="cmp-feat" data-i18n="whyai.f1">เวลาทำงาน</div>
+        <div class="cmp-emp" data-i18n="whyai.e1">8 ชม./วัน มีวันหยุด-ลา-ป่วย</div>
+        <div class="cmp-ai" data-i18n="whyai.a1"><b>24 ชม. ทุกวัน</b> ไม่มีวันหยุด</div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-feat">งานที่ครอบคลุม</div>
-        <div class="cmp-emp">ขาย+เงิน+สต็อก+การตลาด ต้องใช้ 3-5 คน</div>
-        <div class="cmp-ai"><b>ครบทุกงานใน 1 ระบบ</b></div>
+        <div class="cmp-feat" data-i18n="whyai.f2">งานที่ครอบคลุม</div>
+        <div class="cmp-emp" data-i18n="whyai.e2">ขาย+เงิน+สต็อก+การตลาด ต้องใช้ 3-5 คน</div>
+        <div class="cmp-ai" data-i18n="whyai.a2"><b>ครบทุกงานใน 1 ระบบ</b></div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-feat">ต้นทุนต่อเดือน</div>
-        <div class="cmp-emp">30,000 - 60,000+ บาท</div>
-        <div class="cmp-ai"><b>เริ่มต้นเพียง 4,000 บาท/เดือน</b> แล้วให้ AI ช่วยสร้างยอดขายไปพร้อมกับธุรกิจของคุณ</div>
+        <div class="cmp-feat" data-i18n="whyai.f3">ต้นทุนต่อเดือน</div>
+        <div class="cmp-emp" data-i18n="whyai.e3">30,000 - 60,000+ บาท</div>
+        <div class="cmp-ai" data-i18n="whyai.a3"><b>เริ่มต้นเพียง 4,000 บาท/เดือน</b> แล้วให้ AI ช่วยสร้างยอดขายไปพร้อมกับธุรกิจของคุณ</div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-feat">ความแม่นยำ</div>
-        <div class="cmp-emp">เหนื่อย ลืม อารมณ์แปรปรวน</div>
-        <div class="cmp-ai"><b>ทำตามกฎเป๊ะ</b> ข้อมูลครบทุกครั้ง</div>
+        <div class="cmp-feat" data-i18n="whyai.f4">ความแม่นยำ</div>
+        <div class="cmp-emp" data-i18n="whyai.e4">เหนื่อย ลืม อารมณ์แปรปรวน</div>
+        <div class="cmp-ai" data-i18n="whyai.a4"><b>ทำตามกฎเป๊ะ</b> ข้อมูลครบทุกครั้ง</div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-feat">ลาออก / เทรนใหม่</div>
-        <div class="cmp-emp">มีตลอด ต้องสอนงานซ้ำ</div>
-        <div class="cmp-ai"><b>ไม่มี</b> ระบบจำทุกอย่างไว้</div>
+        <div class="cmp-feat" data-i18n="whyai.f5">ลาออก / เทรนใหม่</div>
+        <div class="cmp-emp" data-i18n="whyai.e5">มีตลอด ต้องสอนงานซ้ำ</div>
+        <div class="cmp-ai" data-i18n="whyai.a5"><b>ไม่มี</b> ระบบจำทุกอย่างไว้</div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-feat">ลูกค้าเพิ่ม 10 → 1,000 คน</div>
-        <div class="cmp-emp">ต้องจ้างคนเพิ่ม</div>
-        <div class="cmp-ai"><b>สเกลได้ทันที</b> ไม่ต้องจ้างเพิ่ม</div>
+        <div class="cmp-feat" data-i18n="whyai.f6">ลูกค้าเพิ่ม 10 → 1,000 คน</div>
+        <div class="cmp-emp" data-i18n="whyai.e6">ต้องจ้างคนเพิ่ม</div>
+        <div class="cmp-ai" data-i18n="whyai.a6"><b>สเกลได้ทันที</b> ไม่ต้องจ้างเพิ่ม</div>
       </div>
     </div>
-    <p class="cmp-quote grad-txt reveal">"AI ทำงานแทนพนักงานทั้งทีม 24 ชม. ไม่ลา ไม่ป่วย ไม่ลาออก — ในราคาที่ถูกกว่าจ้างคนเดียว"</p>
+    <p class="cmp-quote grad-txt reveal" data-i18n="whyai.quote">"AI ทำงานแทนพนักงานทั้งทีม 24 ชม. ไม่ลา ไม่ป่วย ไม่ลาออก — ในราคาที่ถูกกว่าจ้างคนเดียว"</p>
   </div>
 </section>
 
@@ -604,38 +607,38 @@
 <section id="pricing">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">🎂 แพ็กเกจ · โปรพิเศษ 22 ท่านแรก</div>
-      <h2>เลือกแพ็กเกจที่ใช่สำหรับธุรกิจคุณ</h2>
-      <p>ราคาโปรเปิดตัว เฉพาะ <b style="color:var(--gold)">22 ท่านแรก</b> เท่านั้น! · หรือออกแบบทีม AI เองด้านล่าง</p>
+      <div class="eyebrow" data-i18n="pricing.eyebrow">🎂 แพ็กเกจ · โปรพิเศษ 22 ท่านแรก</div>
+      <h2 data-i18n="pricing.h2">เลือกแพ็กเกจที่ใช่สำหรับธุรกิจคุณ</h2>
+      <p data-i18n="pricing.p">ราคาโปรเปิดตัว เฉพาะ <b style="color:var(--gold)">22 ท่านแรก</b> เท่านั้น! · หรือออกแบบทีม AI เองด้านล่าง</p>
     </div>
     <div class="price-grid" id="pkgGrid"></div>
 
     <div class="webonly reveal">
       <div>
-        <div class="price-name">🌐 เฉพาะเว็บไซต์</div>
-        <div class="pkg-tag">เว็บร้าน + แคตตาล็อก + แอดมิน · เพิ่ม AI ทีหลังได้ทุกเมื่อ<br>ระบบจัดการ admin: Dashboard · Orders · Products · Customers · Users</div>
-        <div class="pkg-fit" style="margin-bottom:0">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)<br>💬 <b style="color:var(--cyan)">อยากได้เกินนี้ (เพิ่มหน้า/ฟีเจอร์)?</b> ส่งรายละเอียดให้โนวา ขอใบเสนอราคา</div>
+        <div class="price-name" data-i18n="webonly.name">🌐 เฉพาะเว็บไซต์</div>
+        <div class="pkg-tag" data-i18n="webonly.tag">เว็บร้าน + แคตตาล็อก + แอดมิน · เพิ่ม AI ทีหลังได้ทุกเมื่อ<br>ระบบจัดการ admin: Dashboard · Orders · Products · Customers · Users</div>
+        <div class="pkg-fit" style="margin-bottom:0" data-i18n="webonly.fit">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)<br>💬 <b style="color:var(--cyan)">อยากได้เกินนี้ (เพิ่มหน้า/ฟีเจอร์)?</b> ส่งรายละเอียดให้โนวา ขอใบเสนอราคา</div>
       </div>
       <div style="text-align:right">
-        <div class="price-num" style="font-size:30px">฿9,000<small> ค่าทำเว็บ (ครั้งเดียว)</small></div>
-        <div class="price-monthly">+ รายปี ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">รวมโดเมน + โฮสติ้ง</b> · ไม่มีรายเดือน</div>
-        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="requestWebOnly()">ขอใบเสนอราคา</button>
+        <div class="price-num" style="font-size:30px">฿9,000<small data-i18n="webonly.once"> ค่าทำเว็บ (ครั้งเดียว)</small></div>
+        <div class="price-monthly" data-i18n="webonly.monthly">+ รายปี ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">รวมโดเมน + โฮสติ้ง</b> · ไม่มีรายเดือน</div>
+        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="requestWebOnly()" data-i18n="webonly.btn">ขอใบเสนอราคา</button>
       </div>
     </div>
 
     <div class="common-band reveal">
-      <div class="cb-title">✨ ทุกแพ็กเกจได้รับ</div>
+      <div class="cb-title" data-i18n="cb.title">✨ ทุกแพ็กเกจได้รับ</div>
       <div class="cb-grid">
-        <div>✅ ฟรีตรวจสลิปโอนเงิน 100 สลิป/เดือน <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
-        <div>⚡ พลัง AI แถมเริ่มต้น ~$20 · เดือนแรกฟรี เติมตามใช้จริง <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
-        <div>🛠️ ติดตั้ง + เทรนการใช้งาน ฟรี</div>
-        <div>🎨 ปรับแบรนด์ตามร้าน (โลโก้/สี/ชื่อ AI)</div>
-        <div>📱 รองรับมือถือ (Responsive)</div>
-        <div>🌐 ฟรี Hosting ปีแรก</div>
-        <div>🔄 อัปเกรดแพ็กเกจทีหลังได้ ไม่ต้องรื้อ</div>
-        <div>🔔 เตือนพลัง AI ใกล้หมด ผ่าน LINE <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
+        <div data-i18n="cb.1">✅ ฟรีตรวจสลิปโอนเงิน 100 สลิป/เดือน <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
+        <div data-i18n="cb.2">⚡ พลัง AI แถมเริ่มต้น ~$20 · เดือนแรกฟรี เติมตามใช้จริง <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
+        <div data-i18n="cb.3">🛠️ ติดตั้ง + เทรนการใช้งาน ฟรี</div>
+        <div data-i18n="cb.4">🎨 ปรับแบรนด์ตามร้าน (โลโก้/สี/ชื่อ AI)</div>
+        <div data-i18n="cb.5">📱 รองรับมือถือ (Responsive)</div>
+        <div data-i18n="cb.6">🌐 ฟรี Hosting ปีแรก</div>
+        <div data-i18n="cb.7">🔄 อัปเกรดแพ็กเกจทีหลังได้ ไม่ต้องรื้อ</div>
+        <div data-i18n="cb.8">🔔 เตือนพลัง AI ใกล้หมด ผ่าน LINE <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
       </div>
-      <div class="cb-note">📐 <b>ขอบเขตเว็บไซต์:</b> 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000) · <b>ไม่รวมค่าโดเมน</b></div>
+      <div class="cb-note" data-i18n="cb.note">📐 <b>ขอบเขตเว็บไซต์:</b> 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000) · <b>ไม่รวมค่าโดเมน</b></div>
     </div>
   </div>
 </section>
@@ -644,30 +647,30 @@
 <section id="calculator">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">ออกแบบเอง · จ่ายเท่าที่ใช้</div>
-      <h2>เลือกทีม AI ของคุณ</h2>
-      <p>ติ๊กเลือก AI ที่ธุรกิจต้องใช้ → เห็นราคาทันที · เริ่มจากเว็บ แล้วเพิ่มทีหลังได้</p>
+      <div class="eyebrow" data-i18n="calc.eyebrow">ออกแบบเอง · จ่ายเท่าที่ใช้</div>
+      <h2 data-i18n="calc.h2">เลือกทีม AI ของคุณ</h2>
+      <p data-i18n="calc.p">ติ๊กเลือก AI ที่ธุรกิจต้องใช้ → เห็นราคาทันที · เริ่มจากเว็บ แล้วเพิ่มทีหลังได้</p>
     </div>
     <div class="calc reveal">
       <div class="calc-form">
         <div class="calc-group">
-          <div class="calc-label"><span>✓</span>เลือก AI (เพิ่ม-ลดได้อิสระ · ตัวที่ผูกกันจะปลดล็อกให้เอง)</div>
+          <div class="calc-label"><span>✓</span><span data-i18n="calc.label">เลือก AI (เพิ่ม-ลดได้อิสระ · ตัวที่ผูกกันจะปลดล็อกให้เอง)</span></div>
           <div class="ac-list" id="acList"></div>
         </div>
         <div class="calc-group">
           <div style="background:var(--bg-2); border:1px dashed var(--line); border-radius:12px; padding:15px 17px; font-size:13.5px; color:var(--txt-dim)">
-            🔌 <b style="color:var(--txt)">มีเว็บ/ระบบอยู่แล้ว?</b> อยากเพิ่ม AI เข้าหลังบ้านเดิม — เราประเมินให้เป็นรายเคส (แต่ละระบบไม่เหมือนกัน)
-            <div style="margin-top:11px"><button class="btn-ghost" style="padding:10px 20px;font-size:14px" onclick="requestAssess()">ขอประเมิน (ปรึกษาฟรี) →</button></div>
+            <span data-i18n="calc.assess">🔌 <b style="color:var(--txt)">มีเว็บ/ระบบอยู่แล้ว?</b> อยากเพิ่ม AI เข้าหลังบ้านเดิม — เราประเมินให้เป็นรายเคส (แต่ละระบบไม่เหมือนกัน)</span>
+            <div style="margin-top:11px"><button class="btn-ghost" style="padding:10px 20px;font-size:14px" onclick="requestAssess()" data-i18n="calc.assessBtn">ขอประเมิน (ปรึกษาฟรี) →</button></div>
           </div>
         </div>
       </div>
       <div class="calc-summary">
-        <div class="cs-title">📋 สรุปทีม AI ของคุณ</div>
+        <div class="cs-title" data-i18n="calc.sumTitle">📋 สรุปทีม AI ของคุณ</div>
         <div class="cs-lines" id="calcLines"></div>
-        <div class="cs-total-row"><span>ค่าติดตั้ง (ครั้งเดียว)</span><span class="cs-amount grad-txt" id="csInstall">฿0</span></div>
-        <div class="cs-total-row"><span>รายเดือน</span><span class="cs-amount" id="csMonthly" style="font-size:18px">฿0/เดือน</span></div>
-        <button class="btn-primary" id="calcCta" style="width:100%;margin-top:16px" onclick="requestQuote()">ขอใบเสนอราคา →</button>
-        <div class="cs-note">⚡ <b>พลัง AI</b> (ค่า token): เดือนแรกฟรี ให้ลองใช้ก่อน · จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม<br>* ราคาประเมินเบื้องต้น — ทีม NEO-S ยืนยันในใบเสนอราคาจริง · ฟรี Hosting ปีแรก (ไม่รวมค่าโดเมน)</div>
+        <div class="cs-total-row"><span data-i18n="calc.install">ค่าติดตั้ง (ครั้งเดียว)</span><span class="cs-amount grad-txt" id="csInstall">฿0</span></div>
+        <div class="cs-total-row"><span data-i18n="calc.monthly">รายเดือน</span><span class="cs-amount" id="csMonthly" style="font-size:18px">฿0/เดือน</span></div>
+        <button class="btn-primary" id="calcCta" style="width:100%;margin-top:16px" onclick="requestQuote()" data-i18n="calc.cta">ขอใบเสนอราคา →</button>
+        <div class="cs-note" data-i18n="calc.note">⚡ <b>พลัง AI</b> (ค่า token): เดือนแรกฟรี ให้ลองใช้ก่อน · จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม<br>* ราคาประเมินเบื้องต้น — ทีม NEO-S ยืนยันในใบเสนอราคาจริง · ฟรี Hosting ปีแรก (ไม่รวมค่าโดเมน)</div>
       </div>
     </div>
   </div>
@@ -677,14 +680,14 @@
 <section id="why" style="background:var(--bg-2)">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">ทำไมต้อง NEO-S</div>
-      <h2>ขับเคลื่อนด้วย AI ตั้งแต่ต้นจนจบ</h2>
+      <div class="eyebrow" data-i18n="why.eyebrow">ทำไมต้อง NEO-S</div>
+      <h2 data-i18n="why.h2">ขับเคลื่อนด้วย AI ตั้งแต่ต้นจนจบ</h2>
     </div>
     <div class="why-grid">
-      <div class="why-card reveal"><div class="ic">⚡</div><h3>เริ่มใช้ได้เร็ว</h3><p>พร้อมใช้ใน 7-14 วันทำการ ไม่ต้องรอพัฒนาเป็นเดือน</p></div>
-      <div class="why-card reveal"><div class="ic">🔒</div><h3>ปลอดภัย 100%</h3><p>ออกแบบระบบโดยคำนึงถึงการปกป้องข้อมูล</p></div>
-      <div class="why-card reveal"><div class="ic">🎨</div><h3>ปรับแต่งได้ทุกอย่าง</h3><p>ชื่อ AI · โลโก้ · สี · สินค้า ตามแบรนด์ของคุณ</p></div>
-      <div class="why-card reveal"><div class="ic">🤝</div><h3>ดูแลใกล้ชิด</h3><p>ทีมงานเข้าใจธุรกิจคุณ ติดต่อได้ตลอดเวลา</p></div>
+      <div class="why-card reveal"><div class="ic">⚡</div><h3 data-i18n="why.c1h">เริ่มใช้ได้เร็ว</h3><p data-i18n="why.c1p">พร้อมใช้ใน 7-14 วันทำการ ไม่ต้องรอพัฒนาเป็นเดือน</p></div>
+      <div class="why-card reveal"><div class="ic">🔒</div><h3 data-i18n="why.c2h">ปลอดภัย 100%</h3><p data-i18n="why.c2p">ออกแบบระบบโดยคำนึงถึงการปกป้องข้อมูล</p></div>
+      <div class="why-card reveal"><div class="ic">🎨</div><h3 data-i18n="why.c3h">ปรับแต่งได้ทุกอย่าง</h3><p data-i18n="why.c3p">ชื่อ AI · โลโก้ · สี · สินค้า ตามแบรนด์ของคุณ</p></div>
+      <div class="why-card reveal"><div class="ic">🤝</div><h3 data-i18n="why.c4h">ดูแลใกล้ชิด</h3><p data-i18n="why.c4p">ทีมงานเข้าใจธุรกิจคุณ ติดต่อได้ตลอดเวลา</p></div>
     </div>
   </div>
 </section>
@@ -693,16 +696,16 @@
 <section id="roadmap">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">วิสัยทัศน์</div>
-      <h2>Roadmap สู่ธุรกิจอัตโนมัติ<span style="white-space:nowrap">เต็มรูปแบบ</span></h2>
-      <p>NEO-S พัฒนาต่อเนื่อง สู่ระบบที่ AI ดูแลธุรกิจได้ครบทุกมิติ</p>
+      <div class="eyebrow" data-i18n="road.eyebrow">วิสัยทัศน์</div>
+      <h2 data-i18n="road.h2">Roadmap สู่ธุรกิจอัตโนมัติ<span style="white-space:nowrap">เต็มรูปแบบ</span></h2>
+      <p data-i18n="road.p">NEO-S พัฒนาต่อเนื่อง สู่ระบบที่ AI ดูแลธุรกิจได้ครบทุกมิติ</p>
     </div>
     <div class="road">
-      <div class="road-item done reveal"><div class="road-phase">PHASE 1</div><div><h3>AI Sales &amp; Finance</h3><p>ตอบแชท รับออเดอร์ ตรวจสลิป</p></div></div>
-      <div class="road-item reveal"><div class="road-phase">PHASE 2</div><div><h3>Dashboard หลังบ้าน</h3><p>สรุปยอดขาย จัดการออเดอร์ แจ้งเตือนเรียลไทม์</p></div></div>
-      <div class="road-item reveal"><div class="road-phase">PHASE 3</div><div><h3>Omnichannel</h3><p>เชื่อมระบบภายนอกในการขยายตลาดการค้า</p></div></div>
-      <div class="road-item reveal"><div class="road-phase">PHASE 4</div><div><h3>AI Marketing</h3><p>สร้างคอนเทนต์ คิดแคมเปญ ยิงโฆษณาอัตโนมัติ</p></div></div>
-      <div class="road-item reveal"><div class="road-phase">PHASE 5</div><div><h3>AI Manager</h3><p>รายงานธุรกิจอัจฉริยะ ส่งตรงถึงเจ้าของผ่าน LINE</p></div></div>
+      <div class="road-item done reveal"><div class="road-phase">PHASE 1</div><div><h3>AI Sales &amp; Finance</h3><p data-i18n="road.p1">ตอบแชท รับออเดอร์ ตรวจสลิป</p></div></div>
+      <div class="road-item reveal"><div class="road-phase">PHASE 2</div><div><h3 data-i18n="road.h2b">Dashboard หลังบ้าน</h3><p data-i18n="road.p2">สรุปยอดขาย จัดการออเดอร์ แจ้งเตือนเรียลไทม์</p></div></div>
+      <div class="road-item reveal"><div class="road-phase">PHASE 3</div><div><h3>Omnichannel</h3><p data-i18n="road.p3">เชื่อมระบบภายนอกในการขยายตลาดการค้า</p></div></div>
+      <div class="road-item reveal"><div class="road-phase">PHASE 4</div><div><h3>AI Marketing</h3><p data-i18n="road.p4">สร้างคอนเทนต์ คิดแคมเปญ ยิงโฆษณาอัตโนมัติ</p></div></div>
+      <div class="road-item reveal"><div class="road-phase">PHASE 5</div><div><h3>AI Manager</h3><p data-i18n="road.p5">รายงานธุรกิจอัจฉริยะ ส่งตรงถึงเจ้าของผ่าน LINE</p></div></div>
     </div>
   </div>
 </section>
@@ -712,31 +715,31 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">FAQ</div>
-      <h2>คำถามที่<span class="grad-txt">พบบ่อย</span></h2>
-      <p>รวมคำถามยอดฮิตก่อนเริ่มต้น — ดูคำตอบทั้งหมดได้ในหน้า FAQ</p>
+      <h2 data-i18n="faq.h2">คำถามที่<span class="grad-txt">พบบ่อย</span></h2>
+      <p data-i18n="faq.p">รวมคำถามยอดฮิตก่อนเริ่มต้น — ดูคำตอบทั้งหมดได้ในหน้า FAQ</p>
     </div>
     <div class="mini-faq reveal">
       <div class="faq-item">
-        <button class="faq-q">ติดตั้งนานไหม?<span class="faq-ar">▾</span></button>
-        <div class="faq-a"><div class="faq-a-in"><b>7-14 วันทำการ</b>ค่ะ — ดูแลให้ครบ ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้ แล้วอบรมการใช้งานให้</div></div>
+        <button class="faq-q"><span data-i18n="faq.q1">ติดตั้งนานไหม?</span><span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in" data-i18n="faq.a1"><b>7-14 วันทำการ</b>ค่ะ — ดูแลให้ครบ ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้ แล้วอบรมการใช้งานให้</div></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">พลัง AI แพงไหม?<span class="faq-ar">▾</span></button>
-        <div class="faq-a"><div class="faq-a-in">คิด<b>ตามทุนจริง ไม่บวกกำไร</b>ค่ะ — 1 แชท (ถาม-ตอบ 1 รอบ) ราว <b>1.4 บาท</b> · เดือนแรกฟรี ให้ลองใช้ก่อน · เราได้กำไรจากค่าพัฒนา+ดูแล ไม่ใช่ค่า AI</div></div>
+        <button class="faq-q"><span data-i18n="faq.q2">พลัง AI แพงไหม?</span><span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in" data-i18n="faq.a2">คิด<b>ตามทุนจริง ไม่บวกกำไร</b>ค่ะ — 1 แชท (ถาม-ตอบ 1 รอบ) ราว <b>1.4 บาท</b> · เดือนแรกฟรี ให้ลองใช้ก่อน · เราได้กำไรจากค่าพัฒนา+ดูแล ไม่ใช่ค่า AI</div></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">มีค่าใช้จ่ายแอบแฝงไหม?<span class="faq-ar">▾</span></button>
-        <div class="faq-a"><div class="faq-a-in">ไม่มีค่ะ — ทุกแพ็กเกจได้ฟรี Hosting ปีแรก + ติดตั้ง + เทรน + ปรับแบรนด์ + ตรวจสลิป 100/เดือน + พลัง AI เดือนแรกฟรี</div></div>
+        <button class="faq-q"><span data-i18n="faq.q3">มีค่าใช้จ่ายแอบแฝงไหม?</span><span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in" data-i18n="faq.a3">ไม่มีค่ะ — ทุกแพ็กเกจได้ฟรี Hosting ปีแรก + ติดตั้ง + เทรน + ปรับแบรนด์ + ตรวจสลิป 100/เดือน + พลัง AI เดือนแรกฟรี</div></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">มีสัญญาผูกมัดไหม?<span class="faq-ar">▾</span></button>
-        <div class="faq-a"><div class="faq-a-in">ทำสัญญา <b>ปีต่อปี</b> ค่ะ — แจ้งเตือนล่วงหน้า 1 เดือนก่อนต่อ ไม่ต่ออัตโนมัติแบบงงๆ · จ่ายรายเดือนช้าได้ไม่เกิน 7 วัน</div></div>
+        <button class="faq-q"><span data-i18n="faq.q4">มีสัญญาผูกมัดไหม?</span><span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in" data-i18n="faq.a4">ทำสัญญา <b>ปีต่อปี</b> ค่ะ — แจ้งเตือนล่วงหน้า 1 เดือนก่อนต่อ ไม่ต่ออัตโนมัติแบบงงๆ · จ่ายรายเดือนช้าได้ไม่เกิน 7 วัน</div></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">อยากได้แค่เว็บไซต์ ไม่เอา AI ได้ไหม?<span class="faq-ar">▾</span></button>
-        <div class="faq-a"><div class="faq-a-in"><b>เฉพาะเว็บไซต์</b> ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) รวมโดเมน+โฮสติ้ง ไม่มีรายเดือน · เพิ่ม AI ทีหลังได้</div></div>
+        <button class="faq-q"><span data-i18n="faq.q5">อยากได้แค่เว็บไซต์ ไม่เอา AI ได้ไหม?</span><span class="faq-ar">▾</span></button>
+        <div class="faq-a"><div class="faq-a-in" data-i18n="faq.a5"><b>เฉพาะเว็บไซต์</b> ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) รวมโดเมน+โฮสติ้ง ไม่มีรายเดือน · เพิ่ม AI ทีหลังได้</div></div>
       </div>
-      <div class="faq-more"><a href="faq.html">ดูคำถามทั้งหมด →</a></div>
+      <div class="faq-more"><a href="faq.html" data-i18n="faq.more">ดูคำถามทั้งหมด →</a></div>
     </div>
   </div>
 </section>
@@ -745,12 +748,12 @@
 <section id="contact">
   <div class="wrap">
     <div class="cta-box reveal">
-      <h2>พร้อมให้ <span class="grad-txt">AI</span> ดูแลธุรกิจคุณหรือยัง?</h2>
-      <p>ปรึกษาฟรี ไม่มีค่าใช้จ่าย — ทีม NEO-S พร้อมออกแบบระบบให้ธุรกิจคุณ</p>
-      <button class="btn-primary" onclick="openChat()">คุยกับโนวา AI เลย →</button>
+      <h2 data-i18n="cta.h2">พร้อมให้ <span class="grad-txt">AI</span> ดูแลธุรกิจคุณหรือยัง?</h2>
+      <p data-i18n="cta.p">ปรึกษาฟรี ไม่มีค่าใช้จ่าย — ทีม NEO-S พร้อมออกแบบระบบให้ธุรกิจคุณ</p>
+      <button class="btn-primary" onclick="openChat()" data-i18n="cta.btn">คุยกับโนวา AI เลย →</button>
       <div class="cta-contacts">
         <a href="mailto:info@neos-css.com">✉️ info@neos-css.com</a>
-        <a href="https://nutt1569.github.io/lumina" target="_blank">🌐 ดูระบบตัวอย่าง</a>
+        <a href="https://nutt1569.github.io/lumina" target="_blank" data-i18n="cta.demo">🌐 ดูระบบตัวอย่าง</a>
       </div>
     </div>
   </div>
@@ -764,14 +767,14 @@
       <span class="logo-txt">NEO-S</span>
     </div>
     <div class="foot-sub">Autonomous Business OS</div>
-    <p>ระบบบริหารธุรกิจขับเคลื่อนด้วย AI</p>
+    <p data-i18n="foot.tag">ระบบบริหารธุรกิจขับเคลื่อนด้วย AI</p>
     <p class="copy">© 2026 Comtech Solution System Co., Ltd. — All rights reserved.</p>
   </div>
 </footer>
 
 <!-- ===== CHAT WIDGET ===== -->
 <button class="chat-fab" onclick="toggleChat()" aria-label="คุยกับโนวา AI">
-  <span class="nova-bubble">💬 คุยกับโนวา</span>
+  <span class="nova-bubble" data-i18n="chat.bubble">💬 คุยกับโนวา</span>
   <span class="nova-wrap">
     <img class="nova-img nova-open" src="nova-open.png?v=3" alt="โนวา AI ที่ปรึกษา NEO-S" decoding="async">
     <img class="nova-img nova-closed" src="nova-closed.png?v=3" alt="" aria-hidden="true" decoding="async">
@@ -780,19 +783,19 @@
 <div class="chat-win" id="chatWin">
   <div class="chat-hd">
     <div class="chat-av">✨</div>
-    <div><div class="chat-hd-name">โนวา · NEO-S</div><div class="chat-hd-status">● ออนไลน์ — ที่ปรึกษา AI</div></div>
+    <div><div class="chat-hd-name">โนวา · NEO-S</div><div class="chat-hd-status" data-i18n="chat.status">● ออนไลน์ — ที่ปรึกษา AI</div></div>
     <button class="chat-x" onclick="toggleChat()">✕</button>
   </div>
   <div class="chat-body" id="chatBody"></div>
   <div class="chat-quick" id="chatQuick">
-    <button class="quick-b" onclick="showLeadForm()" style="border-color:var(--blue);color:var(--txt)">📩 ฝากให้ติดต่อกลับ</button>
-    <button class="quick-b" onclick="quick('NEO-S ทำอะไรได้บ้างคะ')">NEO-S ทำอะไรได้บ้าง?</button>
-    <button class="quick-b" onclick="quick('ราคาเท่าไหร่คะ')">ราคาเท่าไหร่?</button>
-    <button class="quick-b" onclick="quick('ติดตั้งนานไหมคะ')">ติดตั้งนานไหม?</button>
-    <button class="quick-b" onclick="quick('ขอดูตัวอย่างระบบ')">ขอดูตัวอย่าง</button>
+    <button class="quick-b" onclick="showLeadForm()" style="border-color:var(--blue);color:var(--txt)" data-i18n="chat.lead">📩 ฝากให้ติดต่อกลับ</button>
+    <button class="quick-b" data-th="NEO-S ทำอะไรได้บ้างคะ" data-en="What can NEO-S do?" onclick="quickBtn(this)" data-i18n="chat.q1">NEO-S ทำอะไรได้บ้าง?</button>
+    <button class="quick-b" data-th="ราคาเท่าไหร่คะ" data-en="How much does it cost?" onclick="quickBtn(this)" data-i18n="chat.q2">ราคาเท่าไหร่?</button>
+    <button class="quick-b" data-th="ติดตั้งนานไหมคะ" data-en="How long does setup take?" onclick="quickBtn(this)" data-i18n="chat.q3">ติดตั้งนานไหม?</button>
+    <button class="quick-b" data-th="ขอดูตัวอย่างระบบ" data-en="Can I see a live demo?" onclick="quickBtn(this)" data-i18n="chat.q4">ขอดูตัวอย่าง</button>
   </div>
   <div class="chat-in">
-    <input id="chatInput" type="text" placeholder="พิมพ์ข้อความ…" onkeydown="if(event.key==='Enter')sendMsg()">
+    <input id="chatInput" type="text" placeholder="พิมพ์ข้อความ…" data-i18n-ph="chat.input" onkeydown="if(event.key==='Enter')sendMsg()">
     <button onclick="sendMsg()">➤</button>
   </div>
 </div>
@@ -809,6 +812,136 @@ const NOVA_WORKER_URL = 'https://neos-sales-proxy.kritsada-nutt1981.workers.dev'
 // 🗄️ Supabase — เก็บ Lead (ตาราง neos_leads, INSERT only ผ่าน anon key)
 const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
+
+// ============================================================
+// 🌐 i18n (TH/EN) — สลับภาษาทั้งเว็บ · ไทย = ต้นฉบับใน HTML · EN = dictionary
+//    ปุ่มมุมขวาบน (nav) · จำภาษาด้วย localStorage · dynamic content re-render ตามภาษา
+// ============================================================
+let LANG = (function(){ try { return localStorage.getItem('neos_lang') || 'th'; } catch(e){ return 'th'; } })();
+const I18N_EN = {
+  // ── nav ──
+  'nav.how':'How it works','nav.case':'Results','nav.pricing':'Pricing','nav.calc':'Calculator','nav.cta':'Free consult',
+  // ── hero ──
+  'hero.badge':'Autonomous Business OS · Powered by AI Agents',
+  'hero.title':'Let <span class="grad-txt">AI</span> run your business<br>around the clock, 24/7',
+  'hero.sub':'NEO-S is an AI-Agent-powered business operating system — <span style="white-space:nowrap">it replies to customers,</span> <span style="white-space:nowrap">takes orders,</span> <span style="white-space:nowrap">verifies payment slips</span> and runs your back office automatically, with no days off.',
+  'hero.cta1':'Start a free consult →','hero.cta2':'See it live (LUMINA)',
+  'hero.stat1':'Always on','hero.stat3':'days to launch',
+  // ── pain ──
+  'pain.eyebrow':'A problem every business faces','pain.h2':'Losing sales because you can’t reply in time',
+  'pain.p':'Every slow reply is a customer slipping away — NEO-S solves this for you',
+  'pain.c1h':'Customers message at night, no one replies','pain.c1p':'A customer messages at 2 AM ready to buy, but by the time you reply in the morning they’ve changed their mind',
+  'pain.c2h':'Checking slips every day wastes time','pain.c2p':'Verifying each slip, checking amounts, noting orders — manual work that eats your whole day',
+  'pain.c3h':'Orders slip through, data is scattered','pain.c3p':'Orders live in chats, notebooks, Excel — a headache to find every time',
+  // ── agents ──
+  'agents.eyebrow':'Your AI team','agents.h2':'6 AI Agents working for you','agents.p':'Each Agent is a specialist, working together like a real team',
+  'agents.sales':'<b style="color:var(--cyan)">Smart sales assistant</b><br>Replies to customers, takes orders, closes sales and upsells across every channel, 24/7.',
+  'agents.fin':'<b style="color:var(--cyan)">Smart finance assistant</b><br>Two-layer real/fake slip checking, blocks duplicate slips, confirms amounts automatically.',
+  'agents.mgr':'<b style="color:var(--cyan)">Smart business manager</b><br>Pulls data from every part, summarizes performance and tracks the whole operation in real time.',
+  'agents.inv':'<b style="color:var(--cyan)">Stock management assistant</b><br>Watches stock, warns when items run low, prevents selling out-of-stock products.',
+  'agents.mkt':'<b style="color:var(--cyan)">Smart marketing assistant</b><br>Supercharges your marketing team with AI.',
+  'agents.log':'<b style="color:var(--cyan)">AI delivery-tracking staff</b><br>Tracks parcels and updates delivery status to customers automatically.',
+  'badge.live':'● Available','badge.soon':'Coming soon',
+  // ── how ──
+  'how.eyebrow':'Easy to start','how.h2':'Get started with NEO-S in 4 steps','how.p':'We handle every step, from consult to a system that’s ready for real use',
+  'how.s1h':'Free consult','how.s1p':'Talk to our team about your business and what you want AI to help with — no cost',
+  'how.s2h':'Choose your AI team','how.s2p':'Pick the AI Agents your business needs, with a clear quote',
+  'how.s3h':'We set it up','how.s3p':'Configure, connect, brand and test — within 7–14 business days',
+  'how.s4h':'Go live + ongoing care','how.s4p':'Delivered with training — close support after you go live',
+  // ── results ──
+  'res.h2':'The results your business <span class="grad-txt">will get</span>',
+  'res.k1':'Reply to customers<br>with no days off','res.k2':'Average<br>response time','res.k3':'Slip checking<br>fully automatic','res.k4':'Orders lost<br>overnight',
+  'res.beforeH':'😟 Before NEO-S',
+  'res.b1':'2–3 people taking turns watching chat all day','res.b2':'Hand-written orders, often missed or wrong','res.b3':'Checking slips one by one, 2–5 min each, fraud risk','res.b4':'No real-time view of sales or stock',
+  'res.afterH':'😎 After NEO-S',
+  'res.a1':'AI replies to customers instantly, any time','res.a2':'Orders saved to the system automatically, nothing missed','res.a3':'AI checks slips in < 10 sec, two-layer fraud protection','res.a4':'Real-time sales & stock dashboard',
+  // ── case ──
+  'case.h3':'A skincare brand that lets AI run all of its sales',
+  'case.p':'LUMINA uses NEO-S as an AI salesperson named “Lumé” — replying to customers, taking orders, checking slips and logging everything, end to end, every single day.',
+  'case.m1':'Customer replies','case.m2':'Automated','case.m3':'Staff watching chat','case.cta':'Open the live system →',
+  // ── why ai ──
+  'whyai.h2':'Hiring staff <span class="grad-txt">vs</span> NEO-S AI','whyai.hEmp':'Hiring staff',
+  'whyai.f1':'Working hours','whyai.e1':'8 hrs/day, with holidays, leave & sick days','whyai.a1':'<b>24 hrs, every day</b> with no days off',
+  'whyai.f2':'Scope of work','whyai.e2':'Sales + finance + stock + marketing needs 3–5 people','whyai.a2':'<b>Everything in one system</b>',
+  'whyai.f3':'Monthly cost','whyai.e3':'30,000 – 60,000+ THB','whyai.a3':'<b>Starts at just 4,000 THB/month</b> and the AI helps grow your sales alongside your business',
+  'whyai.f4':'Accuracy','whyai.e4':'Gets tired, forgets, moody','whyai.a4':'<b>Follows the rules exactly</b>, complete data every time',
+  'whyai.f5':'Resignation / retraining','whyai.e5':'Happens often, repeat training needed','whyai.a5':'<b>None</b> — the system remembers everything',
+  'whyai.f6':'Customers grow 10 → 1,000','whyai.e6':'Need to hire more people','whyai.a6':'<b>Scales instantly</b>, no extra hiring',
+  'whyai.quote':'“AI does the work of a whole team 24/7 — no leave, no sick days, no resignations — for less than the cost of a single hire”',
+  // ── pricing ──
+  'pricing.eyebrow':'🎂 Packages · Special offer for the first 22 clients','pricing.h2':'Choose the right package for your business',
+  'pricing.p':'Launch promo for the <b style="color:var(--gold)">first 22 clients</b> only! · or design your own AI team below',
+  'webonly.name':'🌐 Website only','webonly.tag':'Online store + catalog + admin · add AI anytime later<br>Admin panel: Dashboard · Orders · Products · Customers · Users',
+  'webonly.fit':'📐 1 page · up to 5 menus · up to 50 products (extra ฿20/item) · 3 revisions (extra ฿3,000 each)<br>💬 <b style="color:var(--cyan)">Need more (extra pages/features)?</b> Send the details to Nova for a quote',
+  'webonly.once':' website build (one-time)',
+  'webonly.monthly':'+ yearly ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">domain + hosting included</b> · no monthly fee',
+  'webonly.btn':'Get a quote',
+  'cb.title':'✨ Every package includes','cb.1':'✅ Free slip verification, 100 slips/month <span style="color:var(--txt-dim);font-size:11px">(except website without AI)</span>',
+  'cb.2':'⚡ Bonus AI power ~$20 to start · first month free, top up as you use <span style="color:var(--txt-dim);font-size:11px">(except website without AI)</span>',
+  'cb.3':'🛠️ Setup + usage training, free','cb.4':'🎨 Branded to your store (logo/colors/AI name)','cb.5':'📱 Mobile-friendly (responsive)','cb.6':'🌐 Free hosting, first year','cb.7':'🔄 Upgrade your package later, no rebuild','cb.8':'🔔 Low-AI-power alerts via LINE <span style="color:var(--txt-dim);font-size:11px">(except website without AI)</span>',
+  'cb.note':'📐 <b>Website scope:</b> 1 page · up to 5 menus · up to 50 products (extra ฿20/item) · 3 revisions (extra ฿3,000 each) · <b>domain not included</b>',
+  // ── calculator ──
+  'calc.eyebrow':'Design your own · pay for what you use','calc.h2':'Choose your AI team','calc.p':'Tick the AI your business needs → see the price instantly · start with the website, add more later',
+  'calc.label':'Choose AI (add/remove freely · linked ones unlock automatically)',
+  'calc.assess':'🔌 <b style="color:var(--txt)">Already have a website/system?</b> Want to add AI to your existing back office — we assess case by case (every system is different)',
+  'calc.assessBtn':'Request an assessment (free consult) →','calc.sumTitle':'📋 Your AI team summary',
+  'calc.install':'Setup fee (one-time)','calc.monthly':'Monthly','calc.cta':'Get a quote →',
+  'calc.note':'⚡ <b>AI power</b> (token cost): first month free to try · then top up at cost, no markup<br>* Preliminary estimate — the NEO-S team confirms in the actual quote · free hosting first year (domain not included)',
+  // ── why ──
+  'why.eyebrow':'Why NEO-S','why.h2':'AI-driven from start to finish',
+  'why.c1h':'Fast to launch','why.c1p':'Ready in 7–14 business days, no months-long wait','why.c2h':'100% secure','why.c2p':'Designed with data protection in mind',
+  'why.c3h':'Fully customizable','why.c3p':'AI name · logo · colors · products, all to your brand','why.c4h':'Close support','why.c4p':'A team that understands your business, reachable any time',
+  // ── roadmap ──
+  'road.eyebrow':'Vision','road.h2':'Roadmap to a fully <span style="white-space:nowrap">autonomous business</span>','road.p':'NEO-S keeps evolving toward a system where AI runs your business in every dimension',
+  'road.p1':'Reply to chat, take orders, verify slips','road.h2b':'Back-office dashboard','road.p2':'Sales summaries, order management, real-time alerts',
+  'road.p3':'Connect external systems to expand your market','road.p4':'Create content, plan campaigns, run ads automatically','road.p5':'Smart business reports, sent straight to the owner via LINE',
+  // ── faq ──
+  'faq.h2':'Frequently asked <span class="grad-txt">questions</span>','faq.p':'The most common questions before getting started — see all answers on the FAQ page',
+  'faq.q1':'How long does setup take?','faq.a1':'<b>7–14 business days</b> — we handle it all: configure, connect, test until ready, then train you to use it',
+  'faq.q2':'Is AI power expensive?','faq.a2':'Charged <b>at real cost, no markup</b> — 1 chat (one Q&A round) is about <b>1.4 THB</b> · first month free to try · we profit from development + support, not from AI cost',
+  'faq.q3':'Are there hidden costs?','faq.a3':'None — every package includes free first-year hosting + setup + training + branding + 100 slip checks/month + first-month-free AI power',
+  'faq.q4':'Is there a lock-in contract?','faq.a4':'Contracts are <b>year by year</b> — we remind you 1 month before renewal, no confusing auto-renew · monthly payment grace up to 7 days',
+  'faq.q5':'Can I get just the website, no AI?','faq.a5':'<b>Website only</b> ฿9,000 (one-time) + yearly ฿2,500 (.com), domain + hosting included, no monthly fee · add AI later',
+  'faq.more':'See all questions →',
+  // ── cta / footer ──
+  'cta.h2':'Ready to let <span class="grad-txt">AI</span> run your business?','cta.p':'Free consult, no cost — the NEO-S team is ready to design a system for your business',
+  'cta.btn':'Chat with Nova AI now →','cta.demo':'🌐 See a live demo','foot.tag':'AI-driven business operating system',
+  // ── chat widget ──
+  'chat.bubble':'💬 Chat with Nova','chat.status':'● Online — AI consultant','chat.lead':'📩 Leave your contact',
+  'chat.q1':'What can NEO-S do?','chat.q2':'How much?','chat.q3':'How long to set up?','chat.q4':'See a demo','chat.input':'Type a message…',
+  // ── lead form ──
+  'lead.h4':'📩 Get a quote + tell us your needs','lead.note':'A quick form to <b>get a quote</b> + let our team prepare info that fits your business (★ required)',
+  'lead.name':'Name ★','lead.email':'Email ★ (to receive the quote)','lead.phone':'Phone (optional)',
+  'lead.biz0':'Business type ★','lead.biz1':'Online store','lead.biz2':'Restaurant / café','lead.biz3':'Product brand','lead.biz4':'Services / freelance','lead.biz5':'Other',
+  'lead.products':'What do you sell · roughly how many items ★ (e.g. clothing ~50 styles)',
+  'lead.web0':'Existing website / system?','lead.web1':'None yet, starting fresh','lead.web2':'Have a website, want to add AI',
+  'lead.needLabel':'What should the AI help with (select multiple):','lead.need1':'Chat/sales','lead.need2':'Slip check/finance','lead.need3':'Stock management','lead.need4':'Marketing',
+  'lead.msg':'Additional details (optional)','lead.btn':'Send',
+};
+const _i18nOrig = new WeakMap();
+function applyLang(l){
+  LANG = (l === 'en') ? 'en' : 'th';
+  try { localStorage.setItem('neos_lang', LANG); } catch(e){}
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (!_i18nOrig.has(el)) _i18nOrig.set(el, el.innerHTML);
+    const en = I18N_EN[k];
+    el.innerHTML = (LANG === 'en' && en != null) ? en : _i18nOrig.get(el);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    if (!_i18nOrig.has(el)) _i18nOrig.set(el, el.getAttribute('placeholder') || '');
+    const en = I18N_EN[k];
+    el.setAttribute('placeholder', (LANG === 'en' && en != null) ? en : _i18nOrig.get(el));
+  });
+  const tb = document.getElementById('langToggle');
+  if (tb) tb.textContent = (LANG === 'en') ? '🌐 TH' : '🌐 EN';
+  if (window.renderPkgs) renderPkgs();
+  if (window.renderAC) renderAC();
+}
+function toggleLang(){ applyLang(LANG === 'en' ? 'th' : 'en'); }
+function quickBtn(el){ quick(LANG === 'en' ? (el.dataset.en || el.dataset.th) : el.dataset.th); }
 
 // ⚙️ ตั้งค่าหน้าเว็บ (ควบคุมจากแท็บ "เครื่องมือ" ในแอดมิน · ตาราง neos_settings)
 //    default = บังคับกรอกชื่อ+เบอร์ (พฤติกรรมเดิม) เผื่อตารางยังไม่ถูกสร้าง = เว็บไม่พัง
@@ -882,23 +1015,30 @@ function logChat(role, message){
 }
 const chatTurns = [];   // ความจำบทสนทนา (ส่งให้โนวาเพื่อตอบต่อเนื่อง + จำ pre-qualify)
 function composeForNova(latest){
+  const en = LANG === 'en';
+  // 🌐 ถ้าผู้ใช้เลือกภาษาอังกฤษ → สั่งโนวาตอบ EN (ช่วยให้ตอบอังกฤษเต็มรูปแม้ยังไม่ปรับ prompt Dify)
+  const suffix = en ? '\n\n[The customer is using English — reply entirely in natural, fluent English.]' : '';
   const hist = chatTurns.slice(-12);   // เก็บ ~12 turn ล่าสุด พอให้จำบริบท ไม่เปลือง token
-  if (!hist.length) return latest;
-  const lines = hist.map(t => (t.role==='user'?'ลูกค้า':'โนวา') + ': ' + t.text).join('\n');
-  return 'นี่คือบทสนทนาก่อนหน้าระหว่างลูกค้ากับคุณ (โนวา) — ใช้เพื่อตอบต่อเนื่องและจำสิ่งที่ลูกค้าบอกไว้:\n'
-    + lines + '\n\nข้อความล่าสุดจากลูกค้า: ' + latest;
+  if (!hist.length) return latest + suffix;
+  const lines = hist.map(t => (t.role==='user'?(en?'Customer':'ลูกค้า'):(en?'Nova':'โนวา')) + ': ' + t.text).join('\n');
+  const head = en
+    ? 'Here is the prior conversation between the customer and you (Nova) — use it to stay in context and remember what the customer said:\n'
+    : 'นี่คือบทสนทนาก่อนหน้าระหว่างลูกค้ากับคุณ (โนวา) — ใช้เพื่อตอบต่อเนื่องและจำสิ่งที่ลูกค้าบอกไว้:\n';
+  const tail = en ? '\n\nLatest message from the customer: ' : '\n\nข้อความล่าสุดจากลูกค้า: ';
+  return head + lines + tail + latest + suffix;
 }
 
 // ===== คำตอบสำเร็จรูป (offline fallback) =====
 const CANNED = [
-  { k: ['ทำอะไร','คือ','อะไรได้','feature','ฟีเจอร์'], a: 'NEO-S เป็นระบบ AI ที่ช่วยธุรกิจคุณค่ะ ✨\n\n• ตอบแชทลูกค้า 24 ชม.\n• รับออเดอร์ + ส่ง QR อัตโนมัติ\n• ตรวจสลิปการโอนเงิน\n• บันทึกข้อมูลลงระบบกลาง\n\nมี AI 6 ตัวช่วยกันค่ะ ตอนนี้ AI Sales / Finance / Manager / Inventory / Marketing พร้อมใช้แล้ว เหลือ Logistics เร็วๆ นี้ค่ะ 😊' },
-  { k: ['ราคา','เท่าไหร่','แพ็ก','package','กี่บาท'], a: 'มีให้เลือกหลายแพ็กเกจค่ะ 💎 (ราคาโปร 22 ท่านแรก)\n\n🥉 STARTER — ฿17,000 + ฿4,000/ด. (เว็บ+AI Sales)\n🥈 BUSINESS — ฿18,000 + ฿4,800/ด. (+AI Finance)\n🥇 PROFESSIONAL — ฿24,000 + ฿8,000/ด. (+Inventory+Manager)\n🚀 ADVANCED — ฿28,000 + ฿10,000/ด. (+Marketing)\n\nหรือเลือก AI ทีละตัว / เอาแค่เว็บไซต์ ฿9,000 ก็ได้ค่ะ · ติดตั้ง 7-14 วัน สนใจแบบไหนดีคะ? 😊' },
-  { k: ['ติดตั้ง','นาน','กี่วัน','เริ่ม','setup'], a: 'ติดตั้งเสร็จภายใน 7-14 วันทำการค่ะ ⚡\n\nเราดูแลให้ครบ — ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้งานจริง แล้วอบรมการใช้งานให้ด้วยค่ะ 😊' },
-  { k: ['ตัวอย่าง','demo','ดูระบบ','ตัวจริง','lumina','ลูมิน่า'], a: 'มีระบบจริงให้ดูเลยค่ะ! 🌸\n\nLUMINA Skincare ใช้ NEO-S อยู่ — ลองเข้าไปแชทกับ AI "ลูเม่" ได้เลยนะคะ\n👉 nutt1569.github.io/lumina\n\nลองสั่งซื้อดูได้ค่ะ จะเห็นว่า AI ทำงานยังไง 😊' },
-  { k: ['line','ไลน์','facebook','เฟส','tiktok','ติ๊กต็อก','ช่องทาง'], a: 'ตอนนี้พร้อมใช้ เว็บ + LINE OA ค่ะ 📱\n\nลูกค้าทักผ่านเว็บหรือ LINE → AI ตอบ + รับออเดอร์ + ตรวจสลิป อัตโนมัติ ข้อมูลรวมอยู่ที่เดียว\n\nส่วน Facebook / TikTok กำลังพัฒนา เร็วๆ นี้ค่ะ 🔜 เพิ่มให้ทีหลังได้เลยนะคะ' },
-  { k: ['พลัง','เครดิต','credit','neo credit','โทเคน','token','คิดเงินยังไง','คิดเงินไง'], a: 'พลัง AI ⚡ เหมือนแบตมือถือของ AI เลยค่ะ 🔋\n\nทุกครั้งที่ AI ตอบลูกค้า 1 ครั้ง = ใช้พลังนิดเดียว · ใกล้หมดก็แค่เติม เหมือนเติมเงินมือถือ ไม่ซับซ้อนเลยค่ะ\n\n✨ เดือนแรกแถมพลังให้ลองฟรี + ระบบเตือนก่อนหมดทุกครั้ง ไม่มีสะดุดค่ะ 😊' },
+  { k: ['ทำอะไร','คือ','อะไรได้','feature','ฟีเจอร์','do','what'], a: 'NEO-S เป็นระบบ AI ที่ช่วยธุรกิจคุณค่ะ ✨\n\n• ตอบแชทลูกค้า 24 ชม.\n• รับออเดอร์ + ส่ง QR อัตโนมัติ\n• ตรวจสลิปการโอนเงิน\n• บันทึกข้อมูลลงระบบกลาง\n\nมี AI 6 ตัวช่วยกันค่ะ ตอนนี้ AI Sales / Finance / Manager / Inventory / Marketing พร้อมใช้แล้ว เหลือ Logistics เร็วๆ นี้ค่ะ 😊', a_en: 'NEO-S is an AI system that runs your business ✨\n\n• Replies to customers 24/7\n• Takes orders + sends payment QR automatically\n• Verifies payment slips\n• Logs everything to one central system\n\nThere are 6 AI Agents working together — AI Sales / Finance / Manager / Inventory / Marketing are ready now, with Logistics coming soon 😊' },
+  { k: ['ราคา','เท่าไหร่','แพ็ก','package','กี่บาท','price','cost','how much'], a: 'มีให้เลือกหลายแพ็กเกจค่ะ 💎 (ราคาโปร 22 ท่านแรก)\n\n🥉 STARTER — ฿17,000 + ฿4,000/ด. (เว็บ+AI Sales)\n🥈 BUSINESS — ฿18,000 + ฿4,800/ด. (+AI Finance)\n🥇 PROFESSIONAL — ฿24,000 + ฿8,000/ด. (+Inventory+Manager)\n🚀 ADVANCED — ฿28,000 + ฿10,000/ด. (+Marketing)\n\nหรือเลือก AI ทีละตัว / เอาแค่เว็บไซต์ ฿9,000 ก็ได้ค่ะ · ติดตั้ง 7-14 วัน สนใจแบบไหนดีคะ? 😊', a_en: 'We have several packages 💎 (promo for the first 22 clients)\n\n🥉 STARTER — ฿17,000 + ฿4,000/mo (web + AI Sales)\n🥈 BUSINESS — ฿18,000 + ฿4,800/mo (+ AI Finance)\n🥇 PROFESSIONAL — ฿24,000 + ฿8,000/mo (+ Inventory + Manager)\n🚀 ADVANCED — ฿28,000 + ฿10,000/mo (+ Marketing)\n\nOr pick AI one by one / just the website ฿9,000 · setup 7–14 days. Which one interests you? 😊' },
+  { k: ['ติดตั้ง','นาน','กี่วัน','เริ่ม','setup','install','how long'], a: 'ติดตั้งเสร็จภายใน 7-14 วันทำการค่ะ ⚡\n\nเราดูแลให้ครบ — ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้งานจริง แล้วอบรมการใช้งานให้ด้วยค่ะ 😊', a_en: 'Setup is done within 7–14 business days ⚡\n\nWe handle it all — configure, connect, test until it’s ready for real use, then train you to use it 😊' },
+  { k: ['ตัวอย่าง','demo','ดูระบบ','ตัวจริง','lumina','ลูมิน่า','example','live'], a: 'มีระบบจริงให้ดูเลยค่ะ! 🌸\n\nLUMINA Skincare ใช้ NEO-S อยู่ — ลองเข้าไปแชทกับ AI "ลูเม่" ได้เลยนะคะ\n👉 nutt1569.github.io/lumina\n\nลองสั่งซื้อดูได้ค่ะ จะเห็นว่า AI ทำงานยังไง 😊', a_en: 'We have a live system to show you! 🌸\n\nLUMINA Skincare runs on NEO-S — try chatting with the AI “Lumé”\n👉 nutt1569.github.io/lumina\n\nTry placing an order to see how the AI works 😊' },
+  { k: ['line','ไลน์','facebook','เฟส','tiktok','ติ๊กต็อก','ช่องทาง','channel'], a: 'ตอนนี้พร้อมใช้ เว็บ + LINE OA ค่ะ 📱\n\nลูกค้าทักผ่านเว็บหรือ LINE → AI ตอบ + รับออเดอร์ + ตรวจสลิป อัตโนมัติ ข้อมูลรวมอยู่ที่เดียว\n\nส่วน Facebook / TikTok กำลังพัฒนา เร็วๆ นี้ค่ะ 🔜 เพิ่มให้ทีหลังได้เลยนะคะ', a_en: 'Right now web + LINE OA are ready 📱\n\nCustomers message via web or LINE → AI replies + takes orders + checks slips automatically, all data in one place\n\nFacebook / TikTok are in development, coming soon 🔜 and can be added later' },
+  { k: ['พลัง','เครดิต','credit','neo credit','โทเคน','token','คิดเงินยังไง','คิดเงินไง','power'], a: 'พลัง AI ⚡ เหมือนแบตมือถือของ AI เลยค่ะ 🔋\n\nทุกครั้งที่ AI ตอบลูกค้า 1 ครั้ง = ใช้พลังนิดเดียว · ใกล้หมดก็แค่เติม เหมือนเติมเงินมือถือ ไม่ซับซ้อนเลยค่ะ\n\n✨ เดือนแรกแถมพลังให้ลองฟรี + ระบบเตือนก่อนหมดทุกครั้ง ไม่มีสะดุดค่ะ 😊', a_en: 'AI power ⚡ is like a battery for the AI 🔋\n\nEach time the AI replies = a tiny bit of power used · when it runs low you just top up, like mobile credit, nothing complicated\n\n✨ First month of power is free to try + you’re always alerted before it runs out, no interruptions 😊' },
 ];
 const DEFAULT_A = 'ขอบคุณที่สนใจ NEO-S ค่ะ 😊\n\nโนวาช่วยตอบเรื่องระบบ AI ได้เลยนะคะ — ลองถามเรื่องฟีเจอร์ ราคา หรือขอดูตัวอย่างระบบได้ค่ะ\n\nหรือถ้าอยากคุยกับทีมโดยตรง ทักได้ที่ info@neos-css.com ค่ะ';
+const DEFAULT_A_EN = 'Thanks for your interest in NEO-S 😊\n\nNova is happy to answer anything about the AI system — try asking about features, pricing, or to see a live demo.\n\nOr to talk to the team directly, reach us at info@neos-css.com';
 
 let chatStarted = false;
 let userMsgCount = 0, leadShown = false, leadSubmitted = false;
@@ -916,7 +1056,9 @@ function toggleChat() {
   }
 }
 function startChatGreeting(){
-  botSay('สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S\n\nยินดีช่วยตอบทุกคำถามเรื่องระบบ AI สำหรับธุรกิจค่ะ อยากรู้อะไรถามได้เลยนะคะ 😊');
+  botSay(LANG === 'en'
+    ? 'Hi ✨ I’m Nova — the AI consultant for NEO-S.\n\nHappy to answer anything about AI systems for your business. Ask me anything 😊'
+    : 'สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S\n\nยินดีช่วยตอบทุกคำถามเรื่องระบบ AI สำหรับธุรกิจค่ะ อยากรู้อะไรถามได้เลยนะคะ 😊');
 }
 // 🚪 ประตูทางเข้า: ขอชื่อ+เบอร์ก่อนเริ่มคุย (เก็บคอนแทกต์ลงประวัติแชท ลูกค้าไม่หลุดมือ)
 function showChatGate(){
@@ -925,11 +1067,15 @@ function showChatGate(){
   const body = document.getElementById('chatBody');
   const wrap = document.createElement('div');
   wrap.className = 'msg bot'; wrap.id = 'chatGate';
-  wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="max-width:100%">สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S<br>ก่อนเริ่มคุย ขอชื่อกับเบอร์ไว้ติดต่อกลับหน่อยนะคะ 😊
+  const en = LANG === 'en';
+  const intro = en
+    ? 'Hi ✨ I’m Nova — the AI consultant for NEO-S.<br>Before we start, may I have your name and phone so we can follow up? 😊'
+    : 'สวัสดีค่ะ ✨ โนวาเองค่ะ — ที่ปรึกษา AI ของ NEO-S<br>ก่อนเริ่มคุย ขอชื่อกับเบอร์ไว้ติดต่อกลับหน่อยนะคะ 😊';
+  wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="max-width:100%">${intro}
     <div class="lead-card" style="margin-top:10px">
-      <input id="gateName" type="text" placeholder="ชื่อ ★" autocomplete="name">
-      <input id="gatePhone" type="tel" inputmode="tel" placeholder="เบอร์โทร ★" autocomplete="tel" onkeydown="if(event.key==='Enter')submitGate()">
-      <button id="gateBtn" onclick="submitGate()">เริ่มแชทกับโนวา 💬</button>
+      <input id="gateName" type="text" placeholder="${en?'Name ★':'ชื่อ ★'}" autocomplete="name">
+      <input id="gatePhone" type="tel" inputmode="tel" placeholder="${en?'Phone ★':'เบอร์โทร ★'}" autocomplete="tel" onkeydown="if(event.key==='Enter')submitGate()">
+      <button id="gateBtn" onclick="submitGate()">${en?'Start chatting with Nova 💬':'เริ่มแชทกับโนวา 💬'}</button>
     </div></div>`;
   body.appendChild(wrap); body.scrollTop = body.scrollHeight;
   setTimeout(()=>{ const g=document.getElementById('gateName'); if(g) g.focus(); }, 120);
@@ -937,14 +1083,15 @@ function showChatGate(){
 function submitGate(){
   const name  = (document.getElementById('gateName')?.value || '').trim();
   const phone = (document.getElementById('gatePhone')?.value || '').trim();
-  if (!name)  { alert('ขอชื่อหน่อยนะคะ 😊'); return; }
-  if (phone.replace(/\D/g,'').length < 9) { alert('ขอเบอร์โทรที่ติดต่อได้นะคะ 😊'); return; }
+  const en = LANG === 'en';
+  if (!name)  { alert(en?'May I have your name? 😊':'ขอชื่อหน่อยนะคะ 😊'); return; }
+  if (phone.replace(/\D/g,'').length < 9) { alert(en?'A reachable phone number, please 😊':'ขอเบอร์โทรที่ติดต่อได้นะคะ 😊'); return; }
   neosChatName = name; neosChatPhone = phone; chatGated = true;
   const gate = document.getElementById('chatGate'); if(gate) gate.remove();
   const inp = document.getElementById('chatInput'); if(inp){ inp.disabled = false; inp.focus(); }
   const qk  = document.getElementById('chatQuick'); if(qk) qk.style.display = '';
   logChat('user', '[เริ่มแชท] ชื่อ: ' + name + ' · เบอร์: ' + phone);   // บันทึกคอนแทกต์ลงประวัติแชท
-  botSay('ยินดีที่ได้รู้จักค่ะ คุณ' + name + ' 😊 อยากรู้อะไรเรื่องระบบ AI ถามโนวาได้เลยนะคะ');
+  botSay(en ? ('Nice to meet you, ' + name + ' 😊 Ask Nova anything about our AI system') : ('ยินดีที่ได้รู้จักค่ะ คุณ' + name + ' 😊 อยากรู้อะไรเรื่องระบบ AI ถามโนวาได้เลยนะคะ'));
   if (typeof afterGate === 'function'){ const f = afterGate; afterGate = null; setTimeout(f, 300); }
 }
 function openChat() { const w = document.getElementById('chatWin'); if (!w.classList.contains('open')) toggleChat(); document.getElementById('chatInput').focus(); }
@@ -971,8 +1118,9 @@ function typing(on) {
 
 function localAnswer(text) {
   const low = text.toLowerCase();
-  for (const c of CANNED) if (c.k.some(k => low.includes(k))) return c.a;
-  return DEFAULT_A;
+  const en = LANG === 'en';
+  for (const c of CANNED) if (c.k.some(k => low.includes(k))) return (en && c.a_en) ? c.a_en : c.a;
+  return en ? DEFAULT_A_EN : DEFAULT_A;
 }
 
 async function reply(text) {
@@ -1054,37 +1202,38 @@ function showLeadForm(prefillPkg, prefillMsg) {
   wrap.className = 'msg bot';
   wrap.innerHTML = `<div class="av">✨</div><div class="bubble" style="padding:0;background:none;max-width:100%">
     <div class="lead-card" id="leadForm">
-      <h4>📩 รับใบเสนอราคา + บอกความต้องการ</h4>
-      <div class="lead-note">กรอกคร่าวๆ เพื่อ<b>รับใบเสนอราคา</b> + ทีมเตรียมข้อมูลให้ตรงธุรกิจคุณค่ะ (★ จำเป็น)</div>
-      <input id="leadName" type="text" placeholder="ชื่อ ★" autocomplete="name">
-      <input id="leadEmail" type="email" placeholder="อีเมล ★ (รับใบเสนอราคา)" autocomplete="email">
-      <input id="leadContact" type="text" placeholder="เบอร์โทร (ถ้ามี)" autocomplete="tel">
+      <h4 data-i18n="lead.h4">📩 รับใบเสนอราคา + บอกความต้องการ</h4>
+      <div class="lead-note" data-i18n="lead.note">กรอกคร่าวๆ เพื่อ<b>รับใบเสนอราคา</b> + ทีมเตรียมข้อมูลให้ตรงธุรกิจคุณค่ะ (★ จำเป็น)</div>
+      <input id="leadName" type="text" placeholder="ชื่อ ★" data-i18n-ph="lead.name" autocomplete="name">
+      <input id="leadEmail" type="email" placeholder="อีเมล ★ (รับใบเสนอราคา)" data-i18n-ph="lead.email" autocomplete="email">
+      <input id="leadContact" type="text" placeholder="เบอร์โทร (ถ้ามี)" data-i18n-ph="lead.phone" autocomplete="tel">
       <select id="leadBizType">
-        <option value="">ประเภทธุรกิจ ★</option>
-        <option>ร้านค้าออนไลน์</option>
-        <option>ร้านอาหาร / คาเฟ่</option>
-        <option>แบรนด์สินค้า</option>
-        <option>บริการ / รับงาน</option>
-        <option>อื่นๆ</option>
+        <option value="" data-i18n="lead.biz0">ประเภทธุรกิจ ★</option>
+        <option data-i18n="lead.biz1">ร้านค้าออนไลน์</option>
+        <option data-i18n="lead.biz2">ร้านอาหาร / คาเฟ่</option>
+        <option data-i18n="lead.biz3">แบรนด์สินค้า</option>
+        <option data-i18n="lead.biz4">บริการ / รับงาน</option>
+        <option data-i18n="lead.biz5">อื่นๆ</option>
       </select>
-      <input id="leadProducts" type="text" placeholder="ขายอะไร · ประมาณกี่รายการ ★ (เช่น เสื้อผ้า ~50 แบบ)">
+      <input id="leadProducts" type="text" placeholder="ขายอะไร · ประมาณกี่รายการ ★ (เช่น เสื้อผ้า ~50 แบบ)" data-i18n-ph="lead.products">
       <select id="leadHasWeb">
-        <option value="">มีเว็บ / ระบบเดิมไหม</option>
-        <option>ยังไม่มี เริ่มใหม่</option>
-        <option>มีเว็บแล้ว อยากเพิ่ม AI</option>
+        <option value="" data-i18n="lead.web0">มีเว็บ / ระบบเดิมไหม</option>
+        <option data-i18n="lead.web1">ยังไม่มี เริ่มใหม่</option>
+        <option data-i18n="lead.web2">มีเว็บแล้ว อยากเพิ่ม AI</option>
       </select>
-      <div style="font-size:13px;color:var(--txt-dim);margin:4px 0 2px">อยากให้ AI ช่วยอะไร (เลือกได้หลายข้อ):</div>
+      <div style="font-size:13px;color:var(--txt-dim);margin:4px 0 2px" data-i18n="lead.needLabel">อยากให้ AI ช่วยอะไร (เลือกได้หลายข้อ):</div>
       <div style="display:flex;flex-wrap:wrap;gap:7px 14px;font-size:13px;margin-bottom:5px">
-        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="ตอบแชท/ขาย"> ตอบแชท/ขาย</label>
-        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="ตรวจสลิป/การเงิน"> ตรวจสลิป/การเงิน</label>
-        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="จัดการสต็อก"> จัดการสต็อก</label>
-        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="การตลาด"> การตลาด</label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="ตอบแชท/ขาย"> <span data-i18n="lead.need1">ตอบแชท/ขาย</span></label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="ตรวจสลิป/การเงิน"> <span data-i18n="lead.need2">ตรวจสลิป/การเงิน</span></label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="จัดการสต็อก"> <span data-i18n="lead.need3">จัดการสต็อก</span></label>
+        <label style="cursor:pointer"><input type="checkbox" class="ai-need" value="การตลาด"> <span data-i18n="lead.need4">การตลาด</span></label>
       </div>
-      <textarea id="leadMsg" rows="2" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+      <textarea id="leadMsg" rows="2" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)" data-i18n-ph="lead.msg"></textarea>
       <input type="hidden" id="leadInterest">
-      <button id="leadBtn" onclick="submitLead()">ส่งข้อมูล</button>
+      <button id="leadBtn" onclick="submitLead()" data-i18n="lead.btn">ส่งข้อมูล</button>
     </div></div>`;
   body.appendChild(wrap);
+  if (window.applyLang) applyLang(LANG);   // 🌐 แปลฟอร์มทันทีถ้าอยู่โหมด EN
   body.scrollTop = body.scrollHeight;
   if (prefillPkg) document.getElementById('leadInterest').value = prefillPkg;
   if (prefillMsg) document.getElementById('leadMsg').value = prefillMsg;
@@ -1295,35 +1444,38 @@ function requestQuote(){
 // ============================================================
 // 💡 ราคา = โปร 22 ท่านแรก (ตรงกับแพ็กเกจ) · แก้ได้ทุกช่อง
 const AGENTS = [
-  { id:'web',   name:'🌐 เว็บไซต์',     role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          dep:null,    required:true,  install:9000, monthly:0, status:'live', note:'ระบบจัดการ admin: Dashboard · Orders · Products · Customers · Users' },
-  { id:'sales', name:'🛒 AI Sales',     role:'ผู้ช่วยฝ่ายขายอัจฉริยะ · รับออเดอร์ 24 ชม.', dep:'web',   required:false, install:9000, monthly:2500, status:'live' },
-  { id:'fin',   name:'💰 AI Finance',   role:'ผู้ช่วยงานการเงิน · กันสลิปปลอม/ซ้ำ',       dep:'sales', required:false, install:2500, monthly:800, status:'live' },
-  { id:'log',   name:'🚚 AI Logistics', role:'ผู้ช่วยติดตามการจัดส่ง · แจ้งสถานะ',        dep:'fin',   required:false, install:20000, monthly:2000, status:'soon' },
-  { id:'mgr',   name:'🧠 AI Manager',   role:'ผู้ช่วยจัดการธุรกิจ · Dashboard+วางแผน', dep:'web',   required:false, install:6000, monthly:2500, status:'live' },
-  { id:'mkt',   name:'📣 AI Marketing', role:'ผู้ช่วยงานการตลาด · ทำรูปโปร+บรอดแคสต์',        dep:'mgr',   required:false, install:5000, monthly:2200, status:'live' },
-  { id:'inv',   name:'📦 AI Inventory', role:'ผู้ช่วยจัดการสต็อก · เตือนของใกล้หมด',       dep:'mgr',   required:false, install:2500, monthly:800, status:'live' },
+  { id:'web',   name:'🌐 เว็บไซต์',     name_en:'🌐 Website',      role:'เว็บร้าน + แคตตาล็อก + แอดมิน',          role_en:'Online store + catalog + admin',           dep:null,    required:true,  install:9000, monthly:0, status:'live', note:'ระบบจัดการ admin: Dashboard · Orders · Products · Customers · Users', note_en:'Admin panel: Dashboard · Orders · Products · Customers · Users' },
+  { id:'sales', name:'🛒 AI Sales',     name_en:'🛒 AI Sales',     role:'ผู้ช่วยฝ่ายขายอัจฉริยะ · รับออเดอร์ 24 ชม.', role_en:'Smart sales assistant · takes orders 24/7',  dep:'web',   required:false, install:9000, monthly:2500, status:'live' },
+  { id:'fin',   name:'💰 AI Finance',   name_en:'💰 AI Finance',   role:'ผู้ช่วยงานการเงิน · กันสลิปปลอม/ซ้ำ',       role_en:'Finance assistant · blocks fake/duplicate slips', dep:'sales', required:false, install:2500, monthly:800, status:'live' },
+  { id:'log',   name:'🚚 AI Logistics', name_en:'🚚 AI Logistics', role:'ผู้ช่วยติดตามการจัดส่ง · แจ้งสถานะ',        role_en:'Delivery-tracking assistant · status updates', dep:'fin',   required:false, install:20000, monthly:2000, status:'soon' },
+  { id:'mgr',   name:'🧠 AI Manager',   name_en:'🧠 AI Manager',   role:'ผู้ช่วยจัดการธุรกิจ · Dashboard+วางแผน', role_en:'Business manager · dashboard + planning',   dep:'web',   required:false, install:6000, monthly:2500, status:'live' },
+  { id:'mkt',   name:'📣 AI Marketing', name_en:'📣 AI Marketing', role:'ผู้ช่วยงานการตลาด · ทำรูปโปร+บรอดแคสต์',        role_en:'Marketing assistant · promo images + broadcasts', dep:'mgr',   required:false, install:5000, monthly:2200, status:'live' },
+  { id:'inv',   name:'📦 AI Inventory', name_en:'📦 AI Inventory', role:'ผู้ช่วยจัดการสต็อก · เตือนของใกล้หมด',       role_en:'Stock assistant · low-stock alerts',        dep:'mgr',   required:false, install:2500, monthly:800, status:'live' },
 ];
+// 🌐 helper เลือกข้อความตามภาษา (EN ถ้ามี · ไม่งั้น TH)
+function L(obj, field){ return (LANG === 'en' && obj[field + '_en'] != null) ? obj[field + '_en'] : obj[field]; }
 const acState = {};
 AGENTS.forEach(a => acState[a.id] = !!a.required);
 function acEnabled(a){ if (a.required) return true; if (!a.dep) return true; return acState[a.dep] === true; }
-function acDepName(id){ const d = AGENTS.find(x => x.id === id); return d ? d.name.replace(/^\S+\s/,'') : ''; }
+function acDepName(id){ const d = AGENTS.find(x => x.id === id); return d ? L(d,'name').replace(/^\S+\s/,'') : ''; }
 function renderAC(){
   const el = document.getElementById('acList'); if (!el) return;
+  const en = LANG === 'en';
   el.innerHTML = AGENTS.map(a => {
     const enabled = acEnabled(a), on = acState[a.id], soon = a.status === 'soon';
     let cls = 'ac-item';
     if (a.required) cls += ' req'; else if (soon) cls += ' soon'; else if (!enabled) cls += ' locked'; else if (on) cls += ' on';
     let dep;
-    if (a.required) dep = a.note ? `<span style="color:var(--txt-dim)">${a.note}</span>` : '';
-    else if (soon) dep = '<span class="lk">⏳ เร็วๆ นี้</span>';
-    else if (a.dep && !acState[a.dep]) dep = `<span class="lk">🔒 ต้องเลือก ${acDepName(a.dep)} ก่อน</span>`;
-    else dep = '<span style="color:var(--green)">✓ พร้อมเลือก</span>';
+    if (a.required) dep = a.note ? `<span style="color:var(--txt-dim)">${L(a,'note')}</span>` : '';
+    else if (soon) dep = `<span class="lk">${en?'⏳ Coming soon':'⏳ เร็วๆ นี้'}</span>`;
+    else if (a.dep && !acState[a.dep]) dep = `<span class="lk">${en?('🔒 Select '+acDepName(a.dep)+' first'):('🔒 ต้องเลือก '+acDepName(a.dep)+' ก่อน')}</span>`;
+    else dep = `<span style="color:var(--green)">${en?'✓ Ready to select':'✓ พร้อมเลือก'}</span>`;
     const dis = (a.required || soon || !enabled);
     const click = dis ? '' : `onclick="toggleAgent('${a.id}')"`;
     return `<div class="${cls}">
       <div class="ac-tog ${dis?'dis':''}" ${click}></div>
-      <div><div class="ac-name">${a.name}</div><div class="ac-role">${a.role}</div><div class="ac-dep">${dep}</div></div>
-      <div class="ac-price"><b>+${baht(a.install)}</b><br>+${baht(a.monthly)}/ด.</div>
+      <div><div class="ac-name">${L(a,'name')}</div><div class="ac-role">${L(a,'role')}</div><div class="ac-dep">${dep}</div></div>
+      <div class="ac-price"><b>+${baht(a.install)}</b><br>+${baht(a.monthly)}/${en?'mo':'ด.'}</div>
     </div>`;
   }).join('');
   computeAC();
@@ -1348,12 +1500,13 @@ function computeAC(){
   AGENTS.forEach(a => { if (acState[a.id]){ install += a.install; monthly += a.monthly; chosen.push(a); } });
   const aiCount = chosen.filter(a => a.id !== 'web').length;   // จำนวน AI จริง (ไม่นับเว็บ)
   if (aiCount > 0) monthly += SYS_RENT;   // คิดค่าเช่าระบบเฉพาะเมื่อมี AI · เว็บอย่างเดียว = ไม่มีรายเดือน
-  let html = chosen.map(a => `<div class="cs-line"><span>${a.name}</span><span>+${baht(a.install)}${a.monthly?(' · +'+baht(a.monthly)+'/ด.'):''}</span></div>`).join('');
-  if (aiCount > 0) html += `<div class="cs-line"><span>ค่าเช่าระบบ</span><span>+${baht(SYS_RENT)}/ด.</span></div>`;
-  else html += `<div class="cs-line"><span>โดเมน + โฮสติ้ง (ปีถัดไป)</span><span>${baht(2500)}/ปี</span></div>`;
+  const en = LANG === 'en';
+  let html = chosen.map(a => `<div class="cs-line"><span>${L(a,'name')}</span><span>+${baht(a.install)}${a.monthly?(' · +'+baht(a.monthly)+'/'+(en?'mo':'ด.')):''}</span></div>`).join('');
+  if (aiCount > 0) html += `<div class="cs-line"><span>${en?'System rental':'ค่าเช่าระบบ'}</span><span>+${baht(SYS_RENT)}/${en?'mo':'ด.'}</span></div>`;
+  else html += `<div class="cs-line"><span>${en?'Domain + hosting (next year)':'โดเมน + โฮสติ้ง (ปีถัดไป)'}</span><span>${baht(2500)}/${en?'yr':'ปี'}</span></div>`;
   document.getElementById('calcLines').innerHTML = html;
   document.getElementById('csInstall').textContent = baht(install);
-  document.getElementById('csMonthly').textContent = aiCount > 0 ? (baht(monthly) + '/เดือน') : 'ไม่มีรายเดือน';
+  document.getElementById('csMonthly').textContent = aiCount > 0 ? (baht(monthly) + (en?'/mo':'/เดือน')) : (en?'No monthly fee':'ไม่มีรายเดือน');
   acState._install = install; acState._monthly = monthly; acState._aiCount = aiCount;
 }
 function requestQuote(){
@@ -1390,63 +1543,87 @@ function requestAssess(){
 // full=ก่อนโปร(ขีดฆ่า) · promo=โปร 22 ท่านแรก · monthly=รายเดือน · soon=ปิดทึบ
 // ============================================================
 const PKGS = [
-  { icon:'🥉', name:'STARTER',      tag:'เว็บไซต์พร้อม AI ผู้ช่วยขาย 24 ชั่วโมง',     fit:'ร้านค้าออนไลน์ ธุรกิจเริ่มต้น และ SME',
+  { icon:'🥉', name:'STARTER',      tag:'เว็บไซต์พร้อม AI ผู้ช่วยขาย 24 ชั่วโมง',     tag_en:'Website + a 24-hour AI sales assistant',     fit:'ร้านค้าออนไลน์ ธุรกิจเริ่มต้น และ SME', fit_en:'Online stores, startups and SMEs',
     items:[
       { head:'🌐 เว็บไซต์ร้าน', sub:['หน้าร้านออนไลน์ + แคตตาล็อกสินค้า','ระบบแอดมินจัดการร้าน'] },
       { head:'🛒 AI Sales — ผู้ช่วยฝ่ายขาย 24 ชม.', sub:['ตอบแชทลูกค้าทุกช่องทาง','รับออเดอร์ + ปิดการขายอัตโนมัติ','เสนอขายเพิ่ม (upsell) เพิ่มยอด'] },
+    ],
+    items_en:[
+      { head:'🌐 Store website', sub:['Online storefront + product catalog','Store admin panel'] },
+      { head:'🛒 AI Sales — 24/7 sales assistant', sub:['Replies to customers on every channel','Takes orders + closes sales automatically','Upsells to boost revenue'] },
     ], full:24000, promo:17000, monthly:4000 },
-  { icon:'🥈', name:'BUSINESS',     tag:'เว็บไซต์พร้อม AI ฝ่ายขาย + ผู้ช่วยการเงิน',   fit:'ธุรกิจที่มีออเดอร์ประจำทุกวัน', featured:true,
+  { icon:'🥈', name:'BUSINESS',     tag:'เว็บไซต์พร้อม AI ฝ่ายขาย + ผู้ช่วยการเงิน',   tag_en:'Website + AI sales & finance assistants',    fit:'ธุรกิจที่มีออเดอร์ประจำทุกวัน', fit_en:'Businesses with daily recurring orders', featured:true,
     items:[
       'ทุกอย่างใน STARTER',
       { head:'💰 AI Finance — ผู้ช่วยการเงิน', sub:['ตรวจสลิปจริง-ปลอม 2 ชั้น','กันสลิปซ้ำ / สลิปปลอม','ยืนยันยอด + บันทึกรายรับเข้าระบบถูกต้อง','สรุปยอดขาย-รายรับ ดูได้ทุกวัน'] },
+    ],
+    items_en:[
+      'Everything in STARTER',
+      { head:'💰 AI Finance — finance assistant', sub:['Two-layer real/fake slip check','Blocks duplicate / fake slips','Confirms amounts + logs income correctly','Daily sales & income summaries'] },
     ], full:29000, promo:18000, monthly:4800 },
-  { icon:'🥇', name:'PROFESSIONAL', tag:'เว็บไซต์พร้อมทีม AI บริหารร้านค้า',           fit:'ร้านที่มีสินค้าจำนวนมาก หรือหลายพนักงาน',
+  { icon:'🥇', name:'PROFESSIONAL', tag:'เว็บไซต์พร้อมทีม AI บริหารร้านค้า',           tag_en:'Website + an AI team to run your store',     fit:'ร้านที่มีสินค้าจำนวนมาก หรือหลายพนักงาน', fit_en:'Stores with many products or staff',
     items:[
       'ทุกอย่างใน BUSINESS',
       { head:'📦 AI Inventory — ผู้ช่วยจัดการสต็อก', sub:['เฝ้าสต็อกแบบเรียลไทม์','เตือนเมื่อของใกล้หมด','กันขายของที่หมดสต็อก'] },
       { head:'🧠 AI Manager — ผู้ช่วยจัดการธุรกิจ', sub:['Dashboard สรุปผลธุรกิจแบบเรียลไทม์','รวบรวมข้อมูลจากทุกส่วน','วางแผน + ปรับกลยุทธ์ธุรกิจ','สนับสนุนการตัดสินใจของผู้บริหาร'] },
+    ],
+    items_en:[
+      'Everything in BUSINESS',
+      { head:'📦 AI Inventory — stock assistant', sub:['Real-time stock monitoring','Low-stock alerts','Prevents selling out-of-stock items'] },
+      { head:'🧠 AI Manager — business manager', sub:['Real-time business dashboard','Aggregates data from every part','Plans + adjusts business strategy','Supports executive decisions'] },
     ], full:46000, promo:24000, monthly:8000 },
-  { icon:'🚀', name:'ADVANCED',     tag:'เว็บไซต์พร้อม AI ทีมการตลาด',                fit:'ร้านที่อยากโตด้วยการตลาด เพิ่มยอด-หาลูกค้าใหม่',
+  { icon:'🚀', name:'ADVANCED',     tag:'เว็บไซต์พร้อม AI ทีมการตลาด',                tag_en:'Website + an AI marketing team',             fit:'ร้านที่อยากโตด้วยการตลาด เพิ่มยอด-หาลูกค้าใหม่', fit_en:'Stores that want to grow via marketing and win new customers',
     items:[
       'ทุกอย่างใน PROFESSIONAL',
       { head:'📣 AI Marketing — ผู้ช่วยการตลาด', sub:['ทำรูปโปรโมชัน','บรอดแคสต์หาลูกค้า','เสริมทีมการตลาดด้วย AI'] },
+    ],
+    items_en:[
+      'Everything in PROFESSIONAL',
+      { head:'📣 AI Marketing — marketing assistant', sub:['Creates promo images','Broadcasts to reach customers','Boosts your marketing team with AI'] },
     ], full:55000, promo:28000, monthly:10000 },
-  { icon:'🏢', name:'ENTERPRISE',   tag:'เว็บไซต์พร้อม AI บริหารธุรกิจครบวงจร',        fit:'ธุรกิจครบวงจรที่ต้องส่งของเอง / สเกลใหญ่',
+  { icon:'🏢', name:'ENTERPRISE',   tag:'เว็บไซต์พร้อม AI บริหารธุรกิจครบวงจร',        tag_en:'Website + end-to-end AI business management', fit:'ธุรกิจครบวงจรที่ต้องส่งของเอง / สเกลใหญ่', fit_en:'Full-cycle businesses that ship themselves / large scale',
     items:[
       'ทุกอย่างใน ADVANCED',
       { head:'🚚 AI Logistics — ผู้ช่วยจัดส่ง', sub:['ติดตามสถานะพัสดุ','แจ้งสถานะจัดส่งให้ลูกค้าอัตโนมัติ'] },
+    ],
+    items_en:[
+      'Everything in ADVANCED',
+      { head:'🚚 AI Logistics — delivery assistant', sub:['Tracks parcel status','Auto-updates delivery status to customers'] },
     ], soon:true },
 ];
 function renderPkgs(){
   const el = document.getElementById('pkgGrid'); if (!el) return;
+  const en = LANG === 'en';
   el.innerHTML = PKGS.map(p => {
-    const feats = `<ul class="price-feat">${p.items.map(i => {
+    const items = (en && p.items_en) ? p.items_en : p.items;
+    const feats = `<ul class="price-feat">${items.map(i => {
       if (typeof i === 'string') return `<li>${i}</li>`;
       const subs = i.sub ? `<ul class="feat-sub">${i.sub.map(s => `<li>${s}</li>`).join('')}</ul>` : '';
       return `<li><div class="feat-body"><span class="feat-head">${i.head}</span>${subs}</div></li>`;
     }).join('')}</ul>`;
+    const fitLbl = en ? 'Best for: ' : 'เหมาะสำหรับ: ';
     if (p.soon){
       return `<div class="price-card pkg-soon">
-        <div class="soon-tag">เร็วๆ นี้</div>
+        <div class="soon-tag">${en?'Coming soon':'เร็วๆ นี้'}</div>
         <div class="price-name">${p.icon} ${p.name}</div>
-        <div class="pkg-tag">${p.tag}</div>
-        <div class="pkg-fit">เหมาะสำหรับ: ${p.fit}</div>
+        <div class="pkg-tag">${L(p,'tag')}</div>
+        <div class="pkg-fit">${fitLbl}${L(p,'fit')}</div>
         ${feats}
-        <button class="price-btn" style="opacity:.55;cursor:default" disabled>เร็วๆ นี้</button>
+        <button class="price-btn" style="opacity:.55;cursor:default" disabled>${en?'Coming soon':'เร็วๆ นี้'}</button>
       </div>`;
     }
     return `<div class="price-card ${p.featured?'featured':''}">
       <div class="price-name">${p.icon} ${p.name}</div>
-      <div class="pkg-tag">${p.tag}</div>
-      <div class="pkg-fit">เหมาะสำหรับ: ${p.fit}</div>
+      <div class="pkg-tag">${L(p,'tag')}</div>
+      <div class="pkg-fit">${fitLbl}${L(p,'fit')}</div>
       ${feats}
       <div class="pkg-price">
-        <div class="pkg-price-label">พัฒนาระบบพร้อมติดตั้ง</div>
-        <div><span class="price-was">${baht(p.full)}</span><span class="promo-badge">ประหยัด ${baht(p.full - p.promo)}</span></div>
+        <div class="pkg-price-label">${en?'Build + setup':'พัฒนาระบบพร้อมติดตั้ง'}</div>
+        <div><span class="price-was">${baht(p.full)}</span><span class="promo-badge">${en?'Save ':'ประหยัด '}${baht(p.full - p.promo)}</span></div>
         <div class="price-num">${baht(p.promo)}</div>
-        <div class="price-monthly">+ ${baht(p.monthly)}/เดือน</div>
+        <div class="price-monthly">+ ${baht(p.monthly)}/${en?'mo':'เดือน'}</div>
       </div>
-      <button class="price-btn" onclick="selectPkg('${p.name}', ${p.promo}, ${p.monthly})">เลือกแพ็กเกจนี้</button>
+      <button class="price-btn" onclick="selectPkg('${p.name}', ${p.promo}, ${p.monthly})">${en?'Choose this package':'เลือกแพ็กเกจนี้'}</button>
     </div>`;
   }).join('');
 }
@@ -1474,6 +1651,7 @@ function requestWebOnly(){
 }
 renderAC();
 renderPkgs();
+applyLang(LANG);   // 🌐 ตั้งภาษาเริ่มต้นจาก localStorage (TH default · แปลทั้งหน้า + ปุ่ม toggle)
 trackVisit();   // 📊 นับคนเข้าชม + ช่องทางที่มา (วิเคราะห์การตลาดใน Dashboard)
 
 // ===== scroll reveal =====
