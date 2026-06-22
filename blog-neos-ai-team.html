@@ -127,6 +127,11 @@
   @keyframes novaBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
   @keyframes novaBlink { 0%,93%,100%{opacity:0} 95%,97%{opacity:1} }
   @media(max-width:600px){ .nova-img{width:56px} .nova-bubble{font-size:11px;padding:4px 9px} }
+  /* listen bar */
+  .listen-bar { background:linear-gradient(135deg, rgba(34,211,238,0.09), rgba(139,92,246,0.11)); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:24px 0 4px; }
+  .listen-label { font-size:14.5px; font-weight:600; color:var(--txt); margin-bottom:10px; display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .listen-label span { color:var(--txt-dim); font-weight:400; font-size:12.5px; }
+  .listen-bar audio { width:100%; height:40px; display:block; }
 </style>
 
   <!-- SEO / Social -->
@@ -179,6 +184,11 @@
 
 <main class="art-body">
   <div class="wrap">
+
+    <div class="listen-bar">
+      <div class="listen-label">🔊 ฟังบทความนี้ <span>(เสียงโนวา · ขี้เกียจอ่าน กดฟังได้เลย)</span></div>
+      <audio controls preload="none" src="neos-ai-team.mp3"></audio>
+    </div>
 
     <h2>🌙 ทำไมธุรกิจยุคนี้ต้องมี AI?</h2>
     <p>ลองนึกภาพร้านออนไลน์ทั่วไป — ลูกค้าทักมาถามราคาตอนสี่ทุ่ม แต่กว่าจะมีคนตอบก็เช้าวันรุ่งขึ้น ลูกค้าก็ไปสั่งร้านอื่นไปแล้ว · เจ้าของอยากรู้ว่าเดือนนี้ขายดีไหม กำไรเท่าไหร่ ก็ต้องนั่งรวมยอดเองทีละออเดอร์ · อยากโพสต์โปรโมชั่นลงเฟซบุ๊กก็ไม่รู้จะเขียนยังไงให้ปัง · สต็อกใกล้หมดก็ไม่มีใครเตือน จนรับออเดอร์มาแล้วของไม่พอ · แล้วยังต้องคอยเช็กสลิปทีละใบว่าจริงหรือปลอม</p>
