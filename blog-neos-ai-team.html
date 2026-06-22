@@ -106,9 +106,6 @@
   .more-link a { font-size:14.5px; color:var(--cyan); }
   .more-link a:hover { text-decoration:underline; }
 
-  /* floating chat */
-  .chat-fab { position:fixed; right:22px; bottom:22px; z-index:90; background:var(--grad); color:#050A14; font-weight:700; font-size:15px; padding:14px 22px; border-radius:50px; box-shadow:0 10px 30px rgba(59,130,246,0.45); display:inline-flex; align-items:center; gap:8px; transition:transform .2s; }
-  .chat-fab:hover { transform:translateY(-3px); }
 
   /* footer */
   footer { border-top:1px solid var(--line); padding:44px 0; text-align:center; }
@@ -117,6 +114,19 @@
   footer .foot-sub { font-size:9px; letter-spacing:3px; color:var(--txt-dim); text-transform:uppercase; margin:7px 0 16px; }
   footer p { color:var(--txt-dim); font-size:14px; }
   footer .copy { font-size:12px; margin-top:10px; opacity:.7; }
+  /* nova-mascot-fab */
+  .chat-fab { position:fixed; bottom:18px; right:18px; z-index:200; background:none; border:none; padding:0; cursor:pointer; text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:3px; transition:transform .2s; }
+  .chat-fab:hover { transform:scale(1.06); }
+  .chat-fab:hover .nova-wrap { animation-play-state:paused; }
+  .nova-bubble { background:#fff; color:#15233f; font-weight:600; font-size:13px; padding:5px 13px; border-radius:14px; box-shadow:0 4px 14px rgba(0,0,0,.4); white-space:nowrap; position:relative; animation:novaBob 2.4s ease-in-out infinite; }
+  .nova-bubble::after { content:""; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid #fff; }
+  .nova-wrap { position:relative; display:block; animation:novaFloat 3.4s ease-in-out infinite; filter:drop-shadow(0 6px 14px rgba(59,130,246,.55)); }
+  .nova-img { width:68px; height:auto; display:block; }
+  .nova-closed { position:absolute; top:0; left:0; opacity:0; animation:novaBlink 5s infinite; }
+  @keyframes novaFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+  @keyframes novaBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  @keyframes novaBlink { 0%,93%,100%{opacity:0} 95%,97%{opacity:1} }
+  @media(max-width:600px){ .nova-img{width:56px} .nova-bubble{font-size:11px;padding:4px 9px} }
 </style>
 
   <!-- SEO / Social -->
@@ -340,7 +350,13 @@
   </div>
 </footer>
 
-<a class="chat-fab" href="index.html#contact">💬 คุยกับ AI Sales</a>
+<a class="chat-fab" href="index.html#contact" aria-label="คุยกับโนวา AI">
+  <span class="nova-bubble">💬 คุยกับโนวา</span>
+  <span class="nova-wrap">
+    <img class="nova-img nova-open" src="nova-open.png?v=3" alt="โนวา AI" decoding="async">
+    <img class="nova-img nova-closed" src="nova-closed.png?v=3" alt="" aria-hidden="true" decoding="async">
+  </span>
+</a>
 
 </body>
 </html>
