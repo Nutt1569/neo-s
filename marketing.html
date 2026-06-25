@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEO-S · หน้าการตลาด</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root { --bg:#070B16; --bg-2:#0C1322; --card:#111A2E; --line:#1E2A44; --txt:#EAF0FF; --txt-dim:#95A3C2; --blue:#3B82F6; --cyan:#22D3EE; --violet:#8B5CF6; --green:#34D399; --gold:#E2B679; --red:#F87171; --grad:linear-gradient(120deg,#22D3EE,#3B82F6 45%,#8B5CF6); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); color:var(--txt); font-family:'Sarabun','Segoe UI',-apple-system,sans-serif; font-size:14px; }
+a { color:var(--cyan); }
+.grad-txt { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+/* login */
+.login { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; }
+.login h1 { font-size:26px; font-weight:700; }
+.login .sub { color:var(--txt-dim); font-size:14px; }
+.gbtn { display:flex; align-items:center; gap:10px; background:#fff; color:#222; border:none; border-radius:10px; padding:12px 22px; font-size:15px; font-weight:600; cursor:pointer; }
+.loginErr { color:var(--red); font-size:13px; max-width:380px; text-align:center; display:none; }
+/* nav */
+nav { background:var(--bg-2); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
+.nav-in { max-width:1200px; margin:0 auto; padding:12px 22px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+.nav-logo { font-size:18px; font-weight:700; }
+.nav-right { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.nav-user { color:var(--txt-dim); font-size:12.5px; }
+.nav-btn { background:var(--card); color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:13px; cursor:pointer; }
+.nav-btn:hover { border-color:var(--blue); }
+/* tabs */
+.tabs { max-width:1200px; margin:16px auto 0; padding:0 22px; display:flex; gap:8px; flex-wrap:wrap; }
+.tab { background:var(--card); color:var(--txt-dim); border:1px solid var(--line); border-radius:10px 10px 0 0; padding:10px 18px; font-size:14px; cursor:pointer; }
+.tab.on { color:var(--txt); border-bottom-color:var(--blue); background:var(--bg-2); }
+.page { max-width:1200px; margin:0 auto; padding:18px 22px 60px; }
+.panel { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:18px; }
+.panel-title { font-size:15px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.spacer { flex:1; }
+/* kpi */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+.kpi { background:var(--bg-2); border:1px solid var(--line); border-radius:12px; padding:16px; }
+.kpi .lbl { font-size:12.5px; color:var(--txt-dim); }
+.kpi .val { font-size:28px; font-weight:700; margin-top:4px; }
+.bar { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:13px; }
+.bar .track { flex:1; height:9px; background:var(--bg); border-radius:99px; overflow:hidden; }
+.bar .fill { height:100%; background:var(--grad); border-radius:99px; }
+.bar .num { color:var(--txt-dim); min-width:34px; text-align:right; }
+/* table */
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); white-space:nowrap; }
+th { color:var(--txt-dim); font-weight:600; font-size:12px; }
+tr.lead-row { cursor:pointer; }
+tr.lead-row:hover { background:var(--bg-2); }
+.pill { display:inline-block; font-size:11.5px; padding:3px 10px; border-radius:99px; border:1px solid var(--line); }
+.st-NEW { color:var(--cyan); border-color:var(--cyan); }
+.st-CONTACTED { color:var(--gold); border-color:var(--gold); }
+.st-QUOTED { color:var(--violet); border-color:var(--violet); }
+.st-WON { color:var(--green); border-color:var(--green); }
+.st-LOST { color:var(--txt-dim); }
+.seg { display:inline-flex; gap:4px; }
+.seg button { background:var(--bg-2); color:var(--txt-dim); border:1px solid var(--line); border-radius:8px; padding:6px 12px; font-size:12.5px; cursor:pointer; }
+.seg button.on { color:var(--txt); border-color:var(--blue); }
+.empty { color:var(--txt-dim); text-align:center; padding:30px; font-size:13px; }
+.loading { color:var(--txt-dim); text-align:center; padding:20px; }
+/* chat */
+.chat-wrap { display:grid; grid-template-columns:300px 1fr; gap:14px; }
+@media(max-width:760px){ .chat-wrap { grid-template-columns:1fr; } }
+.chat-list { max-height:560px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
+.chat-room { background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; }
+.chat-room.on { border-color:var(--blue); }
+.chat-room .nm { font-size:13px; font-weight:600; }
+.chat-room .pv { font-size:12px; color:var(--txt-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chat-msgs { max-height:560px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding:4px; }
+.msg { max-width:78%; padding:9px 13px; border-radius:12px; font-size:13px; line-height:1.5; word-break:break-word; }
+.msg.user { background:var(--bg-2); border:1px solid var(--line); align-self:flex-start; }
+.msg.bot { background:rgba(59,130,246,0.14); border:1px solid var(--blue); align-self:flex-end; }
+.msg .t { font-size:10.5px; color:var(--txt-dim); margin-top:3px; }
+/* modal */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:100; padding:18px; }
+.overlay.open { display:flex; }
+.modal { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px; max-width:520px; width:100%; max-height:88vh; overflow-y:auto; }
+.modal h3 { font-size:17px; margin-bottom:14px; }
+.frow { margin-bottom:12px; }
+.fl { font-size:12px; color:var(--txt-dim); margin-bottom:4px; }
+.fv { font-size:14px; }
+.cf { width:100%; background:var(--bg-2); color:var(--txt); border:1px solid var(--line); border-radius:9px; padding:9px 11px; font-size:14px; font-family:inherit; }
+.cf:focus { outline:none; border-color:var(--blue); }
+.tl-item { background:var(--bg-2); border:1px solid var(--line); border-radius:9px; padding:9px 11px; margin-bottom:7px; font-size:13px; }
+.tl-item .meta { font-size:11px; color:var(--txt-dim); margin-top:3px; }
+.btn { background:var(--grad); color:#04101f; border:none; border-radius:9px; padding:9px 16px; font-weight:600; font-size:13.5px; cursor:pointer; }
+.btn-ghost { background:var(--bg-2); color:var(--txt); border:1px solid var(--line); }
+.toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--blue); border-radius:10px; padding:11px 20px; font-size:13.5px; z-index:200; display:none; }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login" class="login">
+  <h1 class="grad-txt">NEO-S · การตลาด</h1>
+  <p class="sub">หน้าสำหรับทีมการตลาด — เข้าด้วยบัญชี Google ที่ได้รับสิทธิ์</p>
+  <button class="gbtn" onclick="loginGoogle()">🔵 เข้าสู่ระบบด้วย Google</button>
+  <p class="loginErr" id="loginErr"></p>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" style="display:none">
+  <nav>
+    <div class="nav-in">
+      <div class="nav-logo grad-txt">NEO-S · การตลาด</div>
+      <div class="nav-right">
+        <span class="nav-user" id="navUser"></span>
+        <button class="nav-btn" onclick="loadAll()">🔄 รีเฟรช</button>
+        <button class="nav-btn" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="tabs">
+    <button class="tab on" id="tab-overview" onclick="showTab('overview')">🏠 ภาพรวม</button>
+    <button class="tab" id="tab-leads" onclick="showTab('leads')">📥 Lead</button>
+    <button class="tab" id="tab-chat" onclick="showTab('chat')">💬 ประวัติแชท</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="page" id="page-overview">
+    <div class="panel">
+      <div class="panel-title">📊 ภาพรวมการตลาด</div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="lbl">Lead ทั้งหมด</div><div class="val" id="oLeadTotal">–</div></div>
+        <div class="kpi"><div class="lbl">Lead ใหม่ (ยังไม่ติดต่อ)</div><div class="val" id="oLeadNew">–</div></div>
+        <div class="kpi"><div class="lbl">ห้องแชต</div><div class="val" id="oChat">–</div></div>
+        <div class="kpi"><div class="lbl">คนเข้าเว็บ</div><div class="val" id="oVisits">–</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🚦 สถานะ Lead (Pipeline)</div>
+      <div id="oPipeline"><div class="loading">กำลังโหลด…</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📈 ช่องทางที่ลูกค้ามาจาก</div>
+      <div id="oSource"><div class="loading">กำลังโหลด…</div></div>
+    </div>
+  </div>
+
+  <!-- LEADS -->
+  <div class="page" id="page-leads" style="display:none">
+    <div class="panel">
+      <div class="panel-title">📥 รายการ Lead <span class="spacer"></span><input class="cf" id="leadSearch" placeholder="ค้นหา ชื่อ/เบอร์/ข้อความ…" style="max-width:240px" oninput="renderLeads()"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ชื่อ</th><th>ติดต่อ</th><th>สนใจ</th><th>ช่องทาง</th><th>สถานะ</th><th>วันที่</th></tr></thead>
+          <tbody id="leadBody"><tr><td colspan="6" class="loading">กำลังโหลด…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="page" id="page-chat" style="display:none">
+    <div class="panel">
+      <div class="panel-title">💬 ประวัติแชท <span class="spacer"></span>
+        <span class="seg" id="chFilter">
+          <button class="on" onclick="setChFilter('all',this)">ทั้งหมด</button>
+          <button onclick="setChFilter('web',this)">🌐 เว็บ</button>
+          <button onclick="setChFilter('line',this)">💚 LINE</button>
+          <button onclick="setChFilter('fb',this)">📘 FB</button>
+        </span>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-list" id="chatList"><div class="loading">กำลังโหลด…</div></div>
+        <div class="chat-msgs" id="chatMsgs"><div class="empty">เลือกห้องแชทด้านซ้าย</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEAD MODAL -->
+<div class="overlay" id="leadOverlay" onclick="if(event.target===this)closeLeadModal()">
+  <div class="modal" id="leadModal"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ CONFIG ============
+const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
+// 🔧 เติมอีเมล Gmail ของทีมการตลาดตรงนี้ (ใส่ได้หลายคน) — ต้องตรงกับ RLS ใน Supabase ด้วย
+const MARKETING_EMAILS = ['kritsada.nutt1981@gmail.com'];  // ใส่นัทไว้ทดสอบก่อน · เปลี่ยน/เพิ่มเป็นอีเมลคนการตลาดจริง
+
+const STATUSES  = ['NEW','CONTACTED','QUOTED','WON','LOST'];
+const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้', LOST:'ไม่สำเร็จ' };
+const CH_META   = { web:'🌐 เว็บ', line:'💚 LINE', fb:'📘 FB' };
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, lock:(n,t,fn)=>fn() }
+});
+
+let LEADS = [], VISITS = [], CHAT_ROWS = [], CH_FILTER = 'all', CUR_EMAIL = '', curSid = null;
+
+// ============ AUTH ============
+function loginGoogle(){
+  if (location.protocol === 'file:'){ showErr('เปิดเป็นไฟล์ (file://) — Google login ใช้ไม่ได้ ต้องเปิดผ่าน https'); return; }
+  sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href.split('#')[0] } });
+}
+function logout(){ sb.auth.signOut().then(()=> location.reload()); }
+function showErr(m){ const e=document.getElementById('loginErr'); e.textContent=m; e.style.display='block'; }
+async function getSessionSafe(){ try { const r = await sb.auth.getSession(); return r.data.session; } catch(e){ return null; } }
+
+async function checkAuth(){
+  const session = await getSessionSafe();
+  if (!session){ document.getElementById('login').style.display='flex'; document.getElementById('app').style.display='none'; return; }
+  const email = (session.user.email || '').toLowerCase();
+  CUR_EMAIL = email;
+  if (!MARKETING_EMAILS.map(e=>e.toLowerCase()).includes(email)){
+    document.getElementById('login').style.display='flex'; document.getElementById('app').style.display='none';
+    showErr('บัญชี ' + email + ' ไม่มีสิทธิ์เข้าหน้าการตลาด — ติดต่อผู้ดูแล');
+    await sb.auth.signOut(); return;
+  }
+  document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block';
+  document.getElementById('navUser').textContent = email;
+  loadAll();
+}
+sb.auth.onAuthStateChange(()=> checkAuth());
+checkAuth();
+
+// ============ LOAD ============
+async function loadAll(){ await Promise.all([loadLeads(), loadVisits(), loadChats()]); renderOverview(); }
+
+async function loadLeads(){
+  const { data, error } = await sb.from('neos_leads').select('*').order('created_at',{ascending:false});
+  LEADS = error ? [] : (data||[]);
+  renderLeads(); renderOverview();
+}
+async function loadVisits(){
+  const { data } = await sb.from('neos_visits').select('*');
+  VISITS = data || [];
+  renderOverview();
+}
+async function loadChats(){
+  const { data } = await sb.from('neos_chat_history').select('*').order('created_at',{ascending:true}).limit(2000);
+  CHAT_ROWS = data || [];
+  renderChats(); renderOverview();
+}
+
+// ============ OVERVIEW ============
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function chatSessions(){ const m=new Map(); CHAT_ROWS.forEach(r=>{ if(!m.has(r.session_id)) m.set(r.session_id,[]); m.get(r.session_id).push(r); }); return [...m.entries()].map(([sid,msgs])=>({sid,msgs})); }
+
+function renderOverview(){
+  document.getElementById('oLeadTotal').textContent = LEADS.length;
+  document.getElementById('oLeadNew').textContent   = LEADS.filter(l=>(l.status||'NEW')==='NEW').length;
+  document.getElementById('oChat').textContent      = chatSessions().length;
+  const uniq = new Set(VISITS.map(v=>v.visitor_id||v.id)).size;
+  document.getElementById('oVisits').textContent    = uniq || VISITS.length;
+  // pipeline
+  const pl = STATUSES.map(s=>({s, n:LEADS.filter(l=>(l.status||'NEW')===s).length}));
+  const mx = Math.max(1, ...pl.map(x=>x.n));
+  document.getElementById('oPipeline').innerHTML = pl.map(x=>`<div class="bar"><span class="pill st-${x.s}" style="min-width:96px;text-align:center">${STATUS_TH[x.s]}</span><div class="track"><div class="fill" style="width:${Math.round(x.n/mx*100)}%"></div></div><span class="num">${x.n}</span></div>`).join('');
+  // source
+  const src = {}; LEADS.forEach(l=>{ const s=(l.source||'ไม่ระบุ'); src[s]=(src[s]||0)+1; });
+  const ents = Object.entries(src).sort((a,b)=>b[1]-a[1]);
+  const sm = Math.max(1, ...ents.map(e=>e[1]));
+  document.getElementById('oSource').innerHTML = ents.length ? ents.map(([s,n])=>`<div class="bar"><span style="min-width:96px">${esc(s)}</span><div class="track"><div class="fill" style="width:${Math.round(n/sm*100)}%"></div></div><span class="num">${n}</span></div>`).join('') : '<div class="empty">ยังไม่มีข้อมูล</div>';
+}
+
+// ============ LEADS ============
+function renderLeads(){
+  const q = (document.getElementById('leadSearch').value||'').toLowerCase().trim();
+  let rows = LEADS;
+  if (q) rows = rows.filter(l=>[l.name,l.contact,l.email,l.phone,l.message,l.interest].join(' ').toLowerCase().includes(q));
+  const tb = document.getElementById('leadBody');
+  if (!rows.length){ tb.innerHTML = '<tr><td colspan="6" class="empty">ไม่มี Lead</td></tr>'; return; }
+  tb.innerHTML = rows.map(l=>{
+    const st = l.status||'NEW';
+    const d = l.created_at ? new Date(l.created_at).toLocaleDateString('th-TH',{day:'numeric',month:'short'}) : '-';
+    return `<tr class="lead-row" onclick='openLead("${esc(l.lead_id)}")'><td>${esc(l.name)||'-'}</td><td>${esc(l.contact||l.email||l.phone)||'-'}</td><td>${esc(l.interest)||'-'}</td><td>${esc(l.source)||'-'}</td><td><span class="pill st-${st}">${STATUS_TH[st]||st}</span></td><td>${d}</td></tr>`;
+  }).join('');
+}
+
+async function openLead(id){
+  const l = LEADS.find(x=>String(x.lead_id)===String(id)); if(!l) return;
+  const st = l.status||'NEW';
+  const opts = STATUSES.map(s=>`<option value="${s}" ${s===st?'selected':''}>${STATUS_TH[s]}</option>`).join('');
+  document.getElementById('leadModal').innerHTML = `
+    <h3>${esc(l.name)||'(ไม่ระบุชื่อ)'}</h3>
+    <div class="frow"><div class="fl">ติดต่อ</div><div class="fv">${esc(l.contact||l.email||l.phone)||'-'}</div></div>
+    <div class="frow"><div class="fl">สนใจแพ็กเกจ</div><div class="fv">${esc(l.interest)||'-'} · ช่องทาง: ${esc(l.source)||'-'}</div></div>
+    ${l.message?`<div class="frow"><div class="fl">ข้อความ</div><div class="fv">${esc(l.message)}</div></div>`:''}
+    <div class="frow"><div class="fl">สถานะ (แก้ได้)</div><select class="cf" id="md_status" onchange="saveStatus('${esc(l.lead_id)}',this.value)">${opts}</select></div>
+    <div class="frow"><div class="fl">เพิ่มโน้ต / บันทึกการตามงาน</div><textarea class="cf" id="md_note" rows="2" placeholder="เช่น โทรแล้วยังไม่รับ นัดติดต่อใหม่พรุ่งนี้…"></textarea><button class="btn" style="margin-top:8px" onclick="addNote('${esc(l.lead_id)}')">บันทึกโน้ต</button></div>
+    <div class="frow"><div class="fl">ประวัติการตามงาน</div><div id="md_timeline"><div class="loading">กำลังโหลด…</div></div></div>
+    <div style="text-align:right;margin-top:8px"><button class="btn btn-ghost" onclick="closeLeadModal()">ปิด</button></div>`;
+  document.getElementById('leadOverlay').classList.add('open');
+  loadTimeline(id);
+}
+function closeLeadModal(){ document.getElementById('leadOverlay').classList.remove('open'); }
+
+async function saveStatus(id, status){
+  const { error } = await sb.from('neos_leads').update({ status }).eq('lead_id', id);
+  if (error){ toast('แก้สถานะไม่สำเร็จ: '+error.message); return; }
+  const l = LEADS.find(x=>String(x.lead_id)===String(id)); if(l) l.status = status;
+  renderLeads(); renderOverview(); toast('อัปเดตสถานะแล้ว ✅');
+  // log timeline (เงียบถ้าไม่มีตาราง)
+  try { await sb.from('neos_lead_events').insert({ lead_id:id, type:'status', body:'เปลี่ยนสถานะเป็น '+(STATUS_TH[status]||status), author:CUR_EMAIL }); loadTimeline(id); } catch(e){}
+}
+async function addNote(id){
+  const t = document.getElementById('md_note'); const body = (t.value||'').trim(); if(!body){ toast('พิมพ์โน้ตก่อนนะคะ'); return; }
+  const { error } = await sb.from('neos_lead_events').insert({ lead_id:id, type:'note', body, author:CUR_EMAIL });
+  if (error){ toast('บันทึกโน้ตไม่สำเร็จ: '+error.message); return; }
+  t.value=''; toast('บันทึกโน้ตแล้ว ✅'); loadTimeline(id);
+}
+async function loadTimeline(id){
+  const el = document.getElementById('md_timeline'); if(!el) return;
+  const { data, error } = await sb.from('neos_lead_events').select('*').eq('lead_id',id).order('created_at',{ascending:false});
+  if (error){ el.innerHTML = '<div class="empty">ยังเปิดประวัติไม่ได้</div>'; return; }
+  if (!data || !data.length){ el.innerHTML = '<div class="empty" style="padding:12px">ยังไม่มีบันทึก</div>'; return; }
+  el.innerHTML = data.map(e=>`<div class="tl-item">${esc(e.body)}<div class="meta">${e.type==='note'?'📝':'🔁'} ${esc(e.author||'')} · ${new Date(e.created_at).toLocaleString('th-TH')}</div></div>`).join('');
+}
+
+// ============ CHAT ============
+function chChannel(s){ return (s.msgs.find(m=>m.channel)||{}).channel || 'web'; }
+function setChFilter(f, btn){ CH_FILTER=f; document.querySelectorAll('#chFilter button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); renderChats(); }
+function renderChats(){
+  let ses = chatSessions();
+  ses.sort((a,b)=> new Date(b.msgs[b.msgs.length-1].created_at) - new Date(a.msgs[a.msgs.length-1].created_at));
+  if (CH_FILTER!=='all') ses = ses.filter(s=>chChannel(s)===CH_FILTER);
+  const list = document.getElementById('chatList');
+  if (!ses.length){ list.innerHTML='<div class="empty">ยังไม่มีแชท</div>'; document.getElementById('chatMsgs').innerHTML='<div class="empty">—</div>'; return; }
+  list.innerHTML = ses.map(s=>{
+    const last = s.msgs[s.msgs.length-1];
+    const nm = (s.msgs.find(m=>m.name)||{}).name || s.sid.slice(0,14);
+    return `<div class="chat-room ${s.sid===curSid?'on':''}" onclick='openRoom("${esc(s.sid)}")'><div class="nm">${CH_META[chChannel(s)]||'🌐'} ${esc(nm)}</div><div class="pv">${esc((last.message||'').slice(0,40))}</div></div>`;
+  }).join('');
+  if (curSid && ses.find(s=>s.sid===curSid)) openRoom(curSid);
+}
+function openRoom(sid){
+  curSid = sid;
+  document.querySelectorAll('.chat-room').forEach(r=>r.classList.remove('on'));
+  const msgs = CHAT_ROWS.filter(m=>m.session_id===sid).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  document.getElementById('chatMsgs').innerHTML = msgs.map(m=>`<div class="msg ${m.role==='bot'?'bot':'user'}">${esc(m.message)}<div class="t">${new Date(m.created_at).toLocaleString('th-TH')}</div></div>`).join('');
+  renderChats();
+}
+
+// ============ TABS / UTIL ============
+function showTab(p){
+  ['overview','leads','chat'].forEach(x=>{ document.getElementById('page-'+x).style.display = x===p?'block':'none'; document.getElementById('tab-'+x).classList.toggle('on', x===p); });
+}
+let toastT;
+function toast(m){ const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>el.style.display='none',2600); }
+</script>
+</body>
+</html>
