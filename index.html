@@ -247,6 +247,11 @@
   footer .foot-brand svg { filter: drop-shadow(0 2px 10px rgba(59,130,246,0.4)); }
   footer .foot-sub { font-size: 9px; letter-spacing: 3px; color: var(--txt-dim); text-transform: uppercase; margin: 7px 0 16px; }
   footer p { font-size: 13px; color: var(--txt-dim); } footer .copy { margin-top: 8px; font-size: 12px; color: #56627E; }
+  footer .foot-contact { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; margin: 16px 0 4px; }
+  footer .foot-contact a { font-size: 13px; color: var(--txt-dim); text-decoration: none; transition: color .15s; }
+  footer .foot-contact a:hover { color: #fff; }
+  .nav-contact { font-weight: 600; white-space: nowrap; }
+  .nav-line { color: #22c55e !important; }
 
   /* ===== CHAT WIDGET ===== */
   .chat-fab { position: fixed; bottom: 18px; right: 18px; z-index: 200; background: none; border: none; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: transform .2s; }
@@ -410,6 +415,8 @@
       <a href="#roadmap">Roadmap</a>
       <a href="blog.html">บทความ</a>
       <a href="faq.html">FAQ</a>
+      <a href="tel:0626964155" class="nav-contact" aria-label="โทร">📞 062-696-4155</a>
+      <a href="https://line.me/R/ti/p/@neos-css" target="_blank" rel="noopener" class="nav-contact nav-line" aria-label="LINE">LINE @neos-css</a>
       <button class="lang-btn" id="langToggle" onclick="toggleLang()" aria-label="Switch language">🌐 EN</button>
       <button class="nav-cta" onclick="openChat()" data-i18n="nav.cta">ปรึกษาฟรี</button>
     </div>
@@ -773,6 +780,12 @@
     </div>
     <div class="foot-sub">Autonomous Business OS</div>
     <p data-i18n="foot.tag">ระบบบริหารธุรกิจขับเคลื่อนด้วย AI</p>
+    <div class="foot-contact">
+      <a href="tel:0626964155">📞 062-696-4155</a>
+      <a href="https://line.me/R/ti/p/@neos-css" target="_blank" rel="noopener">💚 LINE @neos-css</a>
+      <a href="https://www.facebook.com/NeosCss/" target="_blank" rel="noopener">📘 Facebook</a>
+      <a href="mailto:info@neos-css.com">✉️ info@neos-css.com</a>
+    </div>
     <p class="copy">© 2026 Comtech Solution System Co., Ltd. — All rights reserved.</p>
   </div>
 </footer>
