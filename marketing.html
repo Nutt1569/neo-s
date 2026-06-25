@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEO-S · หน้าการตลาด</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root { --bg:#070B16; --bg-2:#0C1322; --card:#111A2E; --line:#1E2A44; --txt:#EAF0FF; --txt-dim:#95A3C2; --blue:#3B82F6; --cyan:#22D3EE; --violet:#8B5CF6; --green:#34D399; --gold:#E2B679; --red:#F87171; --grad:linear-gradient(120deg,#22D3EE,#3B82F6 45%,#8B5CF6); }
 * { box-sizing:border-box; margin:0; padding:0; }
@@ -42,6 +43,29 @@ nav { background:var(--bg-2); border-bottom:1px solid var(--line); position:stic
 .bar .track { flex:1; height:9px; background:var(--bg); border-radius:99px; overflow:hidden; }
 .bar .fill { height:100%; background:var(--grad); border-radius:99px; }
 .bar .num { color:var(--txt-dim); min-width:34px; text-align:right; }
+/* visits section */
+.vis-kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+@media(max-width:560px){ .vis-kpis { grid-template-columns:1fr; } }
+.vis-k { background:var(--bg-2); border:1px solid var(--line); border-radius:13px; padding:15px 16px; }
+.vis-k .vk-num { font-size:26px; font-weight:700; line-height:1; }
+.vis-k:nth-child(1) .vk-num{ color:var(--violet); }
+.vis-k:nth-child(2) .vk-num{ color:var(--cyan); }
+.vis-k:nth-child(3) .vk-num{ color:var(--gold); }
+.vis-k .vk-lbl { font-size:12px; color:var(--txt-dim); margin-top:6px; }
+.grid-2 { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; }
+@media(max-width:880px){ .grid-2 { grid-template-columns:1fr; } }
+.panel-sub-title { font-size:12.5px; font-weight:600; color:var(--txt-dim); margin-bottom:12px; }
+.chart-wrap { position:relative; }
+.src-row { display:flex; gap:12px; align-items:center; padding:11px 0; border-bottom:1px solid rgba(30,42,68,.5); }
+.src-row:last-child { border-bottom:none; }
+.src-ic { width:38px; height:38px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; background:var(--bg-2); border:1px solid var(--line); border-radius:10px; }
+.src-main { flex:1; min-width:0; }
+.src-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+.src-name { font-size:13.5px; font-weight:600; }
+.src-cnt { font-size:13px; font-weight:700; color:var(--cyan); white-space:nowrap; }
+.src-bar { height:6px; background:var(--bg); border-radius:99px; margin:7px 0 4px; overflow:hidden; }
+.src-fill { height:100%; background:var(--grad); border-radius:99px; }
+.src-pct { font-size:11px; color:var(--txt-dim); }
 /* table */
 .table-wrap { overflow-x:auto; }
 table { width:100%; border-collapse:collapse; font-size:13px; }
@@ -127,7 +151,6 @@ tr.lead-row:hover { background:var(--bg-2); }
         <div class="kpi"><div class="lbl">Lead ทั้งหมด</div><div class="val" id="oLeadTotal">–</div></div>
         <div class="kpi"><div class="lbl">Lead ใหม่ (ยังไม่ติดต่อ)</div><div class="val" id="oLeadNew">–</div></div>
         <div class="kpi"><div class="lbl">ห้องแชต</div><div class="val" id="oChat">–</div></div>
-        <div class="kpi"><div class="lbl">คนเข้าเว็บ</div><div class="val" id="oVisits">–</div></div>
       </div>
     </div>
     <div class="panel">
@@ -135,8 +158,22 @@ tr.lead-row:hover { background:var(--bg-2); }
       <div id="oPipeline"><div class="loading">กำลังโหลด…</div></div>
     </div>
     <div class="panel">
-      <div class="panel-title">📈 ช่องทางที่ลูกค้ามาจาก</div>
-      <div id="oSource"><div class="loading">กำลังโหลด…</div></div>
+      <div class="panel-title">📣 การตลาด · คนเข้าชมเว็บ</div>
+      <div class="vis-kpis">
+        <div class="vis-k"><div class="vk-num" id="vUnique">0</div><div class="vk-lbl">คนเข้าชม (ไม่นับซ้ำ)</div></div>
+        <div class="vis-k"><div class="vk-num" id="vTotal">0</div><div class="vk-lbl">เข้าชมทั้งหมด</div></div>
+        <div class="vis-k"><div class="vk-num" id="vConv">0%</div><div class="vk-lbl">Lead Conversion (Lead ÷ คนเข้าชม)</div></div>
+      </div>
+      <div class="grid-2" style="margin-top:18px">
+        <div>
+          <div class="panel-sub-title">📈 คนเข้าชมรายวัน (14 วันล่าสุด)</div>
+          <div class="chart-wrap" style="height:220px"><canvas id="visChart"></canvas></div>
+        </div>
+        <div>
+          <div class="panel-sub-title">🧭 ช่องทางที่มา</div>
+          <div id="sourceList"><div class="loading">กำลังโหลด…</div></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -189,6 +226,8 @@ const MARKETING_EMAILS = ['kritsada.nutt1981@gmail.com'];  // ใส่นัท
 const STATUSES  = ['NEW','CONTACTED','QUOTED','WON','LOST'];
 const STATUS_TH = { NEW:'ใหม่', CONTACTED:'ติดต่อแล้ว', QUOTED:'เสนอราคาแล้ว', WON:'ปิดได้', LOST:'ไม่สำเร็จ' };
 const CH_META   = { web:'🌐 เว็บ', line:'💚 LINE', fb:'📘 FB' };
+const SRC_META  = { direct:{label:'เข้าตรง',ic:'🔗'}, facebook:{label:'Facebook',ic:'📘'}, google:{label:'Google',ic:'🔍'}, line:{label:'LINE',ic:'💬'}, instagram:{label:'Instagram',ic:'📷'}, tiktok:{label:'TikTok',ic:'🎵'}, bing:{label:'Bing',ic:'🔎'}, other:{label:'อื่นๆ',ic:'🌐'} };
+let visChart = null;
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, lock:(n,t,fn)=>fn() }
@@ -249,17 +288,37 @@ function renderOverview(){
   document.getElementById('oLeadTotal').textContent = LEADS.length;
   document.getElementById('oLeadNew').textContent   = LEADS.filter(l=>(l.status||'NEW')==='NEW').length;
   document.getElementById('oChat').textContent      = chatSessions().length;
-  const uniq = new Set(VISITS.map(v=>v.visitor_id||v.id)).size;
-  document.getElementById('oVisits').textContent    = uniq || VISITS.length;
   // pipeline
   const pl = STATUSES.map(s=>({s, n:LEADS.filter(l=>(l.status||'NEW')===s).length}));
   const mx = Math.max(1, ...pl.map(x=>x.n));
   document.getElementById('oPipeline').innerHTML = pl.map(x=>`<div class="bar"><span class="pill st-${x.s}" style="min-width:96px;text-align:center">${STATUS_TH[x.s]}</span><div class="track"><div class="fill" style="width:${Math.round(x.n/mx*100)}%"></div></div><span class="num">${x.n}</span></div>`).join('');
-  // source
-  const src = {}; LEADS.forEach(l=>{ const s=(l.source||'ไม่ระบุ'); src[s]=(src[s]||0)+1; });
-  const ents = Object.entries(src).sort((a,b)=>b[1]-a[1]);
-  const sm = Math.max(1, ...ents.map(e=>e[1]));
-  document.getElementById('oSource').innerHTML = ents.length ? ents.map(([s,n])=>`<div class="bar"><span style="min-width:96px">${esc(s)}</span><div class="track"><div class="fill" style="width:${Math.round(n/sm*100)}%"></div></div><span class="num">${n}</span></div>`).join('') : '<div class="empty">ยังไม่มีข้อมูล</div>';
+  // visits section
+  renderVisitors();
+}
+
+function renderVisitors(){
+  const rv = VISITS;
+  const uniq = new Set(rv.map(v=>v.visitor_id||v.id)).size;
+  document.getElementById('vUnique').textContent = uniq;
+  document.getElementById('vTotal').textContent  = rv.length;
+  document.getElementById('vConv').textContent   = uniq ? Math.round(LEADS.length/uniq*100)+'%' : '—';
+  buildVisitChart(rv);
+  renderSources(rv);
+}
+function buildVisitChart(rv){
+  const ctx = document.getElementById('visChart'); if(!ctx || typeof Chart==='undefined') return;
+  const n=14, days=[], counts=[];
+  for(let i=n-1;i>=0;i--){ const d=new Date(Date.now()-i*864e5); const key=d.toISOString().slice(0,10); days.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'})); counts.push(rv.filter(v=>(v.created_at||'').slice(0,10)===key).length); }
+  if(visChart) visChart.destroy();
+  const grad=ctx.getContext('2d').createLinearGradient(0,0,0,200); grad.addColorStop(0,'rgba(139,92,246,.75)'); grad.addColorStop(1,'rgba(139,92,246,.12)');
+  visChart=new Chart(ctx,{ type:'bar', data:{ labels:days, datasets:[{ data:counts, backgroundColor:grad, borderColor:'#8B5CF6', borderWidth:1, borderRadius:5 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ grid:{display:false}, ticks:{ color:'#95A3C2', font:{size:10}, maxRotation:0, autoSkip:true, maxTicksLimit:8 } }, y:{ beginAtZero:true, ticks:{ color:'#95A3C2', precision:0 }, grid:{ color:'rgba(30,42,68,.6)' } } } } });
+}
+function renderSources(rv){
+  const el=document.getElementById('sourceList'); if(!el) return;
+  if(!rv.length){ el.innerHTML='<div class="empty">ยังไม่มีข้อมูลคนเข้าชม</div>'; return; }
+  const map={}; rv.forEach(v=>{ const s=(v.source||'other'); map[s]=(map[s]||0)+1; });
+  const total=rv.length;
+  el.innerHTML=Object.keys(map).sort((a,b)=>map[b]-map[a]).map(s=>{ const m=SRC_META[s]||{label:esc(s),ic:'🌐'}; const c=map[s]; const pct=Math.round(c/total*100); return `<div class="src-row"><div class="src-ic">${m.ic}</div><div class="src-main"><div class="src-top"><span class="src-name">${esc(m.label)}</span><span class="src-cnt">${c} ครั้ง</span></div><div class="src-bar"><div class="src-fill" style="width:${pct}%"></div></div><div class="src-pct">${pct}% ของทั้งหมด</div></div></div>`; }).join('');
 }
 
 // ============ LEADS ============
