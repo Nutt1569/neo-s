@@ -589,7 +589,21 @@
         <div id="kbMsg" class="sub" style="margin-top:8px"></div>
       </div>
       <div class="panel">
-        <div class="panel-title">📚 ความรู้ในถัง (ล่าสุด)</div>
+        <div class="panel-title">✍️ วางข้อมูลเอง <span class="sub" style="font-weight:400">— พิมพ์/วางข้อมูลที่ไม่ได้อยู่บนเว็บ (จุดขาย/วัสดุ/ราคา/FAQ) ระบบหั่นชิ้น + ให้ AI ค้นเองอัตโนมัติ</span></div>
+        <textarea id="kbText" placeholder="พิมพ์หรือวางข้อมูลที่นี่..." style="width:100%;min-height:90px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit;font-family:inherit;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px">
+          <input id="kbTextTitle" placeholder="ชื่อหัวข้อ (เช่น ราคาแพ็กเกจ NEO-S)" style="flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit">
+          <select id="kbTextType" style="padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit">
+            <option value="product">จุดขาย/สินค้า</option>
+            <option value="faq">FAQ/บทความ</option>
+            <option value="competitor">คู่แข่ง</option>
+            <option value="news">ข่าว/เทรนด์</option>
+          </select>
+          <button class="nav-btn" onclick="kbAddText()">+ เก็บเข้าถัง</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">📚 ความรู้ในถัง (รวมตามแหล่ง)</div>
         <div id="kbItemList"><div class="loading">กำลังโหลด…</div></div>
       </div>
     </div>
@@ -1355,6 +1369,7 @@ function showTab(which){
 // ===== 🧠 ถังความรู้เอเลน่า (RAG) — เรียก worker /kb/* ด้วย session token =====
 const KB_WORKER = QUOTE_WORKER_URL;
 const KB_TMAP = { product:'จุดขาย', faq:'FAQ', competitor:'คู่แข่ง', news:'ข่าว' };
+let kbGroupsCache = [];
 async function kbApi(path, body){
   const s = await getSessionSafe();
   const token = s && s.access_token;
@@ -1365,6 +1380,9 @@ async function kbApi(path, body){
 }
 function kbMsg(m){ const e=document.getElementById('kbMsg'); if(e) e.textContent=m||''; }
 function kbDate(s){ try{ return s ? new Date(s).toLocaleDateString('th-TH') : ''; }catch(e){ return ''; } }
+function kbDomain(u){ try{ return u==='manual' ? 'ใส่เอง' : new URL(u).hostname.replace(/^www\./,''); }catch(e){ return u||''; } }
+function kbBaseTitle(t){ return String(t||'').replace(/\s*\(\d+\/\d+\)\s*$/,'').trim(); }
+function kbCleanTitle(t,u){ t=kbBaseTitle(t); return (!t || t.indexOf('???')>=0) ? kbDomain(u) : t; }
 async function kbLoad(){
   // แหล่งข้อมูล
   const sd = await kbApi('/kb/sources', { action:'list' });
@@ -1376,7 +1394,7 @@ async function kbLoad(){
     const ls = s.last_synced ? kbDate(s.last_synced) : 'ยังไม่ sync';
     return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)">
       <span style="font-size:11px;padding:2px 8px;border-radius:6px;background:var(--card);border:1px solid var(--line);white-space:nowrap">${KB_TMAP[s.type]||s.type}</span>
-      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.title||s.url}</div><div class="sub" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.url} · sync: ${ls}</div></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${kbCleanTitle(s.title,s.url)}</div><div class="sub" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.url} · sync: ${ls}</div></div>
       <button class="nav-btn" style="padding:4px 10px;font-size:12px" onclick="kbDelSource('${s.id}')">ลบ</button>
     </div>`;
   }).join('') : '<div class="sub">ยังไม่มีแหล่งข้อมูล — เพิ่ม URL ด้านบนแล้วกด sync</div>';
@@ -1385,13 +1403,24 @@ async function kbLoad(){
   const kd = await kbApi('/kb/list', {});
   const items = (kd && kd.items) || [];
   document.getElementById('kbTotal').textContent = items.length;
-  document.getElementById('kbItemList').innerHTML = items.length ? items.slice(0,40).map(it=>{
-    return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px">
-      <span style="font-size:11px;padding:2px 8px;border-radius:6px;background:var(--card);border:1px solid var(--line);white-space:nowrap">${KB_TMAP[it.source_type]||it.source_type}</span>
-      <div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.title||'(ไม่มีชื่อ)'}</div>
-      <span class="sub" style="font-size:11px;white-space:nowrap">${kbDate(it.fetched_at)}</span>
+  // รวมชิ้นเป็นกลุ่มตามแหล่ง (ดูง่าย ไม่รก · 1 แหล่ง = หลายชิ้น)
+  const groups = {};
+  items.forEach(it=>{
+    const isWeb = it.source_url && it.source_url!=='manual';
+    const key = isWeb ? it.source_url : ('manual:'+kbBaseTitle(it.title));
+    if(!groups[key]) groups[key] = { key, type:it.source_type, name: isWeb ? kbDomain(it.source_url) : (kbCleanTitle(it.title,it.source_url)||'บันทึกใส่เอง'), manual:!isWeb, n:0, date:it.fetched_at };
+    groups[key].n++;
+    if(it.fetched_at>groups[key].date) groups[key].date=it.fetched_at;
+  });
+  kbGroupsCache = Object.values(groups).sort((a,b)=> a.date<b.date?1:-1);
+  document.getElementById('kbItemList').innerHTML = kbGroupsCache.length ? kbGroupsCache.map((g,i)=>{
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px">
+      <span style="font-size:11px;padding:2px 8px;border-radius:6px;background:var(--card);border:1px solid var(--line);white-space:nowrap">${KB_TMAP[g.type]||g.type}</span>
+      <div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.manual?'📝 ':'🌐 '}${g.name}</div>
+      <span class="sub" style="font-size:11px;white-space:nowrap">${g.n} ชิ้น · ${kbDate(g.date)}</span>
+      <button class="nav-btn" style="padding:3px 9px;font-size:12px" onclick="kbDelGroup(${i})">ลบ</button>
     </div>`;
-  }).join('') : '<div class="sub">ยังไม่มีความรู้ในถัง — เพิ่มแหล่งแล้วกด "sync เดี๋ยวนี้"</div>';
+  }).join('') : '<div class="sub">ยังไม่มีความรู้ในถัง — เพิ่มแหล่งแล้วกด "sync เดี๋ยวนี้" หรือวางข้อมูลเอง</div>';
 }
 async function kbAddSource(){
   const url = document.getElementById('kbUrl').value.trim();
@@ -1407,6 +1436,23 @@ async function kbDelSource(id){
   if (!confirm('ลบแหล่งนี้? (ความรู้ที่ sync มาแล้วยังอยู่ในถัง)')) return;
   const r = await kbApi('/kb/sources', { action:'del', id });
   if (r && r.ok) kbLoad(); else kbMsg('❌ ลบไม่สำเร็จ');
+}
+async function kbAddText(){
+  const content = document.getElementById('kbText').value.trim();
+  if (!content){ kbMsg('⚠️ วางเนื้อหาก่อน'); return; }
+  const title = document.getElementById('kbTextTitle').value.trim();
+  const type = document.getElementById('kbTextType').value;
+  kbMsg('กำลังบันทึกเข้าถัง…');
+  const r = await kbApi('/kb/addtext', { title, content, source_type:type });
+  if (r && r.ok){ document.getElementById('kbText').value=''; document.getElementById('kbTextTitle').value=''; kbMsg('✅ บันทึกแล้ว — หั่นเป็น '+r.chunks+' ชิ้น ให้ AI ค้นได้ทันที'); kbLoad(); }
+  else kbMsg('❌ บันทึกไม่สำเร็จ' + (r&&r.error?' ('+r.error+')':''));
+}
+async function kbDelGroup(i){
+  const g = kbGroupsCache[i]; if(!g) return;
+  if (!confirm('ลบความรู้กลุ่มนี้ "'+g.name+'" ('+g.n+' ชิ้น)?')) return;
+  kbMsg('กำลังลบ…');
+  const r = await kbApi('/kb/delitem', g.manual ? { key_prefix:g.key } : { source_url:g.key });
+  if (r && r.ok){ kbMsg('✅ ลบแล้ว'); kbLoad(); } else kbMsg('❌ ลบไม่สำเร็จ'+(r&&r.error?' ('+r.error+')':''));
 }
 async function kbSyncNow(){
   const btn = document.getElementById('kbSyncBtn'); const o = btn.textContent; btn.disabled=true; btn.textContent='⏳ กำลัง sync…';
