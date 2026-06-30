@@ -594,10 +594,15 @@
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px">
           <input id="kbTextTitle" placeholder="ชื่อหัวข้อ (เช่น ราคาแพ็กเกจ NEO-S)" style="flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit">
           <select id="kbTextType" style="padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit">
-            <option value="product">จุดขาย/สินค้า</option>
-            <option value="faq">FAQ/บทความ</option>
-            <option value="competitor">คู่แข่ง</option>
-            <option value="news">ข่าว/เทรนด์</option>
+            <optgroup label="ลูกค้าเห็น (โนวาใช้ตอบ)">
+              <option value="product">จุดขาย/สินค้า</option>
+              <option value="faq">FAQ/บทความ</option>
+            </optgroup>
+            <optgroup label="เฉพาะผู้จัดการ (เอเลน่าใช้ตัดสินใจ · ลูกค้าไม่เห็น)">
+              <option value="marketing">📊 การตลาด/กลยุทธ์</option>
+              <option value="competitor">คู่แข่ง</option>
+              <option value="news">เทรนด์/ข่าว</option>
+            </optgroup>
           </select>
           <button class="nav-btn" onclick="kbAddText()">+ เก็บเข้าถัง</button>
         </div>
@@ -1368,7 +1373,7 @@ function showTab(which){
 
 // ===== 🧠 ถังความรู้เอเลน่า (RAG) — เรียก worker /kb/* ด้วย session token =====
 const KB_WORKER = QUOTE_WORKER_URL;
-const KB_TMAP = { product:'จุดขาย', faq:'FAQ', competitor:'คู่แข่ง', news:'ข่าว' };
+const KB_TMAP = { product:'จุดขาย', faq:'FAQ', competitor:'คู่แข่ง', news:'ข่าว/เทรนด์', marketing:'การตลาด' };
 let kbGroupsCache = [];
 async function kbApi(path, body){
   const s = await getSessionSafe();
