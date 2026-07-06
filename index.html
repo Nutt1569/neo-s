@@ -1291,8 +1291,10 @@ function openLead(pkg) { openChat(); setTimeout(() => showLeadForm(pkg), 350); }
 function maybeOfferLead(text) {
   if (leadShown || leadSubmitted) return;
   const low = (text || '').toLowerCase();
-  const intent = ['ราคา','เท่าไหร่','แพ็ก','package','สนใจ','ติดต่อ','ซื้อ','เริ่ม','สมัคร','ใบเสนอ'].some(k => low.includes(k));
-  if (intent || userMsgCount >= 3) setTimeout(() => showLeadForm(), intent ? 1300 : 800);
+  // โนวา = ที่ปรึกษา: คุย + แนะนำแพ็ก/ทิศทางธุรกิจก่อน · เด้งฟอร์มใบเสนอราคา "เฉพาะตอนลูกค้าเรียกเอง" เท่านั้น
+  // (ตัด soft intent เช่น ราคา/สนใจ/แพ็ก + ตัด auto-pop ครบ 3 ข้อความ ออก — กันยัดฟอร์มเร็วเกินไป)
+  const askQuote = ['ใบเสนอราคา','ใบเสนอ','เสนอราคา','ขอราคา','สั่งทำ','สั่งเลย','เริ่มเลย','สมัครเลย','อยากเริ่ม','จ่ายยังไง','โอนยังไง','quote','get started','sign up'].some(k => low.includes(k));
+  if (askQuote) setTimeout(() => showLeadForm(), 900);
 }
 
 function showLeadForm(prefillPkg, prefillMsg) {
