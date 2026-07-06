@@ -712,7 +712,7 @@
       <div>
         <div class="price-name" data-i18n="webonly.name">🌐 เฉพาะเว็บไซต์</div>
         <div class="pkg-tag" data-i18n="webonly.tag">เว็บร้าน + แคตตาล็อก + แอดมิน · เพิ่ม AI ทีหลังได้ทุกเมื่อ<br>ระบบจัดการ admin: Dashboard · Orders · Products · Customers · Users</div>
-        <div class="pkg-fit" style="margin-bottom:0" data-i18n="webonly.fit">📐 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)<br>💬 <b style="color:var(--cyan)">อยากได้เกินนี้ (เพิ่มหน้า/ฟีเจอร์)?</b> ส่งรายละเอียดให้โนวา ขอใบเสนอราคา</div>
+        <div class="pkg-fit" style="margin-bottom:0" data-i18n="webonly.fit">📐 หน้าแรก · ไม่เกิน 5 เมนู · สินค้า ≤50 ชิ้น (เกิน +฿20/รายการ) · หน้าถัดไป +฿2,000/หน้า · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000)<br>💬 <b style="color:var(--cyan)">อยากได้เกินนี้ (เพิ่มหน้า/ฟีเจอร์)?</b> ส่งรายละเอียดให้โนวา ขอใบเสนอราคา</div>
       </div>
       <div style="text-align:right">
         <div class="price-num" style="font-size:30px">฿9,000<small data-i18n="webonly.once"> ค่าทำเว็บ (ครั้งเดียว)</small></div>
@@ -964,7 +964,7 @@ const I18N_EN = {
   'pricing.note':'* AI power (token cost): first month free, then top up at cost with no markup · final price confirmed in your quote',
   'works.eyebrow':'Real work','works.h2':'Businesses running on NEO-S','works.p':'Systems we built and actively maintain — open any live site to see for yourself',
   'webonly.name':'🌐 Website only','webonly.tag':'Online store + catalog + admin · add AI anytime later<br>Admin panel: Dashboard · Orders · Products · Customers · Users',
-  'webonly.fit':'📐 1 page · up to 5 menus · up to 50 products (extra ฿20/item) · 3 revisions (extra ฿3,000 each)<br>💬 <b style="color:var(--cyan)">Need more (extra pages/features)?</b> Send the details to Nova for a quote',
+  'webonly.fit':'📐 First page · up to 5 menus · ≤50 products (extra +฿20/item) · extra page +฿2,000 each · 3 revisions (extra ฿3,000 each)<br>💬 <b style="color:var(--cyan)">Need more (extra pages/features)?</b> Send the details to Nova for a quote',
   'webonly.once':' website build (one-time)',
   'webonly.monthly':'+ yearly ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">domain + hosting included</b> · no monthly fee',
   'webonly.btn':'Get a quote',
@@ -1464,7 +1464,7 @@ function renderQuoteBody(){
       '<div class="qm-pkg">🌐 ' + (en?'Website only':'เฉพาะเว็บไซต์') + ' — <b>฿9,000</b> <small>' + (en?'one-time':'ครั้งเดียว') + '</small></div>' +
       '<div class="qm-row"><label>' + (en?'Number of pages':'จำนวนหน้า') + '</label><input type="number" id="qmPages" min="1" value="1" oninput="updateQuoteTotal()"></div>' +
       '<div class="qm-row"><label>' + (en?'Approx. products':'จำนวนสินค้าโดยประมาณ') + '</label><input type="number" id="qmProducts" min="0" value="50" oninput="updateQuoteTotal()"></div>' +
-      '<div class="qm-hint">' + (en?'Base covers up to 5 menus & 50 products · extra products +฿20 each · .com domain free / .co.th +฿700/yr':'ฐานครอบคลุม ≤5 เมนู & 50 สินค้า · เกินคิด +฿20/รายการ · โดเมน .com ฟรี / .co.th +฿700/ปี') + '</div>';
+      '<div class="qm-hint">' + (en?'Base = 1st page + up to 50 products · extra page +฿2,000 each · extra products +฿20 each · .com domain free / .co.th +฿700/yr':'ฐาน = หน้าแรก + สินค้า ≤50 · หน้าเพิ่ม +฿2,000/หน้า · สินค้าเกิน +฿20/รายการ · โดเมน .com ฟรี / .co.th +฿700/ปี') + '</div>';
   } else if (qmType === '2ai5'){
     body.innerHTML =
       '<div class="qm-pkg">⭐ 2 AI · 5 Agent — <b>฿22,000</b> <small>(' + (en?'from':'จาก') + ' ฿39,000) + ฿5,990/' + (en?'mo':'เดือน') + '</small></div>' +
@@ -1480,10 +1480,15 @@ function updateQuoteTotal(){
   const t = document.getElementById('qmTotal');
   let install = 0, monthly = 0, note = '';
   if (qmType === 'webonly'){
+    const pages = parseInt((document.getElementById('qmPages')||{}).value, 10) || 1;
     const prod = parseInt((document.getElementById('qmProducts')||{}).value, 10) || 0;
+    const exPage = Math.max(0, pages - 1);
     const over = Math.max(0, prod - 50);
-    install = 9000 + over * 20;
-    if (over > 0) note = en ? ('incl. '+over+' extra products') : ('รวมสินค้าเกิน '+over+' รายการ');
+    install = 9000 + exPage * 2000 + over * 20;
+    const parts = [];
+    if (exPage > 0) parts.push(en ? (exPage+' extra pages') : ('หน้าเพิ่ม '+exPage+' หน้า'));
+    if (over > 0) parts.push(en ? (over+' extra products') : ('สินค้าเกิน '+over+' รายการ'));
+    note = parts.join(' · ');
   } else if (qmType === '2ai5'){
     install = 22000; monthly = 5990;
     document.querySelectorAll('.qm-addcb:checked').forEach(function(cb){ install += Number(qmAddons()[cb.dataset.i].price) || 0; });
@@ -1494,14 +1499,16 @@ function buildQuoteItems(){
   if (qmType === 'webonly'){
     const pages = parseInt((document.getElementById('qmPages')||{}).value, 10) || 1;
     const prod = parseInt((document.getElementById('qmProducts')||{}).value, 10) || 0;
+    const exPage = Math.max(0, pages - 1);
     const over = Math.max(0, prod - 50);
-    const items = [{ desc:'เว็บไซต์ร้าน + แคตตาล็อก + ระบบแอดมิน', subs:[pages+' หน้า · สินค้าประมาณ '+prod+' รายการ','รวมโดเมน .com + Hosting ปีแรก'], qty:1, unit:'เว็บ', price:9000 }];
+    const items = [{ desc:'เว็บไซต์ร้าน + แคตตาล็อก + ระบบแอดมิน (หน้าแรก)', subs:['สินค้าประมาณ '+prod+' รายการ','รวมโดเมน .com + Hosting ปีแรก'], qty:1, unit:'เว็บ', price:9000 }];
+    if (exPage > 0) items.push({ desc:'หน้าเพิ่มเติม', subs:[], qty:exPage, unit:'หน้า', price:2000 });
     if (over > 0) items.push({ desc:'สินค้าเกิน 50 รายการ', subs:[], qty:over, unit:'รายการ', price:20 });
     return { items, monthlyNote:'• ไม่มีค่ารายเดือน · เพิ่ม AI ทีหลังได้ทุกเมื่อ' };
   }
   const items = [{ desc:'2 AI · 5 Agent — พัฒนาระบบพร้อมติดตั้ง', subs:['ทีม AI ครบ 5 หน้าที่ (ขาย/ผู้จัดการ/การเงิน/คลัง/การตลาด)','+ เว็บไซต์ร้าน + ระบบแอดมิน','โปรเปิดตัว 22 ท่านแรก (จากปกติ ฿39,000)'], qty:1, unit:'ระบบ', price:22000 }];
   document.querySelectorAll('.qm-addcb:checked').forEach(function(cb){ const a = qmAddons()[cb.dataset.i]; items.push({ desc:'Add-on: '+a.name, subs:[], qty:1, unit:'ระบบ', price:Number(a.price)||0 }); });
-  return { items, monthlyNote:'• ค่าบริการดูแลระบบ ฿5,990/เดือน (เริ่มนับหลังส่งมอบ)\n• มัดจำ 60% เริ่มงาน · อีก 40% เมื่อส่งมอบ' };
+  return { items, monthlyNote:'• ค่าบริการดูแลระบบ ฿5,990/เดือน — เดือนแรกฟรี เริ่มเก็บเดือนที่ 2\n• มัดจำ 60% เริ่มงาน · อีก 40% เมื่อส่งมอบ' };
 }
 async function submitQuote(){
   const en = (typeof LANG !== 'undefined') && LANG === 'en';
@@ -1997,7 +2004,7 @@ function renderAddons(){
 /* ===== ชั้น 2 (ดีไซน์ใหม่ 6กค): การ์ดแพ็กแบบตาราง 5 ตำแหน่ง + footer "มีอะไรให้บ้าง" (ตามภาพ Nutt) ===== */
 function buildIncluded(p, en){
   const maint = p.maint
-    ? (en ? 'System maintenance ฿' + p.maint.toLocaleString() + '/month' : 'ค่าบริการดูแลระบบ ฿' + p.maint.toLocaleString() + '/เดือน')
+    ? (en ? 'System maintenance ฿' + p.maint.toLocaleString() + '/month (1st month free · from month 2)' : 'ค่าบริการดูแลระบบ ฿' + p.maint.toLocaleString() + '/เดือน (เดือนแรกฟรี · เริ่มเดือนที่ 2)')
     : (en ? 'System maintenance: as agreed (by system complexity)' : 'ค่าบริการดูแลระบบ: ตามตกลง (ตามความซับซ้อนของระบบ)');
   if (p.kind === 'integrate'){
     return en
