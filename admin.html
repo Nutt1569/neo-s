@@ -570,6 +570,19 @@
         <div class="kpi"><div class="ic">⏰</div><div class="num" style="font-size:16px;color:var(--green)" id="kbLastSync">—</div><div class="lbl">sync ล่าสุด</div></div>
       </div>
       <div class="panel">
+        <div class="panel-title">💰 ราคา Add-on (ปรับเอง · มีผลกับเว็บทันที)
+          <span class="spacer"></span>
+          <button class="nav-btn" onclick="addonSave()">💾 บันทึกราคา</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:640px">
+          <label style="font-size:13.5px;display:flex;align-items:center;gap:8px">🎁 สะสมแต้ม + ของรางวัล <input type="number" min="0" id="adPrice_loyalty" value="3000" style="width:100px;margin-left:auto;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit"> ฿</label>
+          <label style="font-size:13.5px;display:flex;align-items:center;gap:8px">📱 เชื่อม LINE OA <input type="number" min="0" id="adPrice_line" value="3000" style="width:100px;margin-left:auto;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit"> ฿</label>
+          <label style="font-size:13.5px;display:flex;align-items:center;gap:8px">📘 เชื่อม Facebook <input type="number" min="0" id="adPrice_fb" value="3000" style="width:100px;margin-left:auto;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit"> ฿</label>
+          <label style="font-size:13.5px;display:flex;align-items:center;gap:8px">🧾 ใบเสนอราคาอัตโนมัติ <input type="number" min="0" id="adPrice_quote" value="2500" style="width:100px;margin-left:auto;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:inherit"> ฿</label>
+        </div>
+        <div id="addonMsg" class="sub" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
         <div class="panel-title">🌐 แหล่งข้อมูล (sync อัตโนมัติทุกจันทร์)
           <span class="spacer"></span>
           <button class="nav-btn" id="kbSyncBtn" onclick="kbSyncNow()">⚡ sync เดี๋ยวนี้</button>
@@ -1383,12 +1396,31 @@ async function kbApi(path, body){
     return await r.json().catch(()=>({}));
   } catch(e){ return { error: e.message }; }
 }
+// ===== 💰 ราคา Add-on (ปรับเอง → worker KV → เว็บอ่านทันที) =====
+const ADDON_KEYS = ['loyalty','line','fb','quote'];
+async function addonLoad(){
+  try {
+    const r = await fetch(QUOTE_WORKER_URL + '/addons');
+    const d = await r.json().catch(()=>({}));
+    const p = (d && d.prices) || {};
+    ADDON_KEYS.forEach(k => { const el = document.getElementById('adPrice_'+k); if (el && p[k]!=null) el.value = p[k]; });
+  } catch(e){}
+}
+async function addonSave(){
+  const prices = {};
+  ADDON_KEYS.forEach(k => { const v = parseInt((document.getElementById('adPrice_'+k)||{}).value, 10); if (Number.isFinite(v) && v>=0) prices[k]=v; });
+  const m = document.getElementById('addonMsg'); if(m) m.textContent = 'กำลังบันทึก…';
+  const r = await kbApi('/kb/addons', { prices });
+  if (r && r.ok) { if(m) m.textContent = '✅ บันทึกแล้ว · หน้าเว็บอัปเดตราคาทันที (ลูกค้ารีเฟรชเห็นเลย)'; }
+  else { if(m) m.textContent = '❌ ' + ((r && (r.error||r.message)) || 'บันทึกไม่สำเร็จ (ล็อกอินแอดมินหรือยัง?)'); }
+}
 function kbMsg(m){ const e=document.getElementById('kbMsg'); if(e) e.textContent=m||''; }
 function kbDate(s){ try{ return s ? new Date(s).toLocaleDateString('th-TH') : ''; }catch(e){ return ''; } }
 function kbDomain(u){ try{ return u==='manual' ? 'ใส่เอง' : new URL(u).hostname.replace(/^www\./,''); }catch(e){ return u||''; } }
 function kbBaseTitle(t){ return String(t||'').replace(/\s*\(\d+\/\d+\)\s*$/,'').trim(); }
 function kbCleanTitle(t,u){ t=kbBaseTitle(t); return (!t || t.indexOf('???')>=0) ? kbDomain(u) : t; }
 async function kbLoad(){
+  addonLoad();
   // แหล่งข้อมูล
   const sd = await kbApi('/kb/sources', { action:'list' });
   const sources = (sd && sd.sources) || [];

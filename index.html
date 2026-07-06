@@ -1963,23 +1963,33 @@ function renderAgentsCap(){
 
 /* ===== ชั้น 3: การ์ด Add-on (เสริม·แยกจาก standard) · ราคา null = "สอบถามราคา" (รอ admin ตั้ง · ดู project-neos-pricing-5agent) ===== */
 const ADDONS = [
-  { icon:'🎁', name:'ระบบสะสมแต้ม + ของรางวัล', name_en:'Loyalty points + rewards',
+  { icon:'🎁', key:'loyalty', name:'ระบบสะสมแต้ม + ของรางวัล', name_en:'Loyalty points + rewards',
     tag:'ลูกค้าสะสมแต้ม แลกส่วนลด/ของรางวัล + ติดตามพัสดุ', tag_en:'Customers earn points, redeem discounts/rewards + track parcels', price:3000,
     items:['ทุก N บาท = 1 แต้ม (ตั้งเรตเองได้)','แลกแต้มเป็นส่วนลดตอนจ่ายเงิน','เมนูของรางวัล เจ้าของกำหนดเอง','ลูกค้าเช็กแต้ม + เลขพัสดุใน LINE/เว็บ','แท็บจัดการแต้ม/สมาชิก/ของรางวัลในแอดมิน'],
     items_en:['Every N baht = 1 point (you set the rate)','Redeem points as discount at checkout','Reward menu you define yourself','Customers check points + tracking in LINE/web','Admin tab to manage points/members/rewards'] },
-  { icon:'📱', name:'เชื่อม LINE OA', name_en:'LINE OA integration',
+  { icon:'📱', key:'line', name:'เชื่อม LINE OA', name_en:'LINE OA integration',
     tag:'AI ตอบลูกค้าใน LINE + ริชเมนู + broadcast', tag_en:'AI replies in LINE + rich menu + broadcast', price:3000,
     items:['AI ตอบลูกค้า 1:1 ใน LINE OA','ริชเมนูปุ่มลัด (ออกแบบให้)','Broadcast โปรถึงลูกค้าทุกคน','แจ้งเตือนออเดอร์/พัสดุเข้า LINE','เก็บประวัติแชต + จำบทสนทนา'],
     items_en:['AI replies 1:1 in LINE OA','Rich menu shortcuts (designed for you)','Broadcast promos to all customers','Order/parcel alerts into LINE','Chat history + conversation memory'] },
-  { icon:'📘', name:'เชื่อม Facebook', name_en:'Facebook integration',
+  { icon:'📘', key:'fb', name:'เชื่อม Facebook', name_en:'Facebook integration',
     tag:'AI ตอบ Messenger + โพสต์เพจอัตโนมัติ', tag_en:'AI replies on Messenger + auto page posts', price:3000,
     items:['AI ตอบลูกค้าใน FB Messenger','โพสต์ขายลงเพจอัตโนมัติ','เปลี่ยนรูปโปรไฟล์/หน้าปกได้','เก็บ lead จากแชต Messenger'],
     items_en:['AI replies on FB Messenger','Auto sales posts to your page','Update profile/cover images','Captures leads from Messenger chats'] },
-  { icon:'🧾', name:'ใบเสนอราคาอัตโนมัติ', name_en:'Auto quotation',
+  { icon:'🧾', key:'quote', name:'ใบเสนอราคาอัตโนมัติ', name_en:'Auto quotation',
     tag:'AI ออกใบเสนอราคา PDF มีลายเซ็น+ตราบริษัท ให้ลูกค้าอัตโนมัติ', tag_en:'AI generates signed PDF quotations for your customers automatically', price:2500,
     items:['ออกใบเสนอราคา PDF จากแชต/ฟอร์ม','ใส่ลายเซ็น + ตราบริษัทอัตโนมัติ','คิดราคา + รายการให้ครบ','เหมาะธุรกิจ B2B / งานสั่งทำ'],
     items_en:['Generates PDF quotes from chat/form','Auto signature + company seal','Itemized pricing filled in','Great for B2B / made-to-order'] },
 ];
+// ดึงราคา add-on ที่แอดมินตั้ง (worker KV) → override ADDONS · ล้มเหลว = ใช้ default ในโค้ด
+async function loadAddonPrices(){
+  try {
+    const r = await fetch(NOVA_WORKER_URL + '/addons');
+    const d = await r.json();
+    const p = (d && d.prices) || {};
+    if (typeof ADDONS !== 'undefined') ADDONS.forEach(function(a){ if (a.key && p[a.key] != null && Number.isFinite(Number(p[a.key]))) a.price = Number(p[a.key]); });
+  } catch (e) {}
+  if (window.renderAddons) renderAddons();
+}
 function renderAddons(){
   const el = document.getElementById('addonGrid'); if (!el) return;
   const en = (typeof LANG !== 'undefined') && LANG === 'en';
@@ -2126,6 +2136,7 @@ renderPkgTables();
 renderAgentsCap();
 renderAddons();
 renderWorks();
+loadAddonPrices();
 applyLang(LANG);   // 🌐 ตั้งภาษาเริ่มต้นจาก localStorage (TH default · แปลทั้งหน้า + ปุ่ม toggle)
 trackVisit();   // 📊 นับคนเข้าชม + ช่องทางที่มา (วิเคราะห์การตลาดใน Dashboard)
 
