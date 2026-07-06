@@ -129,6 +129,21 @@
   .badge.live { background: rgba(34,211,238,0.14); color: var(--cyan); border: 1px solid rgba(34,211,238,0.3); }
   .badge.soon { background: rgba(149,163,194,0.12); color: var(--txt-dim); border: 1px solid var(--line); }
   @media(max-width: 820px){ .agent-grid { grid-template-columns: 1fr; } }
+  /* ===== PORTFOLIO / ผลงาน ===== */
+  .work-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  .work-card { display: block; background: linear-gradient(160deg, var(--card), var(--bg-2)); border: 1px solid var(--line); border-radius: 16px; padding: 24px; text-decoration: none; color: inherit; transition: transform .25s, border-color .25s; }
+  .work-card:hover { transform: translateY(-5px); border-color: var(--blue); }
+  .work-visual { aspect-ratio: 16/9; border-radius: 12px; background: radial-gradient(circle at 30% 30%, var(--glow), transparent 62%), var(--bg); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .wv-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 4.5vw, 40px); font-weight: 500; letter-spacing: 6px; padding-left: 6px; line-height: 1; background: linear-gradient(135deg, var(--g1), var(--g2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .wv-sub { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 5px; padding-left: 5px; text-transform: uppercase; margin-top: 8px; }
+  .cta-book { color: var(--gold); font-weight: 600; font-size: 15px; margin: 8px 0 20px; }
+  .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  .cta-phone { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 17px; }
+  .work-name { font-size: 18px; font-weight: 700; margin-bottom: 3px; }
+  .work-cat { font-size: 12px; color: var(--cyan); margin-bottom: 12px; }
+  .work-desc { font-size: 13px; color: var(--txt-dim); line-height: 1.6; margin-bottom: 16px; }
+  .work-link { font-size: 13px; font-weight: 600; color: var(--blue); }
+  @media(max-width: 820px){ .work-grid { grid-template-columns: 1fr; } }
 
   /* ===== HOW ===== */
   .how-row { display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; }
@@ -174,7 +189,32 @@
   .price-btn { width: 100%; padding: 13px; border-radius: 11px; font-weight: 600; font-size: 15px; cursor: pointer; border: 1px solid var(--line); background: var(--bg-2); color: var(--txt); transition: all .2s; }
   .price-card.featured .price-btn { background: var(--grad); color: #050A14; border: none; }
   .price-btn:hover { transform: translateY(-2px); }
-  @media(max-width: 820px){ .price-grid { grid-template-columns: 1fr; } }
+  #pkgGrid { grid-template-columns: repeat(2, minmax(0,400px)); justify-content: center; }
+  #addonGrid { grid-template-columns: repeat(3, minmax(0,340px)); justify-content: center; }
+  @media(max-width: 820px){ .price-grid, #pkgGrid, #addonGrid { grid-template-columns: 1fr; } }
+  /* ===== PACKAGE TABLE (2 AI 5 ตำแหน่ง / 5 AI) ===== */
+  .pkg-table { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 26px 28px; margin-bottom: 22px; }
+  .pkg-table.featured { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+  .pkg-table-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .pt-name { font-size: 22px; font-weight: 800; }
+  .pt-sub { font-size: 13px; color: var(--txt-dim); margin-top: 4px; font-weight: 400; }
+  .pt-price { font-size: 15px; text-align: right; }
+  .pt-price .pt-was { text-decoration: line-through; color: var(--txt-dim); font-size: 14px; margin-right: 6px; }
+  .pt-price b { color: var(--gold); font-size: 26px; }
+  .pcols { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+  .pcol { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .pcol-h { font-weight: 700; font-size: 13px; margin-bottom: 8px; color: var(--cyan); }
+  .pcol ul { list-style: none; padding: 0; margin: 0; }
+  .pcol li { font-size: 11.5px; color: var(--txt-dim); padding: 5px 0; line-height: 1.45; border-top: 1px solid rgba(255,255,255,.05); }
+  .pcol li:first-child { border-top: 0; }
+  .pcol li.soon { opacity: .5; }
+  .pkg-soon-note { margin: 14px 0; font-size: 12.5px; color: var(--txt-dim); text-align: center; }
+  .pkg-included { background: var(--bg-2); border-radius: 12px; padding: 14px 18px; margin: 14px 0 18px; }
+  .pkg-included .pi-title { font-weight: 700; font-size: 13.5px; margin-bottom: 8px; }
+  .pkg-included ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .pkg-included li { font-size: 12.5px; color: var(--txt-dim); padding: 3px 0; }
+  @media(max-width: 820px){ .pcols { grid-template-columns: 1fr 1fr; } .pkg-included ul { grid-template-columns: 1fr; } .pkg-table-head { align-items: flex-start; } .pt-price { text-align: left; } }
+  @media(max-width: 520px){ .pcols { grid-template-columns: 1fr; } }
 
   /* ===== WHY ===== */
   .why-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
@@ -357,8 +397,7 @@
   @media(max-width:560px){ .ac-item { grid-template-columns:46px 1fr; } .ac-price { grid-column:2; text-align:left; padding-top:4px; } }
 
   /* 5-package promo cards */
-  #pkgGrid { grid-template-columns:repeat(5,1fr); gap:14px; }
-  @media(max-width:1100px){ #pkgGrid { grid-template-columns:repeat(3,1fr); } }
+  #pkgGrid { grid-template-columns:repeat(2,minmax(0,400px)); gap:20px; justify-content:center; }
   @media(max-width:760px){ #pkgGrid { grid-template-columns:1fr; } }
   #pkgGrid .price-card { padding:24px 20px; }
   .pkg-tag { font-size:13px; color:var(--txt); margin-bottom:6px; line-height:1.45; }
@@ -398,7 +437,7 @@
   {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://neos-css.com/#org","name":"Comtech Solution System Co., Ltd.","alternateName":"CSS","url":"https://neos-css.com/","logo":"https://neos-css.com/css-logo.jpg","email":"info@neos-css.com","description":"ผู้พัฒนาและจำหน่ายระบบ AI สำหรับธุรกิจ NEO-S — ตอบแชท รับออเดอร์ ตรวจสลิป อัตโนมัติ 24 ชม."},{"@type":"WebSite","@id":"https://neos-css.com/#website","url":"https://neos-css.com/","name":"NEO-S","publisher":{"@id":"https://neos-css.com/#org"},"inLanguage":"th"}]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Service","name":"NEO-S — ระบบ AI Agent บริหารธุรกิจ","serviceType":"AI Agent business automation","provider":{"@id":"https://neos-css.com/#org"},"areaServed":{"@type":"Country","name":"Thailand"},"url":"https://neos-css.com/","hasOfferCatalog":{"@type":"OfferCatalog","name":"แพ็กเกจ NEO-S","itemListElement":[{"@type":"Offer","name":"STARTER","description":"เว็บไซต์ + AI Sales · ค่าดูแลระบบ ฿4,000/เดือน","price":"17000","priceCurrency":"THB","category":"ค่าพัฒนาระบบพร้อมติดตั้ง (จ่ายครั้งเดียว)"},{"@type":"Offer","name":"BUSINESS","description":"เว็บไซต์ + AI Sales + AI Finance · ค่าดูแลระบบ ฿4,800/เดือน","price":"18000","priceCurrency":"THB","category":"ค่าพัฒนาระบบพร้อมติดตั้ง (จ่ายครั้งเดียว)"},{"@type":"Offer","name":"PROFESSIONAL","description":"+ AI Inventory + AI Manager · ค่าดูแลระบบ ฿8,000/เดือน","price":"24000","priceCurrency":"THB","category":"ค่าพัฒนาระบบพร้อมติดตั้ง (จ่ายครั้งเดียว)"},{"@type":"Offer","name":"ADVANCED","description":"+ AI Marketing · ค่าดูแลระบบ ฿10,000/เดือน","price":"28000","priceCurrency":"THB","category":"ค่าพัฒนาระบบพร้อมติดตั้ง (จ่ายครั้งเดียว)"}]}}
+  {"@context":"https://schema.org","@type":"Service","name":"NEO-S — ระบบ AI Agent บริหารธุรกิจ","serviceType":"AI Agent business automation","provider":{"@id":"https://neos-css.com/#org"},"areaServed":{"@type":"Country","name":"Thailand"},"url":"https://neos-css.com/","hasOfferCatalog":{"@type":"OfferCatalog","name":"แพ็กเกจ NEO-S","itemListElement":[{"@type":"Offer","name":"2 AI · 5 Agent","description":"ทีม AI 2 ตัว ทำงานครบ 5 หน้าที่ (ขาย/ผู้จัดการ/การเงิน/คลัง/การตลาด) + เว็บไซต์ · ค่าดูแลระบบ ฿5,990/เดือน · โปร 22 ท่านแรก","price":"22000","priceCurrency":"THB","category":"ค่าพัฒนาระบบพร้อมติดตั้ง (จ่ายครั้งเดียว)"},{"@type":"Offer","name":"5 AI · 5 Agent","description":"แยก 5 สมอง AI เฉพาะฝ่าย + ผู้จัดการสั่งงานเอง สำหรับธุรกิจใหญ่ · ปรึกษาราคาตามระบบ","priceCurrency":"THB","category":"ปรึกษาเพิ่ม"},{"@type":"Offer","name":"เสริม AI เข้าระบบเดิม","description":"มีเว็บ/ระบบอยู่แล้ว เพิ่มทีม AI เข้าหลังบ้าน ประเมินตามระบบจริง · ปรึกษาฟรี","priceCurrency":"THB","category":"ปรึกษาเพิ่ม"}]}}
   </script>
 </head>
 <body>
@@ -425,7 +464,7 @@
       <a href="#how" data-i18n="nav.how">วิธีทำงาน</a>
       <a href="#case" data-i18n="nav.case">ผลงาน</a>
       <a href="#pricing" data-i18n="nav.pricing">แพ็กเกจ</a>
-      <a href="#calculator" data-i18n="nav.calc">คำนวณราคา</a>
+      <a href="#addons" data-i18n="nav.calc">Add-on</a>
       <a href="#roadmap">Roadmap</a>
       <a href="blog.html">บทความ</a>
       <a href="faq.html">FAQ</a>
@@ -441,7 +480,7 @@
   <a href="#how" data-i18n="nav.how">วิธีทำงาน</a>
   <a href="#case" data-i18n="nav.case">ผลงาน</a>
   <a href="#pricing" data-i18n="nav.pricing">แพ็กเกจ</a>
-  <a href="#calculator" data-i18n="nav.calc">คำนวณราคา</a>
+  <a href="#addons" data-i18n="nav.calc">Add-on</a>
   <a href="#roadmap">Roadmap</a>
   <a href="blog.html">บทความ</a>
   <a href="#faq">FAQ</a>
@@ -490,7 +529,7 @@
       <h2 data-i18n="agents.h2">6 AI Agents ทำงานแทนคุณ</h2>
       <p data-i18n="agents.p">แต่ละ Agent เชี่ยวชาญเฉพาะด้าน ทำงานประสานกันเหมือนทีมงานจริง</p>
     </div>
-    <div class="agent-grid">
+    <div class="agent-grid" id="capGrid">
       <div class="agent-card reveal"><div class="ic">🛒</div><h3>AI Sales</h3><p data-i18n="agents.sales"><b style="color:var(--cyan)">ผู้ช่วยฝ่ายขายอัจฉริยะ</b><br>ตอบลูกค้า รับออเดอร์ ปิดการขาย เสนอขายเพิ่ม (upsell) ทุกช่องทาง 24 ชม.</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
       <div class="agent-card reveal"><div class="ic">💰</div><h3>AI Finance</h3><p data-i18n="agents.fin"><b style="color:var(--cyan)">ผู้ช่วยงานการเงินอัจฉริยะ</b><br>ตรวจสลิปจริง-ปลอม 2 ชั้น กันสลิปซ้ำ ยืนยันยอดอัตโนมัติ</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
       <div class="agent-card reveal"><div class="ic">🧠</div><h3>AI Manager</h3><p data-i18n="agents.mgr"><b style="color:var(--cyan)">ผู้ช่วยจัดการธุรกิจอัจฉริยะ</b><br>รวบรวมข้อมูลจากหลายส่วน สรุปผลการดำเนินงาน และช่วยติดตามภาพรวมขององค์กรแบบเรียลไทม์</p><span class="badge live" data-i18n="badge.live">● พร้อมใช้งาน</span></div>
@@ -579,6 +618,18 @@
   </div>
 </section>
 
+<!-- ===== PORTFOLIO / ผลงาน ===== -->
+<section id="works">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow" data-i18n="works.eyebrow">ผลงานจริง</div>
+      <h2 data-i18n="works.h2">ธุรกิจที่ใช้ NEO-S จริง</h2>
+      <p data-i18n="works.p">ระบบที่เราสร้างและดูแลอยู่จริง — เปิดดูเว็บจริงได้ทุกร้าน</p>
+    </div>
+    <div class="work-grid" id="workGrid"></div>
+  </div>
+</section>
+
 <!-- ===== WHY AI (vs พนักงาน) ===== -->
 <section id="whyai">
   <div class="wrap">
@@ -605,7 +656,7 @@
       <div class="cmp-row">
         <div class="cmp-feat" data-i18n="whyai.f3">ต้นทุนต่อเดือน</div>
         <div class="cmp-emp" data-i18n="whyai.e3">30,000 - 60,000+ บาท</div>
-        <div class="cmp-ai" data-i18n="whyai.a3"><b>เริ่มต้นเพียง 4,000 บาท/เดือน</b> แล้วให้ AI ช่วยสร้างยอดขายไปพร้อมกับธุรกิจของคุณ</div>
+        <div class="cmp-ai" data-i18n="whyai.a3"><b>เริ่มต้นเพียง 5,990 บาท/เดือน</b> แล้วให้ AI ช่วยสร้างยอดขายไปพร้อมกับธุรกิจของคุณ</div>
       </div>
       <div class="cmp-row">
         <div class="cmp-feat" data-i18n="whyai.f4">ความแม่นยำ</div>
@@ -633,9 +684,9 @@
     <div class="sec-head reveal">
       <div class="eyebrow" data-i18n="pricing.eyebrow">🎂 แพ็กเกจ · โปรพิเศษ 22 ท่านแรก</div>
       <h2 data-i18n="pricing.h2">เลือกแพ็กเกจที่ใช่สำหรับธุรกิจคุณ</h2>
-      <p data-i18n="pricing.p">ราคาโปรเปิดตัว เฉพาะ <b style="color:var(--gold)">22 ท่านแรก</b> เท่านั้น! · หรือออกแบบทีม AI เองด้านล่าง</p>
+      <p data-i18n="pricing.p">ราคาโปรเปิดตัว เฉพาะ <b style="color:var(--gold)">22 ท่านแรก</b> เท่านั้น! · เลือก Add-on เสริมได้ด้านล่าง</p>
     </div>
-    <div class="price-grid" id="pkgGrid"></div>
+    <div id="pkgTables"></div>
 
     <div class="webonly reveal">
       <div>
@@ -650,53 +701,19 @@
       </div>
     </div>
 
-    <div class="common-band reveal">
-      <div class="cb-title" data-i18n="cb.title">✨ ทุกแพ็กเกจได้รับ</div>
-      <div class="cb-grid">
-        <div data-i18n="cb.1">✅ ฟรีตรวจสลิปโอนเงิน 100 สลิป/เดือน <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
-        <div data-i18n="cb.2">⚡ พลัง AI แถมเริ่มต้น ~$20 · เดือนแรกฟรี เติมตามใช้จริง <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
-        <div data-i18n="cb.3">🛠️ ติดตั้ง + เทรนการใช้งาน ฟรี</div>
-        <div data-i18n="cb.4">🎨 ปรับแบรนด์ตามร้าน (โลโก้/สี/ชื่อ AI)</div>
-        <div data-i18n="cb.5">📱 รองรับมือถือ (Responsive)</div>
-        <div data-i18n="cb.6">🌐 ฟรี Hosting ปีแรก</div>
-        <div data-i18n="cb.7">🔄 อัปเกรดแพ็กเกจทีหลังได้ ไม่ต้องรื้อ</div>
-        <div data-i18n="cb.8">🔔 เตือนพลัง AI ใกล้หมด ผ่าน LINE <span style="color:var(--txt-dim);font-size:11px">(ยกเว้นเว็บไซต์ไม่ใช้ AI)</span></div>
-      </div>
-      <div class="cb-note" data-i18n="cb.note">📐 <b>ขอบเขตเว็บไซต์:</b> 1 หน้า · ไม่เกิน 5 เมนู · สินค้าไม่เกิน 50 ชิ้น (เกินคิด ฿20/รายการ) · แก้ไขได้ 3 ครั้ง (เกินครั้งละ ฿3,000) · <b>ไม่รวมค่าโดเมน</b></div>
-    </div>
+    <p style="text-align:center;color:var(--txt-dim);font-size:12.5px;margin-top:18px" data-i18n="pricing.note">* พลัง AI (ค่า token): เดือนแรกฟรี จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม · ราคายืนยันในใบเสนอราคาจริง</p>
   </div>
 </section>
 
-<!-- ===== PRICE CALCULATOR ===== -->
-<section id="calculator">
+<!-- ===== ADD-ONS ===== -->
+<section id="addons">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow" data-i18n="calc.eyebrow">ออกแบบเอง · จ่ายเท่าที่ใช้</div>
-      <h2 data-i18n="calc.h2">เลือกทีม AI ของคุณ</h2>
-      <p data-i18n="calc.p">ติ๊กเลือก AI ที่ธุรกิจต้องใช้ → เห็นราคาทันที · เริ่มจากเว็บ แล้วเพิ่มทีหลังได้</p>
+      <div class="eyebrow" data-i18n="addons.eyebrow">🧩 เสริมได้ตามต้องการ</div>
+      <h2 data-i18n="addons.h2">Add-on เสริมพลังให้ระบบ</h2>
+      <p data-i18n="addons.p">ฟีเจอร์เสริมที่ไม่ได้อยู่ในแพ็กมาตรฐาน · เลือกเพิ่มเฉพาะที่ธุรกิจต้องใช้</p>
     </div>
-    <div class="calc reveal">
-      <div class="calc-form">
-        <div class="calc-group">
-          <div class="calc-label"><span>✓</span><span data-i18n="calc.label">เลือก AI (เพิ่ม-ลดได้อิสระ · ตัวที่ผูกกันจะปลดล็อกให้เอง)</span></div>
-          <div class="ac-list" id="acList"></div>
-        </div>
-        <div class="calc-group">
-          <div style="background:var(--bg-2); border:1px dashed var(--line); border-radius:12px; padding:15px 17px; font-size:13.5px; color:var(--txt-dim)">
-            <span data-i18n="calc.assess">🔌 <b style="color:var(--txt)">มีเว็บ/ระบบอยู่แล้ว?</b> อยากเพิ่ม AI เข้าหลังบ้านเดิม — เราประเมินให้เป็นรายเคส (แต่ละระบบไม่เหมือนกัน)</span>
-            <div style="margin-top:11px"><button class="btn-ghost" style="padding:10px 20px;font-size:14px" onclick="requestAssess()" data-i18n="calc.assessBtn">ขอประเมิน (ปรึกษาฟรี) →</button></div>
-          </div>
-        </div>
-      </div>
-      <div class="calc-summary">
-        <div class="cs-title" data-i18n="calc.sumTitle">📋 สรุปทีม AI ของคุณ</div>
-        <div class="cs-lines" id="calcLines"></div>
-        <div class="cs-total-row"><span data-i18n="calc.install">ค่าติดตั้ง (ครั้งเดียว)</span><span class="cs-amount grad-txt" id="csInstall">฿0</span></div>
-        <div class="cs-total-row"><span data-i18n="calc.monthly">รายเดือน</span><span class="cs-amount" id="csMonthly" style="font-size:18px">฿0/เดือน</span></div>
-        <button class="btn-primary" id="calcCta" style="width:100%;margin-top:16px" onclick="requestQuote()" data-i18n="calc.cta">ขอใบเสนอราคา →</button>
-        <div class="cs-note" data-i18n="calc.note">⚡ <b>พลัง AI</b> (ค่า token): เดือนแรกฟรี ให้ลองใช้ก่อน · จากนั้นเติมตามใช้จริง ราคาทุน ไม่บวกเพิ่ม<br>* ราคาประเมินเบื้องต้น — ทีม NEO-S ยืนยันในใบเสนอราคาจริง · ฟรี Hosting ปีแรก (ไม่รวมค่าโดเมน)</div>
-      </div>
-    </div>
+    <div class="price-grid" id="addonGrid"></div>
   </div>
 </section>
 
@@ -774,8 +791,13 @@
     <div class="cta-box reveal">
       <h2 data-i18n="cta.h2">พร้อมให้ <span class="grad-txt">AI</span> ดูแลธุรกิจคุณหรือยัง?</h2>
       <p data-i18n="cta.p">ปรึกษาฟรี ไม่มีค่าใช้จ่าย — ทีม NEO-S พร้อมออกแบบระบบให้ธุรกิจคุณ</p>
-      <button class="btn-primary" onclick="openChat()" data-i18n="cta.btn">คุยกับโนวา AI เลย →</button>
+      <p class="cta-book" data-i18n="cta.book">📅 นัดพรีเซนต์ + ดูระบบจริงกับทีมงาน — โทรหรือทัก LINE ได้เลย</p>
+      <div class="cta-btns">
+        <button class="btn-primary" onclick="openChat()" data-i18n="cta.btn">คุยกับโนวา AI เลย →</button>
+        <a class="btn-ghost cta-phone" href="tel:0626964155">📞 062-696-4155</a>
+      </div>
       <div class="cta-contacts">
+        <a href="https://line.me/R/ti/p/@neos-css" target="_blank" rel="noopener">💚 LINE @neos-css</a>
         <a href="mailto:info@neos-css.com">✉️ info@neos-css.com</a>
         <a href="https://nutt1569.github.io/lumina" target="_blank" data-i18n="cta.demo">🌐 ดูระบบตัวอย่าง</a>
       </div>
@@ -850,7 +872,7 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 let LANG = (function(){ try { return localStorage.getItem('neos_lang') || 'th'; } catch(e){ return 'th'; } })();
 const I18N_EN = {
   // ── nav ──
-  'nav.how':'How it works','nav.case':'Results','nav.pricing':'Pricing','nav.calc':'Calculator','nav.cta':'Free consult',
+  'nav.how':'How it works','nav.case':'Results','nav.pricing':'Pricing','nav.calc':'Add-ons','nav.cta':'Free consult',
   // ── hero ──
   'hero.badge':'Autonomous Business OS · Powered by AI Agents',
   'hero.title':'Let <span class="grad-txt">AI</span> run your business<br>around the clock, 24/7',
@@ -893,14 +915,17 @@ const I18N_EN = {
   'whyai.h2':'Hiring staff <span class="grad-txt">vs</span> NEO-S AI','whyai.hEmp':'Hiring staff',
   'whyai.f1':'Working hours','whyai.e1':'8 hrs/day, with holidays, leave & sick days','whyai.a1':'<b>24 hrs, every day</b> with no days off',
   'whyai.f2':'Scope of work','whyai.e2':'Sales + finance + stock + marketing needs 3–5 people','whyai.a2':'<b>Everything in one system</b>',
-  'whyai.f3':'Monthly cost','whyai.e3':'30,000 – 60,000+ THB','whyai.a3':'<b>Starts at just 4,000 THB/month</b> and the AI helps grow your sales alongside your business',
+  'whyai.f3':'Monthly cost','whyai.e3':'30,000 – 60,000+ THB','whyai.a3':'<b>Starts at just 5,990 THB/month</b> and the AI helps grow your sales alongside your business',
   'whyai.f4':'Accuracy','whyai.e4':'Gets tired, forgets, moody','whyai.a4':'<b>Follows the rules exactly</b>, complete data every time',
   'whyai.f5':'Resignation / retraining','whyai.e5':'Happens often, repeat training needed','whyai.a5':'<b>None</b> — the system remembers everything',
   'whyai.f6':'Customers grow 10 → 1,000','whyai.e6':'Need to hire more people','whyai.a6':'<b>Scales instantly</b>, no extra hiring',
   'whyai.quote':'“AI does the work of a whole team 24/7 — no leave, no sick days, no resignations — for less than the cost of a single hire”',
   // ── pricing ──
   'pricing.eyebrow':'🎂 Packages · Special offer for the first 22 clients','pricing.h2':'Choose the right package for your business',
-  'pricing.p':'Launch promo for the <b style="color:var(--gold)">first 22 clients</b> only! · or design your own AI team below',
+  'pricing.p':'Launch promo for the <b style="color:var(--gold)">first 22 clients</b> only! · see optional add-ons below',
+  'addons.eyebrow':'🧩 Optional add-ons','addons.h2':'Add-ons to boost your system','addons.p':'Extras beyond the standard packages · add only what your business needs',
+  'pricing.note':'* AI power (token cost): first month free, then top up at cost with no markup · final price confirmed in your quote',
+  'works.eyebrow':'Real work','works.h2':'Businesses running on NEO-S','works.p':'Systems we built and actively maintain — open any live site to see for yourself',
   'webonly.name':'🌐 Website only','webonly.tag':'Online store + catalog + admin · add AI anytime later<br>Admin panel: Dashboard · Orders · Products · Customers · Users',
   'webonly.fit':'📐 1 page · up to 5 menus · up to 50 products (extra ฿20/item) · 3 revisions (extra ฿3,000 each)<br>💬 <b style="color:var(--cyan)">Need more (extra pages/features)?</b> Send the details to Nova for a quote',
   'webonly.once':' website build (one-time)',
@@ -935,6 +960,7 @@ const I18N_EN = {
   'faq.more':'See all questions →',
   // ── cta / footer ──
   'cta.h2':'Ready to let <span class="grad-txt">AI</span> run your business?','cta.p':'Free consult, no cost — the NEO-S team is ready to design a system for your business',
+  'cta.book':'📅 Book a live presentation with our team — call or LINE us anytime',
   'cta.btn':'Chat with Nova AI now →','cta.demo':'🌐 See a live demo','foot.tag':'AI-driven business operating system',
   // ── chat widget ──
   'chat.bubble':'💬 Chat with Nova','chat.status':'● Online — AI consultant','chat.lead':'📩 Leave your contact',
@@ -967,8 +993,10 @@ function applyLang(l){
   });
   const tb = document.getElementById('langToggle');
   if (tb) tb.textContent = (LANG === 'en') ? '🌐 TH' : '🌐 EN';
-  if (window.renderPkgs) renderPkgs();
-  if (window.renderAC) renderAC();
+  if (window.renderPkgTables) renderPkgTables();
+  if (window.renderAgentsCap) renderAgentsCap();
+  if (window.renderAddons) renderAddons();
+  if (window.renderWorks) renderWorks();
 }
 function toggleLang(){ applyLang(LANG === 'en' ? 'th' : 'en'); }
 function quickBtn(el){ quick(LANG === 'en' ? (el.dataset.en || el.dataset.th) : el.dataset.th); }
@@ -1060,8 +1088,8 @@ function composeForNova(latest){
 
 // ===== คำตอบสำเร็จรูป (offline fallback) =====
 const CANNED = [
-  { k: ['ทำอะไร','คือ','อะไรได้','feature','ฟีเจอร์','do','what'], a: 'NEO-S เป็นระบบ AI ที่ช่วยธุรกิจคุณค่ะ ✨\n\n• ตอบแชทลูกค้า 24 ชม.\n• รับออเดอร์ + ส่ง QR อัตโนมัติ\n• ตรวจสลิปการโอนเงิน\n• บันทึกข้อมูลลงระบบกลาง\n\nมี AI 6 ตัวช่วยกันค่ะ ตอนนี้ AI Sales / Finance / Manager / Inventory / Marketing พร้อมใช้แล้ว เหลือ Logistics เร็วๆ นี้ค่ะ 😊', a_en: 'NEO-S is an AI system that runs your business ✨\n\n• Replies to customers 24/7\n• Takes orders + sends payment QR automatically\n• Verifies payment slips\n• Logs everything to one central system\n\nThere are 6 AI Agents working together — AI Sales / Finance / Manager / Inventory / Marketing are ready now, with Logistics coming soon 😊' },
-  { k: ['ราคา','เท่าไหร่','แพ็ก','package','กี่บาท','price','cost','how much'], a: 'มีให้เลือกหลายแพ็กเกจค่ะ 💎 (ราคาโปร 22 ท่านแรก)\n\n🥉 STARTER — ฿17,000 + ฿4,000/ด. (เว็บ+AI Sales)\n🥈 BUSINESS — ฿18,000 + ฿4,800/ด. (+AI Finance)\n🥇 PROFESSIONAL — ฿24,000 + ฿8,000/ด. (+Inventory+Manager)\n🚀 ADVANCED — ฿28,000 + ฿10,000/ด. (+Marketing)\n\nหรือเลือก AI ทีละตัว / เอาแค่เว็บไซต์ ฿9,000 ก็ได้ค่ะ · ติดตั้ง 7-14 วัน สนใจแบบไหนดีคะ? 😊', a_en: 'We have several packages 💎 (promo for the first 22 clients)\n\n🥉 STARTER — ฿17,000 + ฿4,000/mo (web + AI Sales)\n🥈 BUSINESS — ฿18,000 + ฿4,800/mo (+ AI Finance)\n🥇 PROFESSIONAL — ฿24,000 + ฿8,000/mo (+ Inventory + Manager)\n🚀 ADVANCED — ฿28,000 + ฿10,000/mo (+ Marketing)\n\nOr pick AI one by one / just the website ฿9,000 · setup 7–14 days. Which one interests you? 😊' },
+  { k: ['ทำอะไร','คือ','อะไรได้','feature','ฟีเจอร์','do','what'], a: 'NEO-S เป็นระบบ AI ที่ช่วยธุรกิจคุณค่ะ ✨\n\n• ตอบแชทลูกค้า 24 ชม.\n• รับออเดอร์ + ส่ง QR อัตโนมัติ\n• ตรวจสลิปการโอนเงิน\n• บันทึกข้อมูลลงระบบกลาง\n\nเป็นทีม AI ที่ทำงานครบ 5 หน้าที่ค่ะ — AI Sales / Manager / Finance / Inventory / Marketing พร้อมใช้แล้ว (ส่วน AI Logistics กำลังจะมาเร็วๆ นี้) 😊', a_en: 'NEO-S is an AI system that runs your business ✨\n\n• Replies to customers 24/7\n• Takes orders + sends payment QR automatically\n• Verifies payment slips\n• Logs everything to one central system\n\nThe AI team covers 5 core roles — AI Sales / Manager / Finance / Inventory / Marketing are ready now (AI Logistics is coming soon) 😊' },
+  { k: ['ราคา','เท่าไหร่','แพ็ก','package','กี่บาท','price','cost','how much'], a: 'มี 2 แพ็กหลักค่ะ 💎 (ราคาโปร 22 ท่านแรก)\n\n⭐ 2 AI · 5 Agent — ฿22,000 (จาก ฿39,000) + ฿5,990/เดือน\n   ทีม AI ครบ 5 หน้าที่ (ขาย/ผู้จัดการ/การเงิน/คลัง/การตลาด) + เว็บไซต์\n🏢 5 AI · 5 Agent — ธุรกิจใหญ่ ข้อมูลเยอะ · ปรึกษาเพิ่ม\n🔌 มีเว็บอยู่แล้ว? เสริม AI เข้าระบบเดิม · ปรึกษาฟรี\n\nมี add-on เสริม (สะสมแต้ม/LINE/FB/ใบเสนอราคา) · ติดตั้ง 7-14 วัน สนใจแบบไหนดีคะ? 😊', a_en: 'We have 2 main packages 💎 (promo for the first 22 clients)\n\n⭐ 2 AI · 5 Agent — ฿22,000 (from ฿39,000) + ฿5,990/mo\n   an AI team covering all 5 roles (sales/manager/finance/inventory/marketing) + website\n🏢 5 AI · 5 Agent — for larger businesses · contact us\n🔌 Already have a website? Add AI to your existing system · free consult\n\nPlus add-ons (loyalty/LINE/FB/quotation) · setup 7–14 days. Which one interests you? 😊' },
   { k: ['ติดตั้ง','นาน','กี่วัน','เริ่ม','setup','install','how long'], a: 'ติดตั้งเสร็จภายใน 7-14 วันทำการค่ะ ⚡\n\nเราดูแลให้ครบ — ตั้งระบบ เชื่อมต่อ ทดสอบ จนพร้อมใช้งานจริง แล้วอบรมการใช้งานให้ด้วยค่ะ 😊', a_en: 'Setup is done within 7–14 business days ⚡\n\nWe handle it all — configure, connect, test until it’s ready for real use, then train you to use it 😊' },
   { k: ['ตัวอย่าง','demo','ดูระบบ','ตัวจริง','lumina','ลูมิน่า','example','live'], a: 'มีระบบจริงให้ดูเลยค่ะ! 🌸\n\nLUMINA Skincare ใช้ NEO-S อยู่ — ลองเข้าไปแชทกับ AI "ลูเม่" ได้เลยนะคะ\n👉 nutt1569.github.io/lumina\n\nลองสั่งซื้อดูได้ค่ะ จะเห็นว่า AI ทำงานยังไง 😊', a_en: 'We have a live system to show you! 🌸\n\nLUMINA Skincare runs on NEO-S — try chatting with the AI “Lumé”\n👉 nutt1569.github.io/lumina\n\nTry placing an order to see how the AI works 😊' },
   { k: ['line','ไลน์','facebook','เฟส','tiktok','ติ๊กต็อก','ช่องทาง','channel'], a: 'ตอนนี้พร้อมใช้ เว็บ + LINE OA ค่ะ 📱\n\nลูกค้าทักผ่านเว็บหรือ LINE → AI ตอบ + รับออเดอร์ + ตรวจสลิป อัตโนมัติ ข้อมูลรวมอยู่ที่เดียว\n\nส่วน Facebook / TikTok กำลังพัฒนา เร็วๆ นี้ค่ะ 🔜 เพิ่มให้ทีหลังได้เลยนะคะ', a_en: 'Right now web + LINE OA are ready 📱\n\nCustomers message via web or LINE → AI replies + takes orders + checks slips automatically, all data in one place\n\nFacebook / TikTok are in development, coming soon 🔜 and can be added later' },
@@ -1572,55 +1600,315 @@ function requestAssess(){
 // 5 แพ็กเกจ (โปร 22 ท่านแรก) — config-driven · แก้ราคาที่ PKGS
 // full=ก่อนโปร(ขีดฆ่า) · promo=โปร 22 ท่านแรก · monthly=รายเดือน · soon=ปิดทึบ
 // ============================================================
+// 🆕 5กค: โมเดลใหม่ — 1 แพ็กหลัก "2 AI · 5 Agent" (ธุรกิจเล็ก) + การ์ด Pro (ปรึกษา · ไม่ลงราคา)
+// 🚚 โลจิสติกส์ = Phase 2 (สร้างจริงที่อุ้งเท้าแล้ว · ยังไม่ยกมา NEOS · โชว์ "เร็วๆ นี้" ที่ agent-card เท่านั้น · ห้ามนับใน pricing)
 const PKGS = [
-  { icon:'🥉', name:'STARTER',      tag:'เว็บไซต์พร้อม AI ผู้ช่วยขาย 24 ชั่วโมง',     tag_en:'Website + a 24-hour AI sales assistant',     fit:'ร้านค้าออนไลน์ ธุรกิจเริ่มต้น และ SME', fit_en:'Online stores, startups and SMEs',
+  { icon:'⭐', name:'2 AI · 5 Agent', tag:'ทีม AI 2 ตัว ทำงานครบ 5 หน้าที่ ดูแลร้าน 24 ชม.', tag_en:'2 AI running all 5 roles for your store, 24/7',
+    fit:'ธุรกิจขนาดเล็ก สินค้าไม่ซับซ้อน', fit_en:'Small businesses with simple product lines', featured:true,
     items:[
-      { head:'🌐 เว็บไซต์ร้าน', sub:['หน้าร้านออนไลน์ + แคตตาล็อกสินค้า','ระบบแอดมินจัดการร้าน'] },
-      { head:'🛒 AI Sales — ผู้ช่วยฝ่ายขาย 24 ชม.', sub:['ตอบแชทลูกค้าทุกช่องทาง','รับออเดอร์ + ปิดการขายอัตโนมัติ','เสนอขายเพิ่ม (upsell) เพิ่มยอด'] },
+      { head:'🛍️ AI ฝ่ายขาย', sub:['ตอบลูกค้า 24 ชม. (เว็บ · LINE · FB)','รับออเดอร์ + ปิดการขาย','แนะนำสินค้า/upsell + เก็บ lead'] },
+      { head:'👩‍💼 AI ผู้จัดการ', sub:['วิเคราะห์ยอด/กำไร/KPI + รายงาน','เตือนของหมด/ลูกหนี้/ขาดทุน','ดูแชตลูกค้า + คัด lead ให้ตามต่อ'] },
+      { head:'💰 AI การเงิน', sub:['ตรวจสลิปจริง-ปลอม 2 ชั้น','กำไรขั้นต้น/สุทธิ + margin','ลูกหนี้ + เตือนค้างจ่าย'] },
+      { head:'📦 AI คลังสินค้า', sub:['เฝ้าสต็อก + เตือนของใกล้หมด','พยากรณ์ของจะหมดในกี่วัน','ชี้ของค้างขายไม่ออก (เงินจม)'] },
+      { head:'📣 AI การตลาด', sub:['เขียนโพสต์ + ทำรูปโปร','บรอดแคสต์ + ยิงเจาะกลุ่ม','วิเคราะห์ลูกค้า'] },
     ],
     items_en:[
-      { head:'🌐 Store website', sub:['Online storefront + product catalog','Store admin panel'] },
-      { head:'🛒 AI Sales — 24/7 sales assistant', sub:['Replies to customers on every channel','Takes orders + closes sales automatically','Upsells to boost revenue'] },
-    ], full:24000, promo:17000, monthly:4000 },
-  { icon:'🥈', name:'BUSINESS',     tag:'เว็บไซต์พร้อม AI ฝ่ายขาย + ผู้ช่วยการเงิน',   tag_en:'Website + AI sales & finance assistants',    fit:'ธุรกิจที่มีออเดอร์ประจำทุกวัน', fit_en:'Businesses with daily recurring orders', featured:true,
+      { head:'🛍️ AI Sales', sub:['24/7 replies (web · LINE · FB)','Takes orders + closes sales','Upsell + captures leads'] },
+      { head:'👩‍💼 AI Manager', sub:['Sales/profit/KPI analysis + reports','Alerts: out-of-stock / receivables / loss','Reviews chats + picks leads to follow'] },
+      { head:'💰 AI Finance', sub:['Two-layer real/fake slip check','Gross/net profit + margin','Receivables + overdue alerts'] },
+      { head:'📦 AI Inventory', sub:['Stock monitoring + low-stock alerts','Forecasts days-until-out','Flags dead stock (tied-up cash)'] },
+      { head:'📣 AI Marketing', sub:['Writes posts + promo images','Broadcast + segmented blasts','Customer analysis'] },
+    ], full:39000, promo:22000, monthly:5990, kind:'new', maint:5990 },
+  { icon:'🏢', name:'5 AI · 5 Agent', tag:'แยก 5 สมอง AI ทำงานเฉพาะฝ่าย + ผู้จัดการสั่งงานเอง วิเคราะห์เจาะลึกทุกด้าน', tag_en:'5 dedicated AI brains + a manager that delegates — deep analysis across every area',
+    fit:'ธุรกิจใหญ่ สินค้าเยอะ ข้อมูลซับซ้อน / หลายสาขา', fit_en:'Large businesses — many products, complex data, multiple branches',
     items:[
-      'ทุกอย่างใน STARTER',
-      { head:'💰 AI Finance — ผู้ช่วยการเงิน', sub:['ตรวจสลิปจริง-ปลอม 2 ชั้น','กันสลิปซ้ำ / สลิปปลอม','ยืนยันยอด + บันทึกรายรับเข้าระบบถูกต้อง','สรุปยอดขาย-รายรับ ดูได้ทุกวัน'] },
+      { head:'🧠 แยก 5 สมอง AI + ผู้จัดการสั่งงานเอง', sub:['แต่ละฝ่ายมีสมอง AI เฉพาะตัว (แม่น/เร็ว/ลึกกว่า)','ผู้จัดการมอบหมาย + ประสานข้ามฝ่ายอัตโนมัติ','วางแผนหลายขั้น จบในคำสั่งเดียว'] },
+      { head:'👩‍💼 AI ผู้จัดการ (สั่งงานทีม)', sub:['สั่งงานผู้เชี่ยวชาญทุกฝ่าย + รวบเป็นแผนเดียว','อ่านแชตลูกค้า คัดคนน่าปิดการขาย','ยิงโปรเจาะกลุ่ม 4 แบบ (ลูกค้าหาย/VIP/ซื้อครั้งเดียว/ตามหมวด)'] },
+      { head:'🛍️ AI ฝ่ายขาย', sub:['ตอบ 3 ช่องทาง เว็บ · LINE · FB + คลังความรู้ RAG','ตอบแม่นจากข้อมูลจริง กันหลุด/กันเคลมเกิน','แต้มสะสม + ลูกค้าเช็ก "ของถึงไหน" เอง'] },
+      { head:'📦 AI คลังสินค้า (สมองแยก)', sub:['พยากรณ์ "ของจะหมดในกี่วัน" จากความเร็วขายจริง','คำนวณ "ควรเติมกี่ชิ้น" ก่อนของขาด','ชี้ Dead Stock ของค้าง + เงินจมรวม'] },
+      { head:'💰 AI การเงิน (สมองแยก)', sub:['กำไรรายสินค้า เรียงตัวไหนคุ้ม/บาง','ลูกหนี้ + aging เตือนค้างเกินกำหนด','margin / COGS / เตือนขาดทุน'] },
+      { head:'📣 AI การตลาด (สมองแยก)', sub:['วิเคราะห์ลูกค้าเชิงลึก (ซื้อซ้ำ/หาย/AOV)','Campaign เจาะกลุ่ม ยิง LINE + FB พร้อมกัน','ดึงของขายดี/ของค้าง มาจัดบันเดิล-flash sale'] },
+      { head:'🚚 AI โลจิสติกส์ · เร็วๆ นี้', sub:['แจ้งเลขพัสดุ + ลิงก์ติดตามอัตโนมัติ','ตอบ "ของถึงไหน" ให้ลูกค้าเอง','เตือนเจ้าของออเดอร์ค้างส่งเกินกำหนด'] },
     ],
     items_en:[
-      'Everything in STARTER',
-      { head:'💰 AI Finance — finance assistant', sub:['Two-layer real/fake slip check','Blocks duplicate / fake slips','Confirms amounts + logs income correctly','Daily sales & income summaries'] },
-    ], full:29000, promo:18000, monthly:4800 },
-  { icon:'🥇', name:'PROFESSIONAL', tag:'เว็บไซต์พร้อมทีม AI บริหารร้านค้า',           tag_en:'Website + an AI team to run your store',     fit:'ร้านที่มีสินค้าจำนวนมาก หรือหลายพนักงาน', fit_en:'Stores with many products or staff',
-    items:[
-      'ทุกอย่างใน BUSINESS',
-      { head:'📦 AI Inventory — ผู้ช่วยจัดการสต็อก', sub:['เฝ้าสต็อกแบบเรียลไทม์','เตือนเมื่อของใกล้หมด','กันขายของที่หมดสต็อก'] },
-      { head:'🧠 AI Manager — ผู้ช่วยจัดการธุรกิจ', sub:['Dashboard สรุปผลธุรกิจแบบเรียลไทม์','รวบรวมข้อมูลจากทุกส่วน','วางแผน + ปรับกลยุทธ์ธุรกิจ','สนับสนุนการตัดสินใจของผู้บริหาร'] },
-    ],
-    items_en:[
-      'Everything in BUSINESS',
-      { head:'📦 AI Inventory — stock assistant', sub:['Real-time stock monitoring','Low-stock alerts','Prevents selling out-of-stock items'] },
-      { head:'🧠 AI Manager — business manager', sub:['Real-time business dashboard','Aggregates data from every part','Plans + adjusts business strategy','Supports executive decisions'] },
-    ], full:46000, promo:24000, monthly:8000 },
-  { icon:'🚀', name:'ADVANCED',     tag:'เว็บไซต์พร้อม AI ทีมการตลาด',                tag_en:'Website + an AI marketing team',             fit:'ร้านที่อยากโตด้วยการตลาด เพิ่มยอด-หาลูกค้าใหม่', fit_en:'Stores that want to grow via marketing and win new customers',
-    items:[
-      'ทุกอย่างใน PROFESSIONAL',
-      { head:'📣 AI Marketing — ผู้ช่วยการตลาด', sub:['ทำรูปโปรโมชัน','บรอดแคสต์หาลูกค้า','เสริมทีมการตลาดด้วย AI'] },
-    ],
-    items_en:[
-      'Everything in PROFESSIONAL',
-      { head:'📣 AI Marketing — marketing assistant', sub:['Creates promo images','Broadcasts to reach customers','Boosts your marketing team with AI'] },
-    ], full:55000, promo:28000, monthly:10000 },
-  { icon:'🏢', name:'ENTERPRISE',   tag:'เว็บไซต์พร้อม AI บริหารธุรกิจครบวงจร',        tag_en:'Website + end-to-end AI business management', fit:'ธุรกิจครบวงจรที่ต้องส่งของเอง / สเกลใหญ่', fit_en:'Full-cycle businesses that ship themselves / large scale',
-    items:[
-      'ทุกอย่างใน ADVANCED',
-      { head:'🚚 AI Logistics — ผู้ช่วยจัดส่ง', sub:['ติดตามสถานะพัสดุ','แจ้งสถานะจัดส่งให้ลูกค้าอัตโนมัติ'] },
-    ],
-    items_en:[
-      'Everything in ADVANCED',
-      { head:'🚚 AI Logistics — delivery assistant', sub:['Tracks parcel status','Auto-updates delivery status to customers'] },
-    ], soon:true },
+      { head:'🧠 5 dedicated AI brains + self-managing', sub:['Each department gets its own AI (sharper, faster, deeper)','Manager delegates + coordinates across teams automatically','Plans multi-step work in a single command'] },
+      { head:'👩‍💼 AI Manager (delegates the team)', sub:['Delegates to every specialist + merges into one plan','Reviews customer chats, picks leads worth closing','Segmented promos: 4 groups (lapsed / VIP / one-time / by category)'] },
+      { head:'🛍️ AI Sales', sub:['Replies on web · LINE · FB + knowledge-base RAG','Accurate answers from real data, no over-claiming','Loyalty points + customers self-check "where is my order"'] },
+      { head:'📦 AI Inventory (separate brain)', sub:['Forecasts days-until-out from real sell-through','Calculates reorder quantity before stockout','Flags dead stock + total tied-up cash'] },
+      { head:'💰 AI Finance (separate brain)', sub:['Per-product profit, which items pay off','Receivables + aging, overdue alerts','Margin / COGS / loss alerts'] },
+      { head:'📣 AI Marketing (separate brain)', sub:['Deep customer analysis (repeat / lapsed / AOV)','Segmented campaigns blasted to LINE + FB together','Turns bestsellers / dead stock into bundles + flash sales'] },
+      { head:'🚚 AI Logistics · Coming soon', sub:['Auto tracking number + tracking link','Answers "where is my order" for customers','Alerts owner to overdue unshipped orders'] },
+    ], consult:true, kind:'new', maint:null },
+  { icon:'🔌', name:'เสริม AI เข้าระบบเดิม', name_en:'Add AI to your existing system', tag:'มีเว็บ/ระบบอยู่แล้ว — เพิ่มทีม AI เข้าหลังบ้าน ประเมินตามระบบจริง', tag_en:'Already have a site/system — add the AI team into your backend, assessed per case', consult:true, kind:'integrate', maint:null },
 ];
+/* ===== ผลงาน / Portfolio (การ์ดลูกค้าจริง + ลิงก์เว็บ) ===== */
+const WORKS = [
+  { brand:'AUNGTAO', bsub:'PET SHOP', glow:'rgba(244,160,80,.18)', g1:'#FCE0B8', g2:'#E8935C', accent:'#E8935C',
+    name:'อุ้งเท้าช็อป', name_en:'Aungtao Shop', cat:'ร้านของใช้สัตว์เลี้ยง', cat_en:'Pet supplies store',
+    desc:'AI ฝ่ายขาย "อุ๋งอิ๋ง" ตอบลูกค้า + ปิดการขาย · ระบบสะสมแต้ม + เกมรับแต้ม · แคตตาล็อก + ตะกร้า + แอดมิน',
+    desc_en:'AI sales "Aung-Ing" replies + closes sales · loyalty points + mini-game · catalog + cart + admin',
+    url:'https://neoscss02.github.io/aungtaoshop' },
+  { brand:'SIGNMASTER', bsub:'SIGN & PRINT', glow:'rgba(90,150,240,.18)', g1:'#DCEBFF', g2:'#5A96F0', accent:'#5A96F0',
+    name:'Signmaster Pro', name_en:'Signmaster Pro', cat:'ธุรกิจงานป้าย / สื่อพิมพ์', cat_en:'Signage & print business',
+    desc:'AI "น้องอิงค์" ประเมินราคางานป้ายได้จริง · wizard คำนวณราคา · ใบเสนอราคาอัตโนมัติ · แกลเลอรีผลงาน',
+    desc_en:'AI "Nong Ink" gives real signage quotes · price wizard · auto quotation · portfolio gallery',
+    url:'https://signmasterpro-shop.com' },
+  { brand:'LANTONG', bsub:'THAI DESSERT', glow:'rgba(226,182,121,.18)', g1:'#F5E8CC', g2:'#E2B679', accent:'#E2B679',
+    name:'ร้านลานทอง', name_en:'Lantong', cat:'ร้านขนมไทย', cat_en:'Thai dessert shop',
+    desc:'AI ฝ่ายขาย "ไพลิน" + ผู้จัดการ "พลอย" · ตอบ LINE + FB · รับออเดอร์ + ตรวจสลิป · รายงานยอดเข้า LINE',
+    desc_en:'AI sales "Pailin" + manager "Ploy" · replies on LINE + FB · orders + slip check · sales reports to LINE',
+    url:'https://neos-css.github.io/lantong' },
+];
+function renderWorks(){
+  const el = document.getElementById('workGrid'); if (!el) return;
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  el.innerHTML = WORKS.map(w => {
+    const nm = (en && w.name_en) ? w.name_en : w.name;
+    const ct = (en && w.cat_en) ? w.cat_en : w.cat;
+    const ds = (en && w.desc_en) ? w.desc_en : w.desc;
+    return `<a class="work-card" href="${w.url}" target="_blank" rel="noopener">
+      <div class="work-visual" style="--glow:${w.glow}">
+        <div class="wv-name" style="--g1:${w.g1};--g2:${w.g2}">${w.brand}</div>
+        <div class="wv-sub" style="color:${w.accent}">${w.bsub}</div>
+      </div>
+      <div class="work-name">${nm}</div>
+      <div class="work-cat">${ct}</div>
+      <div class="work-desc">${ds}</div>
+      <div class="work-link">${en ? 'View live site →' : 'ดูเว็บจริง →'}</div>
+    </a>`;
+  }).join('');
+}
+
+/* ===== ชั้น 1: การ์ดความสามารถ AI แต่ละตัว (ย่อยละเอียด · ยกจาก master _AI_AGENTS_มาตรฐาน_5ตัว(6)_26มิย) ===== */
+const AGENTS_CAP = [
+  { icon:'👩‍💼', name:'AI ผู้จัดการ', name_en:'AI Manager', tag:'มือขวาที่รู้ทุกอย่างในร้าน', tag_en:'The right hand that knows everything in your shop', status:'live',
+    items:[
+      'วิเคราะห์ธุรกิจจากข้อมูลจริง (ไม่มั่ว)',
+      'สรุปยอดขายรายวันเข้ามือถือ (เจ้าของ + กลุ่มทีม)',
+      'KPI ครบ: %ปิดการขาย · margin% · รายรับ · สินค้าขายดี',
+      'แจ้งเตือนเชิงรุก: สต็อกต่ำ · ค้างจ่าย · ลูกหนี้เกินกำหนด · ⚠️ขาดทุน',
+      'Dashboard สรุปในหน้า admin (ยอดวันนี้/7วัน + คนเข้าเว็บ)',
+      'ถามปุ๊บตอบปั๊บ "ยอดวันนี้เท่าไหร่ / กำไรเดือนนี้"',
+      'วิเคราะห์ครบทุกฝ่าย: ขาย · เงิน · สต็อก · ลูกค้า · การตลาด',
+      'สั่งงานทีมผู้เชี่ยวชาญ AI ให้เอง + รวบเป็นแผนเดียว',
+      'อ่านแชตลูกค้า คัดคนน่าปิดการขาย + เสนอ next step',
+      'ยิงโปรเจาะกลุ่ม 4 แบบ (ลูกค้าหาย / VIP / ซื้อครั้งเดียว / ตามหมวด)',    ],
+    items_en:[
+      'Analyzes the business from real data (no guessing)',
+      'Daily sales summary to your phone (owner + team group)',
+      'Full KPIs: close rate · margin% · revenue · bestsellers',
+      'Proactive alerts: low stock · unpaid · overdue receivables · loss',
+      'Admin dashboard (today / 7-day + web visitors)',
+      'Instant answers: "today sales / this month profit"',
+      'Analyzes every area: sales · finance · stock · customers · marketing',
+      'Delegates to the specialist AIs + merges into one plan',
+      'Reviews chats, picks leads worth closing + suggests next step',
+      'Segmented promos: 4 groups (lapsed / VIP / one-time / by category)',    ] },
+  { icon:'🛍️', name:'AI ฝ่ายขาย', name_en:'AI Sales', tag:'นักขายที่ไม่เคยหลับ', tag_en:'The salesperson that never sleeps', status:'live',
+    items:[
+      'ตอบลูกค้า 24 ชม. 3 ช่องทาง: เว็บ · LINE · FB',
+      'เปิดบิล/สร้างออเดอร์ (ราคา·สต็อก·คูปอง กันปลอมฝั่ง server)',
+      'ปิดการขายครบวงจร: ออเดอร์→ที่อยู่→ตรวจสลิป→ตัดสต็อก→แต้ม',
+      'ตรวจสลิปจริง-ปลอม 2 ชั้น + กันออเดอร์ซ้ำ',
+      'รับเก็บเงินปลายทาง (COD)',
+      'แนะนำสินค้า + upsell / cross-sell',
+      'คลังความรู้ RAG — ตอบแม่นจากข้อมูลจริง กันหลุด/กันเคลมเกินจริง',
+      'เก็บชื่อ-เบอร์ lead อัตโนมัติ',
+      'ส่งต่อคนจริงเมื่อลูกค้าขอ (Human Takeover)',
+    ],
+    items_en:[
+      'Replies 24/7 on 3 channels: web · LINE · FB',
+      'Creates orders (price · stock · coupon, server-trusted)',
+      'Full close: order→address→slip check→stock cut→points',
+      'Two-layer real/fake slip check + duplicate-order guard',
+      'Supports cash on delivery (COD)',
+      'Product recommendations + upsell / cross-sell',
+      'Knowledge-base RAG — accurate from real data, no over-claiming',
+      'Captures lead name + phone automatically',
+      'Hands off to a human when asked (Human Takeover)',
+    ] },
+  { icon:'📦', name:'AI คลังสินค้า', name_en:'AI Inventory', tag:'ผู้คุมสต็อกที่ไม่มีวันเผลอ', tag_en:'The stock keeper that never slips', status:'live',
+    items:[
+      'เช็คสต็อกเรียลไทม์ + เว็บปฏิเสธถ้าของไม่พอ',
+      'ตัดสต็อกอัตโนมัติเมื่อจ่ายเงิน + คืนสต็อกเมื่อยกเลิก',
+      'audit log ทุกการเคลื่อนไหว + กันตัดซ้ำ',
+      'แจ้งของใกล้หมด/หมด + รายงานรายวัน',
+      'พยากรณ์ "ของจะหมดในกี่วัน" จากความเร็วขายจริง',
+      'คำนวณ "ควรเติมกี่ชิ้น" ก่อนของขาด',
+      'ชี้ Dead Stock ของค้าง + เงินจมรวม → เสนอจัดโปรระบาย',
+      'เพิ่มสินค้า/เติมสต็อกผ่านแชต (มีขั้นยืนยัน)',
+    ],
+    items_en:[
+      'Real-time stock check + web blocks if not enough',
+      'Auto stock deduction on payment + restock on cancel',
+      'Audit log on every movement + double-cut guard',
+      'Low / out-of-stock alerts + daily report',
+      'Forecasts "days until out" from real sell-through',
+      'Calculates "how many to reorder" before stockout',
+      'Flags dead stock + total tied-up cash → suggests clearance',
+      'Add products / restock via chat (with confirmation)',
+    ] },
+  { icon:'💰', name:'AI การเงิน', name_en:'AI Finance', tag:'นักบัญชีที่ไม่มีวันพลาด', tag_en:'The accountant that never misses', status:'live',
+    items:[
+      'ตรวจสลิปจริง-ปลอม กันซ้ำ กันโกง',
+      'กำไรขั้นต้น/สุทธิ + margin% (คิด COGS เอง)',
+      'กำไรรายสินค้า เรียงตัวไหนคุ้ม/บาง',
+      'ยอดขายจากออเดอร์ที่ชำระแล้ว',
+      'บันทึกค่าใช้จ่ายแยกหมวด (ผ่าน LINE ได้)',
+      'ลูกหนี้ + aging เตือนค้างจ่ายเกินกำหนด',
+      'เตือน ⚠️ เมื่อขาดทุน · ตั้งต้นทุนผ่านแชต',    ],
+    items_en:[
+      'Real/fake slip check, dedupe, fraud guard',
+      'Gross/net profit + margin% (computes COGS itself)',
+      'Per-product profit, ranked by which pays off',
+      'Revenue from paid orders',
+      'Logs expenses by category (via LINE too)',
+      'Receivables + aging, overdue alerts',
+      'Loss alerts ⚠️ · set cost via chat',    ] },
+  { icon:'📣', name:'AI การตลาด', name_en:'AI Marketing', tag:'ทีมการตลาดในตัวเดียว', tag_en:'A whole marketing team in one', status:'live',
+    items:[
+      'เขียนโพสต์ + แคปชั่น (หลายแบบให้เลือก)',
+      'เขียนแคปชั่นจากรูปสินค้า (AI มองรูปได้)',
+      'Broadcast ทุกคนทาง LINE + โพสต์เพจ FB',
+      'วิเคราะห์ลูกค้าเชิงลึก (ซื้อซ้ำ/หาย/AOV)',
+      'Campaign เจาะกลุ่ม 4 แบบ ยิง LINE+FB พร้อมกัน',
+      'ดึงของขายดี/ของค้าง มาจัดบันเดิล-flash sale',
+      'ประสานการเงินก่อนกดราคาโปร (เช็คว่ายังมีกำไร)',    ],
+    items_en:[
+      'Writes posts + captions (several options)',
+      'Writes captions from product photos (AI vision)',
+      'Broadcast to everyone on LINE + post to FB page',
+      'Deep customer analysis (repeat / lapsed / AOV)',
+      'Segmented campaigns, 4 groups, LINE+FB together',
+      'Turns bestsellers / dead stock into bundles + flash sales',
+      'Coordinates with Finance before promo pricing (still profitable?)',    ] },
+  { icon:'🚚', name:'AI โลจิสติกส์', name_en:'AI Logistics', tag:'ผู้ช่วยส่งของที่ลูกค้ารัก', tag_en:'The delivery helper customers love', status:'soon',
+    items:[
+      'แจ้งเลขพัสดุ + ลิงก์ติดตามอัตโนมัติเมื่อจัดส่ง',
+      'ตอบ "ของถึงไหน" ให้ลูกค้าเอง (ไม่กินพลังฝ่ายขาย)',
+      'รองรับ 7 ขนส่ง (Flash/Kerry/J&T/ไปรษณีย์ไทย/Ninja/SCG)',
+      'สรุปสถานะจัดส่ง + เตือนของค้างส่งเกินกำหนด',
+      '(เร็วๆ นี้) อัปสถานะจริงจากขนส่งอัตโนมัติ',
+    ],
+    items_en:[
+      'Auto tracking number + tracking link on shipment',
+      'Answers "where is my order" for customers',
+      'Supports 7 carriers (Flash/Kerry/J&T/Thailand Post/Ninja/SCG)',
+      'Delivery status summary + overdue-shipment alerts',
+      '(Coming soon) Auto real status from carriers',
+    ] },
+];
+function renderAgentsCap(){
+  const el = document.getElementById('capGrid'); if (!el) return;
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  el.innerHTML = AGENTS_CAP.map(a => {
+    const items = (en && a.items_en) ? a.items_en : a.items;
+    const soon = a.status === 'soon';
+    const nm = (en && a.name_en) ? a.name_en : a.name;
+    const tg = (en && a.tag_en) ? a.tag_en : a.tag;
+    const badge = soon ? (en ? 'Coming soon' : 'เร็วๆ นี้') : (en ? '● Ready' : '● พร้อมใช้งาน');
+    const lis = items.map(t => {
+      const s = /เร็วๆ นี้|Coming soon/.test(t);
+      return '<li' + (s ? ' style="opacity:.55"' : '') + '>' + t + '</li>';
+    }).join('');
+    return `<div class="agent-card"${soon ? ' style="opacity:.9"' : ''}>
+      <div class="ic">${a.icon}</div>
+      <h3>${nm}</h3>
+      <div style="margin:2px 0 10px"><span class="badge ${soon ? 'soon' : 'live'}">${badge}</span></div>
+      <p style="margin:0 0 12px"><b style="color:var(--cyan)">${tg}</b></p>
+      <ul class="price-feat" style="margin-bottom:0">${lis}</ul>
+    </div>`;
+  }).join('');
+}
+
+/* ===== ชั้น 3: การ์ด Add-on (เสริม·แยกจาก standard) · ราคา null = "สอบถามราคา" (รอ admin ตั้ง · ดู project-neos-pricing-5agent) ===== */
+const ADDONS = [
+  { icon:'🎁', name:'ระบบสะสมแต้ม + ของรางวัล', name_en:'Loyalty points + rewards',
+    tag:'ลูกค้าสะสมแต้ม แลกส่วนลด/ของรางวัล + ติดตามพัสดุ', tag_en:'Customers earn points, redeem discounts/rewards + track parcels', price:3000,
+    items:['ทุก N บาท = 1 แต้ม (ตั้งเรตเองได้)','แลกแต้มเป็นส่วนลดตอนจ่ายเงิน','เมนูของรางวัล เจ้าของกำหนดเอง','ลูกค้าเช็กแต้ม + เลขพัสดุใน LINE/เว็บ','แท็บจัดการแต้ม/สมาชิก/ของรางวัลในแอดมิน'],
+    items_en:['Every N baht = 1 point (you set the rate)','Redeem points as discount at checkout','Reward menu you define yourself','Customers check points + tracking in LINE/web','Admin tab to manage points/members/rewards'] },
+  { icon:'📱', name:'เชื่อม LINE OA', name_en:'LINE OA integration',
+    tag:'AI ตอบลูกค้าใน LINE + ริชเมนู + broadcast', tag_en:'AI replies in LINE + rich menu + broadcast', price:3000,
+    items:['AI ตอบลูกค้า 1:1 ใน LINE OA','ริชเมนูปุ่มลัด (ออกแบบให้)','Broadcast โปรถึงลูกค้าทุกคน','แจ้งเตือนออเดอร์/พัสดุเข้า LINE','เก็บประวัติแชต + จำบทสนทนา'],
+    items_en:['AI replies 1:1 in LINE OA','Rich menu shortcuts (designed for you)','Broadcast promos to all customers','Order/parcel alerts into LINE','Chat history + conversation memory'] },
+  { icon:'📘', name:'เชื่อม Facebook', name_en:'Facebook integration',
+    tag:'AI ตอบ Messenger + โพสต์เพจอัตโนมัติ', tag_en:'AI replies on Messenger + auto page posts', price:3000,
+    items:['AI ตอบลูกค้าใน FB Messenger','โพสต์ขายลงเพจอัตโนมัติ','เปลี่ยนรูปโปรไฟล์/หน้าปกได้','เก็บ lead จากแชต Messenger'],
+    items_en:['AI replies on FB Messenger','Auto sales posts to your page','Update profile/cover images','Captures leads from Messenger chats'] },
+  { icon:'🧾', name:'ใบเสนอราคาอัตโนมัติ', name_en:'Auto quotation',
+    tag:'AI ออกใบเสนอราคา PDF มีลายเซ็น+ตราบริษัท ให้ลูกค้าอัตโนมัติ', tag_en:'AI generates signed PDF quotations for your customers automatically', price:2500,
+    items:['ออกใบเสนอราคา PDF จากแชต/ฟอร์ม','ใส่ลายเซ็น + ตราบริษัทอัตโนมัติ','คิดราคา + รายการให้ครบ','เหมาะธุรกิจ B2B / งานสั่งทำ'],
+    items_en:['Generates PDF quotes from chat/form','Auto signature + company seal','Itemized pricing filled in','Great for B2B / made-to-order'] },
+];
+function renderAddons(){
+  const el = document.getElementById('addonGrid'); if (!el) return;
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  el.innerHTML = ADDONS.map(a => {
+    const items = (en && a.items_en) ? a.items_en : a.items;
+    const nm = (en && a.name_en) ? a.name_en : a.name;
+    const tg = (en && a.tag_en) ? a.tag_en : a.tag;
+    const hasPrice = a.price != null && Number(a.price) > 0;
+    const priceHtml = hasPrice
+      ? `<div class="price-num" style="font-size:24px">${baht(a.price)}<small> ${en ? 'one-time' : 'ครั้งเดียว'}</small></div>`
+      : `<div class="price-num" style="font-size:21px">${en ? 'Ask for price' : 'สอบถามราคา'}</div>`;
+    return `<div class="price-card">
+      <div class="price-name">${a.icon} ${nm}</div>
+      <div class="pkg-tag">${tg}</div>
+      <ul class="price-feat" style="flex:1">${items.map(i => `<li>${i}</li>`).join('')}</ul>
+      <div class="pkg-price">${priceHtml}</div>
+      <button class="price-btn" onclick="openChat()">${en ? 'Add this on' : 'สนใจเสริม'}</button>
+    </div>`;
+  }).join('');
+}
+
+/* ===== ชั้น 2 (ดีไซน์ใหม่ 6กค): การ์ดแพ็กแบบตาราง 5 ตำแหน่ง + footer "มีอะไรให้บ้าง" (ตามภาพ Nutt) ===== */
+function buildIncluded(p, en){
+  const maint = p.maint
+    ? (en ? 'System maintenance ฿' + p.maint.toLocaleString() + '/month' : 'ค่าบริการดูแลระบบ ฿' + p.maint.toLocaleString() + '/เดือน')
+    : (en ? 'System maintenance: as agreed (by system complexity)' : 'ค่าบริการดูแลระบบ: ตามตกลง (ตามความซับซ้อนของระบบ)');
+  if (p.kind === 'integrate'){
+    return en
+      ? ['🔌 Add the AI team into your existing website/system','🧩 Assessed per case — free consultation','⚡ Free $20 AI power (first month) · then top up as used','🛠️ ' + maint,'🧾 100 free slip checks/month (then ฿1/slip or per plan)','💳 60% deposit to start · 40% on delivery']
+      : ['🔌 เสริมทีม AI เข้าเว็บ/ระบบเดิมของคุณ','🧩 ประเมินเป็นรายเคส — ปรึกษาฟรี','⚡ ฟรีพลัง AI $20 (เดือนแรก) · จากนั้นเติมตามใช้จริง','🛠️ ' + maint,'🧾 ตรวจสลิปฟรี 100 สลิป/เดือน (เกินสลิปละ ฿1 หรือตามแผน)','💳 มัดจำ 60% เริ่มงาน · อีก 40% เมื่อส่งมอบ'];
+  }
+  return en
+    ? ['🌐 Website build included, up to 3 pages (incl. homepage)','⚡ Free $20 AI power (first month) · then top up as used','🛠️ ' + maint,'🧾 100 free slip checks/month (then ฿1/slip or per chosen plan)','🔗 .com domain + hosting free 1st year · .co.th +฿700/year','🎨 Branded to your shop (logo/color/AI name) · mobile-ready','💳 60% deposit to start · 40% on delivery']
+    : ['🌐 รวมค่าทำเว็บไซต์ ไม่เกิน 3 หน้า (รวม Homepage)','⚡ ฟรีพลัง AI $20 (เดือนแรก) · จากนั้นเติมตามใช้จริง','🛠️ ' + maint,'🧾 ตรวจสลิปฟรี 100 สลิป/เดือน (เกินคิดสลิปละ ฿1 หรือตามโปรแผนที่เลือก)','🔗 โดเมน .com + โฮสติ้ง ฟรีปีแรก · .co.th เพิ่ม ฿700/ปี','🎨 ปรับแบรนด์ตามร้าน (โลโก้/สี/ชื่อ AI) · รองรับมือถือ','💳 มัดจำ 60% เริ่มงาน · อีก 40% เมื่อส่งมอบ'];
+}
+// เรียงคอลัมน์ตามภาพ Nutt: ขาย · ผู้จัดการ · การตลาด · คลัง · การเงิน
+const PKG_COL_ORDER = ['🛍️','👩‍💼','📣','📦','💰'];
+function renderPkgTables(){
+  const el = document.getElementById('pkgTables'); if (!el) return;
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  const live = (typeof AGENTS_CAP !== 'undefined') ? AGENTS_CAP.filter(a => a.status === 'live') : [];
+  const byIcon = {}; live.forEach(a => { byIcon[a.icon] = a; });
+  const cols = PKG_COL_ORDER.map(ic => byIcon[ic]).filter(Boolean);
+  const capTable = '<div class="pcols">' + cols.map(a => {
+    const items = (en && a.items_en) ? a.items_en : a.items;
+    const nm = (en && a.name_en) ? a.name_en : a.name;
+    const lis = items.map(i => {
+      const s = /เร็วๆ นี้|Coming soon/.test(i);
+      return '<li' + (s ? ' class="soon"' : '') + '>' + i + '</li>';
+    }).join('');
+    return '<div class="pcol"><div class="pcol-h">' + a.icon + ' ' + nm + '</div><ul>' + lis + '</ul></div>';
+  }).join('') + '</div>';
+  const soonNote = '<div class="pkg-soon-note">🚚 ' + (en ? 'AI Logistics — coming soon (opens after full testing)' : 'AI โลจิสติกส์ — เร็วๆ นี้ (เปิดเมื่อทดสอบครบว่าทำงานได้จริง)') + '</div>';
+  el.innerHTML = PKGS.map(p => {
+    const inc = buildIncluded(p, en);
+    const incHtml = '<div class="pkg-included"><div class="pi-title">📦 ' + (en ? 'Package details' : 'รายละเอียดแพ็กเกจ') + '</div><ul>' + inc.map(i => '<li>' + i + '</li>').join('') + '</ul></div>';
+    const nm = (en && p.name_en) ? p.name_en : p.name;
+    const tg = (en && p.tag_en) ? p.tag_en : p.tag;
+    const priceHtml = p.consult
+      ? '<div class="pt-price"><b style="font-size:22px">' + (en ? 'Contact us' : 'ปรึกษาเพิ่ม') + '</b><div class="pt-sub">' + (en ? 'for larger businesses' : 'สำหรับธุรกิจใหญ่ขึ้น') + '</div></div>'
+      : '<div class="pt-price"><span class="pt-was">' + baht(p.full) + '</span><b>' + baht(p.promo) + '</b><div class="pt-sub">+ ' + baht(p.monthly) + '/' + (en ? 'mo' : 'เดือน') + ' · ' + (en ? 'first 22 clients' : 'โปร 22 ท่านแรก') + '</div></div>';
+    const btn = '<button class="price-btn" onclick="openChat()">' + (en ? 'Free consultation' : 'ปรึกษาฟรี') + '</button>';
+    return '<div class="pkg-table' + (p.featured ? ' featured' : '') + '">' +
+      '<div class="pkg-table-head"><div><div class="pt-name">' + p.icon + ' ' + nm + '</div><div class="pt-sub">' + tg + '</div></div>' + priceHtml + '</div>' +
+      capTable + soonNote + incHtml + btn +
+    '</div>';
+  }).join('');
+}
+
 function renderPkgs(){
   const el = document.getElementById('pkgGrid'); if (!el) return;
   const en = LANG === 'en';
@@ -1640,6 +1928,19 @@ function renderPkgs(){
         <div class="pkg-fit">${fitLbl}${L(p,'fit')}</div>
         ${feats}
         <button class="price-btn" style="opacity:.55;cursor:default" disabled>${en?'Coming soon':'เร็วๆ นี้'}</button>
+      </div>`;
+    }
+    if (p.consult){
+      return `<div class="price-card">
+        <div class="price-name">${p.icon} ${p.name}</div>
+        <div class="pkg-tag">${L(p,'tag')}</div>
+        <div class="pkg-fit">${fitLbl}${L(p,'fit')}</div>
+        ${feats}
+        <div class="pkg-price">
+          <div class="pkg-price-label">${en?'For larger businesses':'สำหรับธุรกิจใหญ่ขึ้น'}</div>
+          <div class="price-num" style="font-size:26px">${en?'Contact us':'ปรึกษาเพิ่ม'}</div>
+        </div>
+        <button class="price-btn" onclick="openChat()">${en?'Free consultation':'ปรึกษาฟรี'}</button>
       </div>`;
     }
     return `<div class="price-card ${p.featured?'featured':''}">
@@ -1679,8 +1980,10 @@ function requestWebOnly(){
   openChat();
   setTimeout(() => showLeadForm('', '[สนใจ เว็บไซต์อย่างเดียว] ค่าทำเว็บ ฿9,000 (ครั้งเดียว) + รายปี ฿2,500 (.com) / ฿3,200 (.co.th) รวมโดเมน+โฮสติ้ง · ไม่มีรายเดือน'), 350);
 }
-renderAC();
-renderPkgs();
+renderPkgTables();
+renderAgentsCap();
+renderAddons();
+renderWorks();
 applyLang(LANG);   // 🌐 ตั้งภาษาเริ่มต้นจาก localStorage (TH default · แปลทั้งหน้า + ปุ่ม toggle)
 trackVisit();   // 📊 นับคนเข้าชม + ช่องทางที่มา (วิเคราะห์การตลาดใน Dashboard)
 
