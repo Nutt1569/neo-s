@@ -208,6 +208,22 @@
   .pcol li { font-size: 11.5px; color: var(--txt-dim); padding: 5px 0; line-height: 1.45; border-top: 1px solid rgba(255,255,255,.05); }
   .pcol li:first-child { border-top: 0; }
   .pcol li.soon { opacity: .5; }
+  /* 2 AI groups: Sales (1 brain) + Manager (1 brain, 4 roles) */
+  .ai-groups { display: grid; grid-template-columns: 1fr 2.6fr; gap: 12px; }
+  .ai-grp { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .ai-grp-wide { border-color: rgba(34,211,238,.35); }
+  .ai-grp-h { font-weight: 700; font-size: 14px; color: var(--cyan); margin-bottom: 10px; line-height: 1.3; }
+  .ai-grp-h small { display: block; font-weight: 400; font-size: 11px; color: var(--txt-dim); margin-top: 2px; }
+  .ai-subs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .ai-sub { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; }
+  .ai-sub-h { font-weight: 600; font-size: 12px; color: var(--txt); margin-bottom: 5px; }
+  .pcol-ul { list-style: none; padding: 0; margin: 0; }
+  .pcol-ul li { font-size: 11.5px; color: var(--txt-dim); padding: 4px 0; line-height: 1.45; border-top: 1px solid rgba(255,255,255,.05); }
+  .pcol-ul li:first-child { border-top: 0; }
+  .pkg-consult { background: var(--bg-2); border: 1px dashed var(--line); border-radius: 12px; padding: 22px 20px; text-align: center; font-size: 14.5px; color: var(--txt); line-height: 1.6; margin: 8px 0 18px; }
+  .pkg-consult .pc-sub { font-size: 12.5px; color: var(--txt-dim); margin-top: 8px; }
+  @media(max-width: 820px){ .ai-groups { grid-template-columns: 1fr; } .ai-subs { grid-template-columns: 1fr 1fr; } }
+  @media(max-width: 520px){ .ai-subs { grid-template-columns: 1fr; } }
   .pkg-soon-note { margin: 14px 0; font-size: 12.5px; color: var(--txt-dim); text-align: center; }
   .pkg-included { background: var(--bg-2); border-radius: 12px; padding: 14px 18px; margin: 14px 0 18px; }
   .pkg-included .pi-title { font-weight: 700; font-size: 13.5px; margin-bottom: 8px; }
@@ -2033,15 +2049,19 @@ function renderPkgTables(){
   const live = (typeof AGENTS_CAP !== 'undefined') ? AGENTS_CAP.filter(a => a.status === 'live') : [];
   const byIcon = {}; live.forEach(a => { byIcon[a.icon] = a; });
   const cols = PKG_COL_ORDER.map(ic => byIcon[ic]).filter(Boolean);
-  const capTable = '<div class="pcols">' + cols.map(a => {
-    const items = (en && a.items_en) ? a.items_en : a.items;
-    const nm = (en && a.name_en) ? a.name_en : a.name;
-    const lis = items.map(i => {
-      const s = /เร็วๆ นี้|Coming soon/.test(i);
-      return '<li' + (s ? ' class="soon"' : '') + '>' + i + '</li>';
-    }).join('');
-    return '<div class="pcol"><div class="pcol-h">' + a.icon + ' ' + nm + '</div><ul>' + lis + '</ul></div>';
-  }).join('') + '</div>';
+  // 🏗️ สถาปัตย์จริง 2 AI: ฝ่ายขาย(1 สมอง) + ผู้จัดการ(1 สมอง · ทำ 4 ตำแหน่ง: ผจก/ตลาด/คลัง/เงิน)
+  const g = (ic) => byIcon[ic] || { icon:'', name:'', name_en:'', items:[], items_en:[] };
+  const capList = (a) => '<ul class="pcol-ul">' + ((en && a.items_en) ? a.items_en : a.items).map(i => '<li>' + i + '</li>').join('') + '</ul>';
+  const roleName = (a) => (en && a.name_en ? a.name_en : a.name).replace(/^AI\s*/, '');
+  const twoAiView =
+    '<div class="ai-groups">' +
+      '<div class="ai-grp"><div class="ai-grp-h">🛍️ ' + (en ? 'AI Sales' : 'AI ฝ่ายขาย') + '<small>' + (en ? '1 brain · serves customers 24/7' : '1 สมอง · คุยลูกค้า/ปิดการขาย 24 ชม.') + '</small></div>' + capList(g('🛍️')) + '</div>' +
+      '<div class="ai-grp ai-grp-wide"><div class="ai-grp-h">👩‍💼 ' + (en ? 'AI Manager' : 'AI ผู้จัดการ') + '<small>' + (en ? '1 brain · does the work of 4 roles' : '1 สมอง · ทำแทน 4 ตำแหน่ง') + '</small></div>' +
+        '<div class="ai-subs">' +
+          ['👩‍💼', '📣', '📦', '💰'].map(ic => { const a = g(ic); return '<div class="ai-sub"><div class="ai-sub-h">' + a.icon + ' ' + roleName(a) + '</div>' + capList(a) + '</div>'; }).join('') +
+        '</div>' +
+      '</div>' +
+    '</div>';
   const soonNote = '<div class="pkg-soon-note">🚚 ' + (en ? 'AI Logistics — coming soon (opens after full testing)' : 'AI โลจิสติกส์ — เร็วๆ นี้ (เปิดเมื่อทดสอบครบว่าทำงานได้จริง)') + '</div>';
   el.innerHTML = PKGS.map(p => {
     const inc = buildIncluded(p, en);
@@ -2056,7 +2076,10 @@ function renderPkgTables(){
       : '<button class="price-btn" onclick="openQuote(\'2ai5\')">' + (en ? 'Get a quote' : 'ขอใบเสนอราคา') + '</button>';
     return '<div class="pkg-table' + (p.featured ? ' featured' : '') + '">' +
       '<div class="pkg-table-head"><div><div class="pt-name">' + p.icon + ' ' + nm + '</div><div class="pt-sub">' + tg + '</div></div>' + priceHtml + '</div>' +
-      capTable + soonNote + incHtml + btn +
+      (p.consult
+        ? '<div class="pkg-consult">🎯 ' + (en ? 'Tailored to what your business needs — final price depends on your actual system.' : 'ปรึกษาเพื่อวางแผนตามความต้องการของธุรกิจคุณ — ราคาขึ้นกับระบบจริง') + '<div class="pc-sub">' + tg + '</div></div>'
+        : twoAiView + soonNote + incHtml) +
+      btn +
     '</div>';
   }).join('');
 }
