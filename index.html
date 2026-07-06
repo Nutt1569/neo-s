@@ -418,6 +418,26 @@
   /* reveal anim */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s; }
   .reveal.in { opacity: 1; transform: none; }
+  /* ===== QUOTE MODAL ===== */
+  .qm-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); backdrop-filter: blur(3px); align-items: center; justify-content: center; padding: 20px; }
+  .qm-overlay.open { display: flex; }
+  .qm-box { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 26px 24px; width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; position: relative; }
+  .qm-box h3 { font-size: 20px; margin-bottom: 16px; }
+  .qm-x { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--txt-dim); font-size: 18px; cursor: pointer; }
+  .qm-pkg { font-size: 14px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+  .qm-pkg b { color: var(--gold); font-size: 17px; }
+  .qm-addhead { font-size: 13px; color: var(--txt-dim); margin-bottom: 8px; }
+  .qm-add { display: flex; align-items: center; gap: 8px; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; margin-bottom: 7px; cursor: pointer; }
+  .qm-add b { margin-left: auto; color: var(--cyan); }
+  .qm-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-size: 13.5px; }
+  .qm-row input { width: 110px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-2); color: var(--txt); }
+  .qm-hint { font-size: 12px; color: var(--txt-dim); line-height: 1.5; margin: 8px 0 4px; }
+  .qm-total { font-size: 14px; text-align: right; margin: 14px 0; padding-top: 12px; border-top: 1px solid var(--line); }
+  .qm-total b { color: var(--gold); font-size: 20px; }
+  .qm-fields { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+  .qm-fields input { padding: 11px 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg-2); color: var(--txt); font-size: 14px; }
+  .qm-submit { width: 100%; padding: 13px; border: none; border-radius: 11px; background: var(--grad); color: #050A14; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .qm-note { font-size: 11px; color: var(--txt-dim); text-align: center; margin-top: 10px; }
 </style>
 
   <!-- SEO / Social — added 2026-06-09 -->
@@ -697,7 +717,7 @@
       <div style="text-align:right">
         <div class="price-num" style="font-size:30px">฿9,000<small data-i18n="webonly.once"> ค่าทำเว็บ (ครั้งเดียว)</small></div>
         <div class="price-monthly" data-i18n="webonly.monthly">+ รายปี ฿2,500 (.com) / ฿3,200 (.co.th)<br><b style="color:var(--cyan)">รวมโดเมน + โฮสติ้ง</b> · ไม่มีรายเดือน</div>
-        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="requestWebOnly()" data-i18n="webonly.btn">ขอใบเสนอราคา</button>
+        <button class="price-btn" style="width:auto; padding:11px 24px; margin-top:10px" onclick="openQuote('webonly')" data-i18n="webonly.btn">ขอใบเสนอราคา</button>
       </div>
     </div>
 
@@ -823,6 +843,23 @@
     <p class="copy">© 2026 Comtech Solution System Co., Ltd. — All rights reserved.</p>
   </div>
 </footer>
+
+<!-- ===== QUOTE MODAL ===== -->
+<div id="quoteModal" class="qm-overlay" onclick="if(event.target===this)closeQuote()">
+  <div class="qm-box">
+    <button class="qm-x" onclick="closeQuote()" aria-label="close">✕</button>
+    <h3 id="qmTitle">ขอใบเสนอราคา</h3>
+    <div id="qmBody"></div>
+    <div class="qm-total" id="qmTotal"></div>
+    <div class="qm-fields">
+      <input id="qmName" placeholder="ชื่อ-นามสกุล">
+      <input id="qmPhone" type="tel" placeholder="เบอร์โทร">
+      <input id="qmEmail" type="email" placeholder="อีเมล (ถ้าต้องการรับใบทางเมล)">
+    </div>
+    <button class="qm-submit" id="qmSubmit" onclick="submitQuote()">ออกใบเสนอราคา →</button>
+    <div class="qm-note">* ราคาประเมิน · ทีม NEO-S ยืนยันในใบเสนอราคาจริง</div>
+  </div>
+</div>
 
 <!-- ===== CHAT WIDGET ===== -->
 <button class="chat-fab" onclick="toggleChat()" aria-label="คุยกับโนวา AI">
@@ -1398,6 +1435,102 @@ async function submitLead() {
 }
 
 // ============================================================
+// QUOTE MODAL — ขอใบเสนอราคา (กล่องกรอก · ไม่เข้าแชท) · 6กค
+//   openQuote('2ai5' | 'webonly' | 'consult')
+// ============================================================
+let qmType = '2ai5';
+function qmAddons(){ return (typeof ADDONS !== 'undefined') ? ADDONS : []; }
+function openQuote(type){
+  qmType = type || '2ai5';
+  renderQuoteBody();
+  document.getElementById('quoteModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeQuote(){
+  document.getElementById('quoteModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderQuoteBody(){
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  const body = document.getElementById('qmBody');
+  document.getElementById('qmTitle').textContent = en ? 'Request a quote' : 'ขอใบเสนอราคา';
+  document.getElementById('qmName').placeholder  = en ? 'Full name' : 'ชื่อ-นามสกุล';
+  document.getElementById('qmPhone').placeholder = en ? 'Phone' : 'เบอร์โทร';
+  document.getElementById('qmEmail').placeholder = en ? 'Email (optional, for emailed quote)' : 'อีเมล (ถ้าต้องการรับใบทางเมล)';
+  document.getElementById('qmSubmit').textContent = en ? 'Get quote →' : 'ออกใบเสนอราคา →';
+  document.querySelector('#quoteModal .qm-note').textContent = en ? '* Estimate · NEO-S confirms in the official quote' : '* ราคาประเมิน · ทีม NEO-S ยืนยันในใบเสนอราคาจริง';
+  if (qmType === 'webonly'){
+    body.innerHTML =
+      '<div class="qm-pkg">🌐 ' + (en?'Website only':'เฉพาะเว็บไซต์') + ' — <b>฿9,000</b> <small>' + (en?'one-time':'ครั้งเดียว') + '</small></div>' +
+      '<div class="qm-row"><label>' + (en?'Number of pages':'จำนวนหน้า') + '</label><input type="number" id="qmPages" min="1" value="1" oninput="updateQuoteTotal()"></div>' +
+      '<div class="qm-row"><label>' + (en?'Approx. products':'จำนวนสินค้าโดยประมาณ') + '</label><input type="number" id="qmProducts" min="0" value="50" oninput="updateQuoteTotal()"></div>' +
+      '<div class="qm-hint">' + (en?'Base covers up to 5 menus & 50 products · extra products +฿20 each · .com domain free / .co.th +฿700/yr':'ฐานครอบคลุม ≤5 เมนู & 50 สินค้า · เกินคิด +฿20/รายการ · โดเมน .com ฟรี / .co.th +฿700/ปี') + '</div>';
+  } else if (qmType === '2ai5'){
+    body.innerHTML =
+      '<div class="qm-pkg">⭐ 2 AI · 5 Agent — <b>฿22,000</b> <small>(' + (en?'from':'จาก') + ' ฿39,000) + ฿5,990/' + (en?'mo':'เดือน') + '</small></div>' +
+      '<div class="qm-addhead">' + (en?'Add-ons (optional):':'เลือก Add-on เสริม (ถ้าต้องการ):') + '</div>' +
+      qmAddons().map(function(a,i){ return '<label class="qm-add"><input type="checkbox" class="qm-addcb" data-i="'+i+'" oninput="updateQuoteTotal()"> ' + a.icon + ' ' + ((en&&a.name_en)?a.name_en:a.name) + ' <b>+' + baht(a.price) + '</b></label>'; }).join('');
+  } else {
+    body.innerHTML = '<div class="qm-pkg">🏢 ' + (en?'Custom / large business':'ธุรกิจใหญ่ · สั่งทำเฉพาะ') + '</div><div class="qm-hint">' + (en?'Our team will assess your setup and prepare a tailored quote.':'ทีมงานจะประเมินและจัดทำใบเสนอราคาให้ตามระบบจริงของคุณ') + '</div>';
+  }
+  updateQuoteTotal();
+}
+function updateQuoteTotal(){
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  const t = document.getElementById('qmTotal');
+  let install = 0, monthly = 0, note = '';
+  if (qmType === 'webonly'){
+    const prod = parseInt((document.getElementById('qmProducts')||{}).value, 10) || 0;
+    const over = Math.max(0, prod - 50);
+    install = 9000 + over * 20;
+    if (over > 0) note = en ? ('incl. '+over+' extra products') : ('รวมสินค้าเกิน '+over+' รายการ');
+  } else if (qmType === '2ai5'){
+    install = 22000; monthly = 5990;
+    document.querySelectorAll('.qm-addcb:checked').forEach(function(cb){ install += Number(qmAddons()[cb.dataset.i].price) || 0; });
+  } else { t.innerHTML = ''; return; }
+  t.innerHTML = '<span>' + (en?'Est. one-time':'ประเมินครั้งเดียว') + '</span> <b>' + baht(install) + '</b>' + (monthly ? (' <small>+ '+baht(monthly)+'/'+(en?'mo':'เดือน')+'</small>') : '') + (note ? (' <small>· '+note+'</small>') : '');
+}
+function buildQuoteItems(){
+  if (qmType === 'webonly'){
+    const pages = parseInt((document.getElementById('qmPages')||{}).value, 10) || 1;
+    const prod = parseInt((document.getElementById('qmProducts')||{}).value, 10) || 0;
+    const over = Math.max(0, prod - 50);
+    const items = [{ desc:'เว็บไซต์ร้าน + แคตตาล็อก + ระบบแอดมิน', subs:[pages+' หน้า · สินค้าประมาณ '+prod+' รายการ','รวมโดเมน .com + Hosting ปีแรก'], qty:1, unit:'เว็บ', price:9000 }];
+    if (over > 0) items.push({ desc:'สินค้าเกิน 50 รายการ', subs:[], qty:over, unit:'รายการ', price:20 });
+    return { items, monthlyNote:'• ไม่มีค่ารายเดือน · เพิ่ม AI ทีหลังได้ทุกเมื่อ' };
+  }
+  const items = [{ desc:'2 AI · 5 Agent — พัฒนาระบบพร้อมติดตั้ง', subs:['ทีม AI ครบ 5 หน้าที่ (ขาย/ผู้จัดการ/การเงิน/คลัง/การตลาด)','+ เว็บไซต์ร้าน + ระบบแอดมิน','โปรเปิดตัว 22 ท่านแรก (จากปกติ ฿39,000)'], qty:1, unit:'ระบบ', price:22000 }];
+  document.querySelectorAll('.qm-addcb:checked').forEach(function(cb){ const a = qmAddons()[cb.dataset.i]; items.push({ desc:'Add-on: '+a.name, subs:[], qty:1, unit:'ระบบ', price:Number(a.price)||0 }); });
+  return { items, monthlyNote:'• ค่าบริการดูแลระบบ ฿5,990/เดือน (เริ่มนับหลังส่งมอบ)\n• มัดจำ 60% เริ่มงาน · อีก 40% เมื่อส่งมอบ' };
+}
+async function submitQuote(){
+  const en = (typeof LANG !== 'undefined') && LANG === 'en';
+  const name = document.getElementById('qmName').value.trim();
+  const phone = document.getElementById('qmPhone').value.trim();
+  const email = document.getElementById('qmEmail').value.trim();
+  if (!name) { alert(en?'Your name, please 😊':'กรอกชื่อด้วยนะคะ 😊'); return; }
+  if (phone.replace(/\D/g,'').length < 9) { alert(en?'A reachable phone number, please 😊':'ขอเบอร์โทรที่ติดต่อได้นะคะ 😊'); return; }
+  const consult = (qmType !== 'webonly' && qmType !== '2ai5');
+  const btn = document.getElementById('qmSubmit');
+  btn.disabled = true; btn.textContent = en ? 'Sending…' : 'กำลังส่ง…';
+  let quoteWin = null;
+  const q = consult ? null : buildQuoteItems();
+  if (q) { quoteWin = window.open('', '_blank'); if (quoteWin) quoteWin.document.write('<!DOCTYPE html><meta charset="utf-8"><body style="font-family:sans-serif"><p style="padding:50px;text-align:center;color:#555">กำลังออกใบเสนอราคา… 📄</p></body>'); }
+  const lead = { lead_id:'LEAD-'+Date.now(), name, contact:(email||phone), email:(email||null), phone, interest:qmType, message:'ขอใบเสนอราคาผ่านกล่อง ('+qmType+')', source:'website-quote', quote_data: q ? { items:q.items, monthlyNote:q.monthlyNote, name, email, phone } : null };
+  try { await saveLead(lead); } catch(e) {}
+  if (q && quoteWin) {
+    try {
+      const r = await fetch(NOVA_WORKER_URL + '/quote', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, email, phone, items:q.items, monthlyNote:q.monthlyNote }) });
+      if (r.ok) { const html = await r.text(); quoteWin.document.open(); quoteWin.document.write(html); quoteWin.document.close(); }
+      else if (quoteWin) { quoteWin.close(); }
+    } catch(e) { if (quoteWin) quoteWin.close(); }
+  }
+  btn.disabled = false; btn.textContent = en ? 'Get quote →' : 'ออกใบเสนอราคา →';
+  closeQuote();
+  alert(en ? 'Done! Our team will follow up to confirm 😊' : 'เรียบร้อยค่ะ 😊 ทีม NEO-S จะติดต่อกลับเพื่อยืนยันรายละเอียด');
+}
+
+// ============================================================
 // PRICE CALCULATOR — ออกแบบแพ็กเกจ → ราคา → ขอใบเสนอราคา
 // แก้ราคา/เพิ่ม option ได้ที่ CALC ด้านล่างนี้เลย (config-driven)
 // feature เสร็จ → เปลี่ยน status:'soon' → 'ready' = เปิดติ๊กขายได้ทันที
@@ -1901,7 +2034,9 @@ function renderPkgTables(){
     const priceHtml = p.consult
       ? '<div class="pt-price"><b style="font-size:22px">' + (en ? 'Contact us' : 'ปรึกษาเพิ่ม') + '</b><div class="pt-sub">' + (en ? 'for larger businesses' : 'สำหรับธุรกิจใหญ่ขึ้น') + '</div></div>'
       : '<div class="pt-price"><span class="pt-was">' + baht(p.full) + '</span><b>' + baht(p.promo) + '</b><div class="pt-sub">+ ' + baht(p.monthly) + '/' + (en ? 'mo' : 'เดือน') + ' · ' + (en ? 'first 22 clients' : 'โปร 22 ท่านแรก') + '</div></div>';
-    const btn = '<button class="price-btn" onclick="openChat()">' + (en ? 'Free consultation' : 'ปรึกษาฟรี') + '</button>';
+    const btn = p.consult
+      ? '<button class="price-btn" onclick="openChat()">' + (en ? 'Free consultation' : 'ปรึกษาฟรี') + '</button>'
+      : '<button class="price-btn" onclick="openQuote(\'2ai5\')">' + (en ? 'Get a quote' : 'ขอใบเสนอราคา') + '</button>';
     return '<div class="pkg-table' + (p.featured ? ' featured' : '') + '">' +
       '<div class="pkg-table-head"><div><div class="pt-name">' + p.icon + ' ' + nm + '</div><div class="pt-sub">' + tg + '</div></div>' + priceHtml + '</div>' +
       capTable + soonNote + incHtml + btn +
