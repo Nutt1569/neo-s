@@ -276,6 +276,7 @@
       <button class="tab" id="tab-customers" onclick="showTab('customers')">👥 ลูกค้า</button>
       <button class="tab" id="tab-report" onclick="showTab('report')">📊 เอเลน่า</button>
       <button class="tab" id="tab-chat" onclick="showTab('chat')">💬 ประวัติแชท</button>
+      <button class="tab" id="tab-workshop" onclick="showTab('workshop')">🎓 Workshop</button>
       <button class="tab" id="tab-aipower" onclick="showTab('aipower')">🔋 พลัง AI ลูกค้า</button>
       <button class="tab" id="tab-mypower" onclick="showTab('mypower')">⚡ พลัง AI ของเรา</button>
       <button class="tab" id="tab-tools" onclick="showTab('tools')">🛠 เครื่องมือ</button>
@@ -543,6 +544,16 @@
     .tgl-dot{position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .2s}
     .tgl.on .tgl-dot{left:23px}
     </style>
+    <div id="page-workshop" style="display:none">
+      <div class="panel">
+        <div class="panel-title">🎓 ผู้สมัคร Workshop <span class="spacer"></span>
+          <span id="wsCount" style="font-size:13px;opacity:.7;margin-right:10px"></span>
+          <button class="nav-btn refresh" onclick="loadWorkshop(true)">🔄 รีเฟรช</button>
+        </div>
+        <div id="wsBox" style="padding:6px 2px;overflow-x:auto"></div>
+      </div>
+    </div>
+
     <div id="page-tools" style="display:none">
       <div class="page-head">
         <div><h1>🛠 เครื่องมือ &amp; ตั้งค่าหน้าเว็บ</h1><div class="sub">สวิตช์ควบคุมพฤติกรรมเว็บ neos-css.com แบบเรียลไทม์ · สลับแล้วบันทึกทันที (เว็บเปลี่ยนตามเมื่อลูกค้าโหลดหน้า)</div></div>
@@ -800,6 +811,7 @@ async function loadAll(manual){
   await loadLeads();
   try { await loadCustomers(); } catch(e){}
   try { await loadCredits(); } catch(e){}
+  try { await loadWorkshop(); } catch(e){}
   renderOverview();
   if (manual) toast('รีเฟรชแล้ว ✅');
 }
@@ -1370,7 +1382,7 @@ const PRODUCT_AGENTS = ['AI Sales','AI Finance','AI Inventory','AI Logistics','A
 let CREDITS = [];
 
 function showTab(which){
-  ['overview','leads','customers','report','chat','aipower','mypower','tools','kb'].forEach(p=>{
+  ['overview','leads','customers','report','chat','workshop','aipower','mypower','tools','kb'].forEach(p=>{
     document.getElementById('page-'+p).style.display = which===p ? 'block' : 'none';
     document.getElementById('tab-'+p).classList.toggle('on', which===p);
   });
@@ -1382,6 +1394,7 @@ function showTab(which){
   if (which==='mypower')   { loadMyPower(); loadCredits(); }   // พลัง AI ของเรา + งบ vendor (ยุบรวม)
   if (which==='tools')     loadTools();
   if (which==='kb')        kbLoad();
+  if (which==='workshop')  loadWorkshop();
 }
 
 // ===== 🧠 ถังความรู้เอเลน่า (RAG) — เรียก worker /kb/* ด้วย session token =====
@@ -2074,6 +2087,51 @@ function saveReportCfg(){
   }));
   toast('บันทึกการตั้งค่าแล้ว ✅');
 }
+// ===== 🎓 WORKSHOP SIGNUPS =====
+let WORKSHOP = [];
+async function loadWorkshop(manual){
+  try {
+    const { data, error } = await sb.from('neos_workshop_signups').select('*').order('created_at', { ascending:false });
+    if (error) throw error;
+    WORKSHOP = data || [];
+  } catch(e){ WORKSHOP = []; }
+  renderWorkshop();
+  if (manual) toast('รีเฟรชแล้ว ✅');
+}
+function wsReal(){ return WORKSHOP.filter(w => (w.source||'') === 'workshop-page'); }
+function renderWorkshop(){
+  const box = document.getElementById('wsBox'); if(!box) return;
+  const real = wsReal();
+  const cnt = document.getElementById('wsCount');
+  if (cnt) cnt.textContent = 'สมัครจริง ' + real.length + ' คน · ฟรี ' + Math.min(real.length,5) + '/5';
+  if (!WORKSHOP.length){ box.innerHTML = '<div style="padding:14px;opacity:.6">ยังไม่มีผู้สมัคร</div>'; return; }
+  // 5 ท่านแรก (เรียงตามเวลาสมัคร) = ฟรี
+  const asc = real.slice().sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+  const freeIds = new Set(asc.slice(0,5).map(w=>w.id));
+  const esc = s => (s==null?'':String(s)).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+  const rows = WORKSHOP.map(w => {
+    const isReal = (w.source||'') === 'workshop-page';
+    let badge = isReal
+      ? (freeIds.has(w.id) ? '<span style="color:#31d67e;font-weight:700">● ฟรี</span>' : '<span style="color:#26c6ff">รอบถัดไป</span>')
+      : '<span style="opacity:.4">test</span>';
+    const dt = w.created_at ? new Date(w.created_at).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    return `<tr style="border-bottom:1px solid rgba(128,128,128,.18)">
+      <td style="padding:8px 8px;white-space:nowrap">${badge}</td>
+      <td style="padding:8px 8px"><b>${esc(w.name)}</b></td>
+      <td style="padding:8px 8px;white-space:nowrap">${esc(w.phone)}</td>
+      <td style="padding:8px 8px">${esc(w.line_id)}</td>
+      <td style="padding:8px 8px">${esc(w.business)}</td>
+      <td style="padding:8px 8px">${esc(w.prefer_format)}</td>
+      <td style="padding:8px 8px;white-space:nowrap;opacity:.6;font-size:12px">${dt}</td>
+    </tr>`;
+  }).join('');
+  box.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:14px;min-width:640px">
+    <thead><tr style="text-align:left;opacity:.55;font-size:12px;border-bottom:1px solid rgba(128,128,128,.25)">
+      <th style="padding:6px 8px">สถานะ</th><th style="padding:6px 8px">ชื่อ</th><th style="padding:6px 8px">เบอร์</th>
+      <th style="padding:6px 8px">LINE</th><th style="padding:6px 8px">ธุรกิจ</th><th style="padding:6px 8px">รูปแบบ</th><th style="padding:6px 8px">เวลา</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 function buildReport(){
   const now = new Date();
   const dstr = now.toLocaleDateString('th-TH',{ weekday:'long', day:'numeric', month:'long', year:'numeric' });
@@ -2112,6 +2170,9 @@ function buildReport(){
 
 📣 เว็บ
    • คนเข้าชม ${uniqV||'—'} · Conversion ${visConv} · ช่องทางเด่น ${topSrcLbl}
+
+🎓 Workshop
+   • สมัคร ${wsReal().length} คน · ฟรี ${Math.min(wsReal().length,5)}/5 · รอบถัดไป ${Math.max(0,wsReal().length-5)}
 
 🔋 เครดิต LLM
    ${credLine}
