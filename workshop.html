@@ -60,7 +60,6 @@
   .apinote{font-size:12px;color:var(--dim);text-align:center;margin-top:14px;line-height:1.6}
   .err{color:#ff8a8a;font-size:13px;margin-top:8px;display:none}
 
-  /* success */
   .done{display:none;background:var(--card);border:1px solid rgba(49,214,126,.4);border-radius:18px;padding:36px 24px;text-align:center}
   .done .ic{font-size:56px;margin-bottom:10px}
   .done h2{font-size:24px;color:var(--ok);margin-bottom:8px}
@@ -83,9 +82,9 @@
     <h1>สร้าง<span class="g">เว็บไซต์ธุรกิจ + ผู้ช่วย AI</span><br>จบใน 1 วัน ใช้งานได้จริง</h1>
     <p class="sub">ไม่ต้องเขียนโค้ดเป็น · ไม่ต้องมีพื้นฐาน · จบวันนั้นได้เว็บของคุณเองพร้อม URL ใช้งานจริง</p>
 
-    <div class="free">
+    <div class="free" id="freeBox">
       <span class="big">🎁</span>
-      <div><b>ลงทะเบียน 5 ท่านแรก ฟรี!</b><br><span style="font-size:13px;color:var(--dim)">(ยกเว้นค่า API ที่จ่ายตามใช้จริง)</span></div>
+      <div><b>ลงทะเบียน 5 ท่านแรก ฟรี!</b> <span id="freeLeft" style="color:var(--cyan);font-weight:700"></span><br><span style="font-size:13px;color:var(--dim)">(ยกเว้นค่า API ที่จ่ายตามใช้จริง)</span></div>
     </div>
 
     <div class="gets">
@@ -101,7 +100,7 @@
 
     <form id="regForm" onsubmit="submitReg(event)">
       <h2>📝 ลงทะเบียนเข้าร่วม</h2>
-      <div class="fnote">กรอกข้อมูลสั้นๆ ทีมงานจะติดต่อกลับเพื่อยืนยันรอบเรียนค่ะ</div>
+      <div class="fnote">กรอกข้อมูลสั้นๆ ทีมงานจะติดต่อกลับเพื่อยืนยันสิทธิ์ + รอบเรียนค่ะ</div>
 
       <label>ชื่อ - นามสกุล <span class="req">★</span></label>
       <input id="f_name" type="text" placeholder="เช่น สมชาย ใจดี" autocomplete="name">
@@ -136,9 +135,9 @@
   </div>
 
   <div class="done" id="done">
-    <div class="ic">🎉</div>
-    <h2>ลงทะเบียนสำเร็จ!</h2>
-    <p>ขอบคุณที่สนใจค่ะ ทีมงาน NEO-S จะติดต่อกลับเพื่อยืนยันรอบเรียนโดยเร็วที่สุด</p>
+    <div class="ic" id="doneIc">🎉</div>
+    <h2 id="doneH">ลงทะเบียนสำเร็จ!</h2>
+    <p id="doneP">ขอบคุณที่สนใจค่ะ ทีมงาน NEO-S จะติดต่อกลับเพื่อยืนยันรอบเรียนโดยเร็วที่สุด</p>
     <div class="li">📌 เตรียมตัว: โน้ตบุ๊ก · บัญชี ChatGPT · บัญชี Claude (Anthropic) · อีเมล</div>
   </div>
 
@@ -149,18 +148,50 @@
   const SUPABASE_URL  = 'https://hdpjwegiorofmferhlhq.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
 
+  async function freeLeft(){
+    try{
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/workshop_free_left', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+SUPABASE_ANON },
+        body:'{}'
+      });
+      if(!r.ok) return null;
+      return parseInt(await r.text(), 10);
+    }catch(e){ return null; }
+  }
+
+  async function loadCount(){
+    const n = await freeLeft();
+    if(n === null) return;   // โหลดไม่ได้ → ใช้ข้อความ default
+    const el = document.getElementById('freeLeft');
+    const btn = document.getElementById('regBtn');
+    if(n > 0){
+      el.textContent = '🔥 เหลือ ' + n + '/5 ที่';
+      btn.textContent = 'ลงทะเบียน — รับสิทธิ์ฟรี 🚀';
+    } else {
+      document.getElementById('freeBox').innerHTML =
+        '<span class="big">⏳</span><div><b style="color:var(--cyan)">สิทธิ์ฟรีเต็มแล้ว</b><br><span style="font-size:13px;color:var(--dim)">ลงชื่อรอบถัดไปได้ · ค่าเรียน 4,999 (ยกเว้นค่า API)</span></div>';
+      btn.textContent = 'ลงชื่อรอบถัดไป (4,999)';
+    }
+  }
+  loadCount();
+
   async function submitReg(e){
     e.preventDefault();
-    const err = document.getElementById('regErr');
-    err.style.display = 'none';
+    const err = document.getElementById('regErr'); err.style.display = 'none';
     const name  = document.getElementById('f_name').value.trim();
     const phone = document.getElementById('f_phone').value.trim();
     if(!name){ return showErr('กรอกชื่อ-นามสกุลด้วยนะคะ 😊'); }
     if(!phone){ return showErr('กรอกเบอร์โทรด้วยนะคะ (ไว้ติดต่อกลับ) 😊'); }
 
+    const btn = document.getElementById('regBtn');
+    btn.textContent = 'กำลังลงทะเบียน…'; btn.disabled = true;
+
+    const before = await freeLeft();                       // เช็คสิทธิ์ล่าสุดตอนกดสมัคร
+    const isFree = (before === null) ? null : (before > 0);
+
     const rec = {
-      name: name,
-      phone: phone,
+      name: name, phone: phone,
       line_id: document.getElementById('f_line').value.trim() || null,
       email: document.getElementById('f_email').value.trim() || null,
       business: document.getElementById('f_biz').value.trim() || null,
@@ -168,9 +199,6 @@
       note: document.getElementById('f_note').value.trim() || null,
       source: 'workshop-page'
     };
-
-    const btn = document.getElementById('regBtn');
-    btn.textContent = 'กำลังลงทะเบียน…'; btn.disabled = true;
     try{
       const r = await fetch(SUPABASE_URL + '/rest/v1/neos_workshop_signups', {
         method:'POST',
@@ -179,12 +207,24 @@
         body: JSON.stringify(rec)
       });
       if(!r.ok){ throw new Error('HTTP '+r.status); }
+
+      const ic = document.getElementById('doneIc'), h = document.getElementById('doneH'), p = document.getElementById('doneP');
+      if(isFree === true){
+        ic.textContent = '🎉'; h.textContent = 'ได้สิทธิ์ฟรี! ลงทะเบียนสำเร็จ'; h.style.color = 'var(--ok)';
+        p.textContent = 'ยินดีด้วยค่ะ 🎊 คุณอยู่ใน 5 ท่านแรก ได้เรียนฟรี! ทีมงาน NEO-S จะติดต่อกลับเพื่อยืนยันรอบเรียนโดยเร็วที่สุด';
+      } else if(isFree === false){
+        ic.textContent = '📋'; h.textContent = 'ลงทะเบียนสำเร็จ (รอบถัดไป)'; h.style.color = 'var(--cyan)';
+        p.textContent = 'สิทธิ์ฟรี 5 ท่านแรกเต็มแล้ว แต่เราบันทึกชื่อคุณไว้สำหรับรอบถัดไป (ค่าเรียน 4,999) — ทีมงานจะติดต่อกลับค่ะ';
+      } else {
+        ic.textContent = '🎉'; h.textContent = 'ลงทะเบียนสำเร็จ!'; h.style.color = 'var(--ok)';
+        p.textContent = 'ขอบคุณที่สนใจค่ะ ทีมงาน NEO-S จะติดต่อกลับเพื่อยืนยันสิทธิ์และรอบเรียนโดยเร็วที่สุด';
+      }
       document.getElementById('pitch').style.display = 'none';
       document.getElementById('done').style.display = 'block';
       window.scrollTo({top:0, behavior:'smooth'});
     }catch(ex){
       showErr('ส่งข้อมูลไม่สำเร็จ ลองใหม่อีกครั้ง หรือทัก LINE @neos-css ค่ะ 🙏');
-      btn.textContent = 'ลงทะเบียน — 5 ท่านแรกฟรี 🚀'; btn.disabled = false;
+      btn.textContent = 'ลงทะเบียน 🚀'; btn.disabled = false;
     }
   }
   function showErr(m){ const e=document.getElementById('regErr'); e.textContent=m; e.style.display='block'; }
