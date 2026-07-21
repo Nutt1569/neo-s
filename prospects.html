@@ -1,0 +1,718 @@
+<title>NEOS Sales — ฐานลูกค้าเป้าหมาย</title>
+<style>
+  :root {
+    --bg:#f4f6f5; --surface:#ffffff; --surface-2:#eef1f0;
+    --ink:#16211f; --ink-soft:#4a5a56; --ink-faint:#7d8c88;
+    --line:#dde3e1; --line-soft:#e8ecea;
+    --accent:#0f766e; --accent-ink:#0b5b54; --accent-wash:#e2f0ee;
+    --st-none-bg:#eceeed; --st-none-fg:#6b7a76; --st-none-bar:#c3ccc9;
+    --st-call-bg:#e2edfb; --st-call-fg:#1e5aa8; --st-call-bar:#3b82f6;
+    --st-appt-bg:#fdf1d9; --st-appt-fg:#8a6410; --st-appt-bar:#e0a92b;
+    --st-won-bg:#dcf1e4;  --st-won-fg:#1c7a44;  --st-won-bar:#22a35a;
+    --st-no-bg:#efe4e4;   --st-no-fg:#9a5656;   --st-no-bar:#c07a7a;
+    --shadow: 0 1px 2px rgba(16,40,36,.06), 0 4px 16px rgba(16,40,36,.05);
+    --radius:12px;
+    --font:"Sarabun","Noto Sans Thai","Leelawadee UI","Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){ :root{
+    --bg:#10161a; --surface:#171f24; --surface-2:#1e282e;
+    --ink:#e8efec; --ink-soft:#a7b6b1; --ink-faint:#75847f;
+    --line:#2a353b; --line-soft:#232d33;
+    --accent:#2dd4bf; --accent-ink:#5eead4; --accent-wash:#173c39;
+    --st-none-bg:#232d33; --st-none-fg:#8b9a95; --st-none-bar:#3a464c;
+    --st-call-bg:#16304d; --st-call-fg:#7db3f0; --st-call-bar:#3b82f6;
+    --st-appt-bg:#3a2f14; --st-appt-fg:#e5be6b; --st-appt-bar:#e0a92b;
+    --st-won-bg:#123528;  --st-won-fg:#63d69a;  --st-won-bar:#22a35a;
+    --st-no-bg:#3a2626;   --st-no-fg:#d69a9a;   --st-no-bar:#c07a7a;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 18px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="light"]{
+    --bg:#f4f6f5; --surface:#fff; --surface-2:#eef1f0;
+    --ink:#16211f; --ink-soft:#4a5a56; --ink-faint:#7d8c88;
+    --line:#dde3e1; --line-soft:#e8ecea;
+    --accent:#0f766e; --accent-ink:#0b5b54; --accent-wash:#e2f0ee;
+    --st-none-bg:#eceeed; --st-none-fg:#6b7a76; --st-none-bar:#c3ccc9;
+    --st-call-bg:#e2edfb; --st-call-fg:#1e5aa8; --st-call-bar:#3b82f6;
+    --st-appt-bg:#fdf1d9; --st-appt-fg:#8a6410; --st-appt-bar:#e0a92b;
+    --st-won-bg:#dcf1e4;  --st-won-fg:#1c7a44;  --st-won-bar:#22a35a;
+    --st-no-bg:#efe4e4;   --st-no-fg:#9a5656;   --st-no-bar:#c07a7a;
+  }
+  :root[data-theme="dark"]{
+    --bg:#10161a; --surface:#171f24; --surface-2:#1e282e;
+    --ink:#e8efec; --ink-soft:#a7b6b1; --ink-faint:#75847f;
+    --line:#2a353b; --line-soft:#232d33;
+    --accent:#2dd4bf; --accent-ink:#5eead4; --accent-wash:#173c39;
+    --st-none-bg:#232d33; --st-none-fg:#8b9a95; --st-none-bar:#3a464c;
+    --st-call-bg:#16304d; --st-call-fg:#7db3f0; --st-call-bar:#3b82f6;
+    --st-appt-bg:#3a2f14; --st-appt-fg:#e5be6b; --st-appt-bar:#e0a92b;
+    --st-won-bg:#123528;  --st-won-fg:#63d69a;  --st-won-bar:#22a35a;
+    --st-no-bg:#3a2626;   --st-no-fg:#d69a9a;   --st-no-bar:#c07a7a;
+  }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--font); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1180px; margin:0 auto; padding:28px 20px 80px; }
+
+  .head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .logo { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent-ink)); color:#fff; display:grid; place-items:center; font-weight:800; font-size:19px; box-shadow:var(--shadow); }
+  h1 { font-size:22px; margin:0; letter-spacing:-.01em; font-weight:800; }
+  .sub { color:var(--ink-faint); font-size:13px; margin-top:3px; }
+  .asof { display:inline-block; margin-left:8px; font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-wash); padding:2px 8px; border-radius:20px; }
+
+  .stats { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:14px; }
+  .tile { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+  .tile .n { font-size:24px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .tile .l { font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+  .tile.hot { background:linear-gradient(135deg,var(--accent),var(--accent-ink)); border-color:transparent; }
+  .tile.hot .n{ color:#fff; } .tile.hot .l{ color:rgba(255,255,255,.8); }
+  .tile.won .n{ color:var(--st-won-bar);} .tile.call .n{ color:var(--st-call-bar);} .tile.noweb .n{ color:var(--st-no-bar);}
+
+  .legend { font-size:11.5px; color:var(--ink-faint); margin:0 2px 20px; display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+  .legend b{ color:var(--ink-soft); }
+
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; border-bottom:2px solid var(--line); margin-bottom:20px; }
+  .tab { appearance:none; border:none; background:transparent; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink-soft); padding:10px 14px; border-radius:9px 9px 0 0; cursor:pointer; position:relative; top:2px; border-bottom:2px solid transparent; display:flex; align-items:center; gap:7px; }
+  .tab:hover:not(:disabled){ color:var(--ink); background:var(--surface-2); }
+  .tab[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); background:var(--surface); }
+  .tab:disabled{ color:var(--ink-faint); cursor:not-allowed; opacity:.75; }
+  .tab .soon{ font-size:9.5px; font-weight:700; background:var(--surface-2); color:var(--ink-faint); border:1px solid var(--line); padding:1px 5px; border-radius:20px; letter-spacing:.04em; }
+  .tab:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .search { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:8px 12px; }
+  .search input { border:none; background:transparent; outline:none; font-family:inherit; font-size:14px; color:var(--ink); width:100%; }
+  .search svg{ flex:none; color:var(--ink-faint); }
+  .btn { appearance:none; font-family:inherit; font-size:13px; font-weight:600; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); padding:8px 14px; border-radius:10px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+  .btn:hover{ border-color:var(--accent); color:var(--accent-ink); }
+  .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.primary:hover{ background:var(--accent-ink); }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .cat { margin-bottom:26px; }
+  .cat-head { display:flex; align-items:baseline; gap:10px; margin:0 2px 10px; }
+  .cat-head h2 { font-size:15px; font-weight:800; margin:0; letter-spacing:.01em; }
+  .cat-head .count { font-size:12px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+
+  .table-scroll { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); }
+  table { width:100%; border-collapse:collapse; min-width:920px; }
+  a.srclink { font-size:12.5px; color:var(--accent-ink); text-decoration:none; white-space:nowrap; font-weight:600; }
+  a.srclink:hover { text-decoration:underline; }
+
+  /* sources modal */
+  .modal-bg { position:fixed; inset:0; background:rgba(10,20,18,.55); display:none; align-items:flex-start; justify-content:center; padding:40px 16px; z-index:50; overflow-y:auto; }
+  .modal-bg.open { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--line); border-radius:14px; max-width:640px; width:100%; box-shadow:var(--shadow); }
+  .modal-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--surface); border-radius:14px 14px 0 0; }
+  .modal-head h3 { margin:0; font-size:16px; font-weight:800; }
+  .modal-head .hint { font-size:11.5px; color:var(--ink-faint); }
+  .modal-body { padding:6px 20px 20px; }
+  .src-cat { margin-top:16px; font-size:11.5px; font-weight:800; color:var(--accent-ink); text-transform:uppercase; letter-spacing:.04em; }
+  .src-item { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--line-soft); font-size:13px; }
+  .src-item:last-child { border-bottom:none; }
+  .src-item .nm { color:var(--ink); }
+  .x-btn { appearance:none; border:none; background:var(--surface-2); color:var(--ink-soft); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:17px; flex:none; }
+  .x-btn:hover { color:var(--ink); }
+  thead th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); font-weight:700; padding:11px 12px; border-bottom:1px solid var(--line); background:var(--surface-2); }
+  tbody td { padding:11px 12px; border-bottom:1px solid var(--line-soft); vertical-align:middle; font-size:13.5px; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody tr td:first-child { border-left:3px solid var(--row-bar,transparent); }
+  .name { font-weight:700; color:var(--ink); }
+  .area { display:inline-block; margin-top:2px; font-size:11.5px; color:var(--ink-faint); }
+  a.maplink { display:inline-block; margin-top:3px; font-size:11px; color:var(--accent-ink); text-decoration:none; font-weight:600; white-space:nowrap; }
+  a.maplink:hover { text-decoration:underline; }
+  .contacts { display:flex; flex-direction:column; gap:3px; }
+  .contacts a, .contacts span.cval { font-size:12.5px; color:var(--ink-soft); text-decoration:none; font-variant-numeric:tabular-nums; }
+  .contacts a:hover { color:var(--accent-ink); text-decoration:underline; }
+  .ctype { display:inline-block; min-width:34px; color:var(--ink-faint); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; }
+
+  .badges { display:flex; flex-direction:column; gap:5px; align-items:flex-start; }
+  .badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; white-space:nowrap; line-height:1.3; }
+  .web-none  { background:var(--st-no-bg);   color:var(--st-no-fg); }
+  .web-market{ background:var(--st-appt-bg); color:var(--st-appt-fg); }
+  .web-own   { background:var(--st-call-bg); color:var(--st-call-fg); }
+  .web-corp  { background:var(--st-none-bg); color:var(--st-none-fg); }
+  .opp-high  { background:var(--accent); color:#fff; }
+  .opp-mid   { background:transparent; color:var(--st-appt-fg); border:1px solid var(--st-appt-bar); }
+  .opp-low   { background:transparent; color:var(--ink-faint); border:1px solid var(--line); }
+
+  select.status { appearance:none; font-family:inherit; font-size:12.5px; font-weight:700; border:1px solid var(--st-bar,var(--line)); background:var(--st-bg,var(--surface-2)); color:var(--st-fg,var(--ink-soft)); padding:5px 26px 5px 10px; border-radius:20px; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 3.5L5 6.5L8 3.5' stroke='%23888' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 9px center; }
+  select.status:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  input.note { width:100%; min-width:110px; font-family:inherit; font-size:12.5px; color:var(--ink); background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:6px 9px; outline:none; }
+  input.note:focus{ border-color:var(--accent); }
+  input.note::placeholder{ color:var(--ink-faint); }
+
+  .empty { text-align:center; color:var(--ink-faint); padding:60px 20px; }
+  .empty .big{ font-size:32px; margin-bottom:8px; }
+
+  .foot { margin-top:28px; font-size:12px; color:var(--ink-faint); text-align:center; line-height:1.7; }
+  .foot b{ color:var(--ink-soft); }
+
+  @media (max-width:860px){ .stats{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:720px){ .wrap{ padding:20px 14px 60px; } }
+  @media (prefers-reduced-motion:no-preference){ .tab,.btn,select.status{ transition:all .15s ease; } }
+
+  /* ===== โหมด/แท็บใหญ่ + แผนบุก 10 ร้าน ===== */
+  .mode-bar{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 18px; border-bottom:2px solid var(--line); }
+  .mode-btn{ appearance:none; border:none; background:transparent; font-family:inherit; font-size:15px; font-weight:800; color:var(--ink-soft); padding:10px 16px; border-radius:10px 10px 0 0; cursor:pointer; position:relative; top:2px; border-bottom:3px solid transparent; display:flex; align-items:center; gap:8px; }
+  .mode-btn:hover{ color:var(--ink); background:var(--surface-2); }
+  .mode-btn[aria-selected="true"]{ color:var(--accent-ink); border-bottom-color:var(--accent); background:var(--surface); }
+  .mode-btn .cnt{ font-size:11px; font-weight:700; background:var(--accent-wash); color:var(--accent-ink); padding:1px 8px; border-radius:20px; }
+  .mode-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  #plan-view{ --hot:#e0532b; --hot-wash:#fbe7de; --pcall:#3b82f6; --pcall-wash:#e2edfb; --won:#22a35a; --won-wash:#dcf1e4; }
+  @media (prefers-color-scheme:dark){ #plan-view{ --hot:#ff7b52; --hot-wash:#3a2016; --pcall:#7db3f0; --pcall-wash:#16304d; --won:#63d69a; --won-wash:#123528; } }
+  :root[data-theme="dark"] #plan-view{ --hot:#ff7b52; --hot-wash:#3a2016; --pcall:#7db3f0; --pcall-wash:#16304d; --won:#63d69a; --won-wash:#123528; }
+  :root[data-theme="light"] #plan-view{ --hot:#e0532b; --hot-wash:#fbe7de; --pcall:#3b82f6; --pcall-wash:#e2edfb; --won:#22a35a; --won-wash:#dcf1e4; }
+
+  #plan-view .route-cta{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:6px 0 22px; padding:14px 16px; background:var(--accent-wash); border-radius:14px; }
+  #plan-view .route-cta .txt{ flex:1; min-width:180px; }
+  #plan-view .route-cta b{ color:var(--accent-ink); font-size:14px; }
+  #plan-view .route-cta .txt div{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
+  #plan-view .route-btn{ appearance:none; font-family:inherit; font-size:14px; font-weight:700; border:none; border-radius:11px; padding:11px 18px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; background:var(--accent); color:#fff; box-shadow:var(--shadow); }
+  #plan-view .route-btn:hover{ background:var(--accent-ink); }
+  #plan-view .section-label{ font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-ink); margin:26px 2px 12px; display:flex; align-items:center; gap:8px; }
+  #plan-view .section-label::after{ content:""; flex:1; height:1px; background:var(--line); }
+  #plan-view .shop{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); margin-bottom:11px; display:grid; grid-template-columns:auto 1fr auto; gap:13px; align-items:center; }
+  #plan-view .num{ width:34px; height:34px; border-radius:9px; background:var(--hot-wash); color:var(--hot); font-weight:800; font-size:15px; display:grid; place-items:center; font-variant-numeric:tabular-nums; }
+  #plan-view .shop.done .num{ background:var(--won-wash); color:var(--won); }
+  #plan-view .info .nm{ font-weight:800; font-size:15px; }
+  #plan-view .info .meta{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
+  #plan-view .info .tag{ display:inline-block; font-size:10.5px; font-weight:700; background:var(--surface-2); color:var(--ink-soft); padding:1px 7px; border-radius:20px; margin-right:5px; }
+  #plan-view .info .why{ font-size:12px; color:var(--accent-ink); margin-top:5px; }
+  #plan-view .actions{ display:flex; flex-direction:column; gap:6px; min-width:132px; }
+  #plan-view .actions a, #plan-view .actions button{ font-size:12.5px; font-weight:700; border-radius:9px; padding:7px 11px; text-decoration:none; text-align:center; border:1px solid var(--line); cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:6px; }
+  #plan-view a.call{ background:var(--pcall-wash); color:var(--pcall); border-color:transparent; }
+  #plan-view a.map{ background:var(--surface-2); color:var(--ink-soft); }
+  #plan-view button.mark{ background:transparent; color:var(--ink-faint); }
+  #plan-view .shop.done button.mark{ background:var(--won-wash); color:var(--won); border-color:transparent; }
+  #plan-view .fbtag{ font-size:11.5px; color:var(--ink-faint); text-align:center; padding:6px; }
+  #plan-view .card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:4px 20px 18px; margin-bottom:14px; }
+  #plan-view .step{ display:grid; grid-template-columns:auto 1fr; gap:11px; padding:9px 0; border-bottom:1px solid var(--line-soft); }
+  #plan-view .step:last-child{ border-bottom:none; }
+  #plan-view .step .k{ font-size:11px; font-weight:800; color:var(--accent-ink); text-transform:uppercase; letter-spacing:.04em; padding-top:2px; white-space:nowrap; }
+  #plan-view .step .v{ font-size:13.5px; color:var(--ink); }
+  #plan-view .quote{ background:var(--accent-wash); border-radius:10px; padding:12px 14px; font-size:13.5px; color:var(--ink); }
+  #plan-view .copybtn{ appearance:none; font-family:inherit; font-size:11.5px; font-weight:700; border:1px solid var(--accent); color:var(--accent-ink); background:transparent; border-radius:8px; padding:4px 11px; cursor:pointer; margin-top:9px; }
+  #plan-view .copybtn:hover{ background:var(--accent); color:#fff; }
+  #plan-view .obj{ display:grid; gap:8px; margin-top:6px; }
+  #plan-view .obj .o{ background:var(--surface-2); border-radius:10px; padding:10px 13px; font-size:13px; }
+  #plan-view .obj .o b{ color:var(--hot); }
+  #plan-view .pfoot{ margin-top:24px; font-size:12px; color:var(--ink-faint); text-align:center; line-height:1.7; }
+  #plan-view .pfoot b{ color:var(--ink-soft); }
+  @media (max-width:640px){ #plan-view .shop{ grid-template-columns:auto 1fr; } #plan-view .actions{ grid-column:1/-1; flex-direction:row; flex-wrap:wrap; } #plan-view .actions a, #plan-view .actions button{ flex:1; min-width:90px; } }
+
+  /* ===== หน้าเข้าสู่ระบบ ===== */
+  #login{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:24px; }
+  #login .lg-card{ background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:30px 28px; width:100%; max-width:380px; }
+  #login h1{ font-size:22px; font-weight:800; margin:0 0 4px; text-align:center; }
+  #login .sub{ color:var(--ink-faint); font-size:13px; text-align:center; margin-bottom:20px; }
+  #login .gbtn{ width:100%; appearance:none; font-family:inherit; font-size:14.5px; font-weight:700; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); border-radius:11px; padding:12px; cursor:pointer; }
+  #login .gbtn:hover{ border-color:var(--accent); color:var(--accent-ink); }
+  #login .or{ display:flex; align-items:center; gap:10px; color:var(--ink-faint); font-size:12px; margin:16px 0; }
+  #login .or::before, #login .or::after{ content:""; flex:1; height:1px; background:var(--line); }
+  #login input{ width:100%; font-family:inherit; font-size:14px; color:var(--ink); background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-bottom:9px; outline:none; }
+  #login input:focus{ border-color:var(--accent); }
+  #login .pbtn{ width:100%; appearance:none; font-family:inherit; font-size:14.5px; font-weight:700; border:none; background:var(--accent); color:#fff; border-radius:11px; padding:12px; cursor:pointer; }
+  #login .pbtn:hover{ background:var(--accent-ink); }
+  #login .err{ color:#c0392b; font-size:13px; text-align:center; margin-top:12px; display:none; }
+  .nav-user{ font-size:12px; color:var(--ink-faint); margin-right:6px; }
+</style>
+
+<div id="login">
+  <div class="lg-card">
+    <h1>🔒 NEO-S · ฐานลูกค้าเป้าหมาย</h1>
+    <p class="sub">หน้าสำหรับทีมขาย — เข้าได้เฉพาะผู้ที่ได้รับสิทธิ์</p>
+    <button class="gbtn" onclick="loginGoogle()">🔵 เข้าสู่ระบบด้วย Google</button>
+    <div class="or">หรือใช้รหัสผ่าน</div>
+    <input id="lgEmail" type="email" placeholder="อีเมล" autocomplete="username">
+    <input id="lgPass" type="password" placeholder="รหัสผ่าน" autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')loginPassword()">
+    <button class="pbtn" onclick="loginPassword()">เข้าสู่ระบบ</button>
+    <p class="err" id="lgErr"></p>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <header class="head">
+    <div class="brand">
+      <div class="logo">N</div>
+      <div>
+        <h1>ฐานลูกค้าเป้าหมาย — NEOS Sales <span class="asof">ข้อมูล ณ 20 ก.ค. 2026</span></h1>
+        <div class="sub">รายชื่อสำหรับทีมโทร &amp; walk-in เสนอขาย เว็บไซต์ + พนักงาน AI · ติ๊กสถานะ &amp; โน้ตได้ ระบบจำให้อัตโนมัติ</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span class="nav-user" id="navUser"></span>
+      <button class="btn" onclick="logout()">ออกจากระบบ</button>
+    </div>
+    <div style="display:flex;gap:8px;" id="db-actions">
+      <button class="btn" id="resetBtn" title="ล้างสถานะทั้งหมด">↺ ล้างสถานะ</button>
+      <button class="btn primary" id="exportBtn">⤓ Export CSV</button>
+    </div>
+  </header>
+
+  <nav class="mode-bar" role="tablist">
+    <button class="mode-btn" id="mode-db" role="tab" aria-selected="true">📇 ฐานลูกค้าเป้าหมาย <span class="cnt" id="mode-db-cnt">273</span></button>
+    <button class="mode-btn" id="mode-plan" role="tab" aria-selected="false">🎯 แผนบุก 10 ร้านแรก</button>
+  </nav>
+
+  <div id="db-view">
+  <section class="stats" id="stats"></section>
+  <p class="legend">
+    <span><b>เว็บ:</b></span>
+    <span><span class="badge web-none">✕ ไม่มีเว็บ</span> = โอกาสขายเว็บ+AI</span>
+    <span><span class="badge web-market">◐ มาร์เก็ตเพลส</span> = มีแต่ร้านสำเร็จรูป/LnwShop</span>
+    <span><span class="badge web-own">✓ มีเว็บ</span></span>
+    <span><span class="badge web-corp">✓ เว็บองค์กร</span></span>
+    <span style="margin-left:auto"><span class="badge opp-high">🔥 โอกาสสูง</span> เรียงขึ้นก่อนในแต่ละหมวด</span>
+  </p>
+
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="ค้นหาชื่อร้าน / พื้นที่ / เบอร์…" autocomplete="off">
+    </label>
+    <select id="sortBy" class="btn" style="padding-right:14px;" title="เรียงลำดับรายชื่อ">
+      <option value="opp">↕ เรียง: โอกาสสูงก่อน</option>
+      <option value="status">↕ เรียง: ยังไม่ติดต่อก่อน</option>
+      <option value="web">↕ เรียง: ไม่มีเว็บก่อน</option>
+      <option value="name">↕ เรียง: ชื่อ ก-ฮ</option>
+    </select>
+    <button class="btn" id="srcBtn" title="ดูแหล่งอ้างอิงทุกร้าน">🔗 แหล่งอ้างอิง</button>
+    <select id="statusFilter" class="btn" style="padding-right:14px;">
+      <option value="">สถานะ: ทั้งหมด</option>
+      <option value="none">ยังไม่ติดต่อ</option>
+      <option value="call">โทรแล้ว</option>
+      <option value="appt">นัดหมาย/สนใจ</option>
+      <option value="won">ปิดการขาย</option>
+      <option value="no">ไม่สนใจ</option>
+    </select>
+    <select id="webFilter" class="btn" style="padding-right:14px;">
+      <option value="">เว็บ: ทั้งหมด</option>
+      <option value="noweb">เฉพาะ "ไม่มีเว็บ" 🔥</option>
+      <option value="hasweb">เฉพาะ "มีเว็บ"</option>
+    </select>
+    <select id="districtFilter" class="btn" style="padding-right:14px;" title="กรองตามเขต (สำหรับวางรูทเดินสาย)">
+      <option value="">เขต: ทุกเขต</option>
+    </select>
+  </div>
+
+  <main id="content"></main>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div><h3 id="modalTitle">🔗 แหล่งอ้างอิง</h3><div class="hint">คลิกลิงก์เพื่อเปิดหน้าต้นทาง ตรวจว่าร้านมีจริง/ข้อมูลตรง</div></div>
+        <button class="x-btn" id="modalClose" aria-label="ปิด">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <p class="foot">
+    💡 <b>มุมขาย:</b> ร้านที่ <b>ไม่มีเว็บ</b> (มีแค่ FB/LINE) = ปิดง่ายสุด เจ็บจริงเรื่องตอบแชทไม่ทัน → ชู “เว็บร้าน + พนักงาน AI 24 ชม.” (อ้างเคส 🐾 อุ้งเท้าช็อป ได้)<br>
+    ⚠️ สถานะเว็บ/เบอร์ตรวจ ณ 20 ก.ค. 2026 จากข้อมูลที่ค้นเจอ — ยืนยันอีกครั้งตอนโทร · สถานะที่ติ๊กบันทึกในเบราว์เซอร์เครื่องนี้ (ใช้ Export CSV แชร์ให้ทีม)
+  </p>
+  </div><!-- /#db-view -->
+
+  <div id="plan-view" hidden>
+    <div class="route-cta">
+      <div class="txt">
+        <b>🗺️ เปิดรูทเดินสายทั้ง 10 ร้านใน Google Maps</b>
+        <div>กดแล้ววาง 10 จุดต่อกันเป็นเส้นทางเดียว นำทางได้เลย (เริ่มจากเดอะมอลล์บางกะปิ)</div>
+      </div>
+      <a class="route-btn" id="routeBtn" target="_blank" rel="noopener">🧭 เปิดรูททั้งหมด</a>
+    </div>
+    <div class="section-label">🎯 10 ร้านเป้าหมาย (ติ๊กเมื่อโทร/นัดได้)</div>
+    <div id="shops"></div>
+    <div class="section-label">📞 สคริปต์โทร — 30 วินาทีแรกคือทุกอย่าง</div>
+    <div class="card">
+      <div class="step"><div class="k">1 เปิด</div><div class="v">“สวัสดีค่ะ ร้าน <b>[ชื่อร้าน]</b> ใช่ไหมคะ? รบกวนไม่เกิน 1 นาทีนะคะ — <b>NEOS</b> ทำระบบ ‘ผู้ช่วย AI ตอบลูกค้า + เว็บร้าน’ ให้ร้านย่านบางกะปิค่ะ”</div></div>
+      <div class="step"><div class="k">2 จี้จุดเจ็บ</div><div class="v">“คือร้านแบบพี่ ลูกค้ามักทักมาถาม <b>คิว/ราคา ตอนดึกหรือตอนยุ่ง</b> แล้วตอบไม่ทัน ลูกค้าหลุดไปร้านอื่น — ตรงนี้แหละที่ AI ช่วยได้ค่ะ”</div></div>
+      <div class="step"><div class="k">3 ข้อเสนอ</div><div class="v">“มันตอบแชทแทนพี่ <b>24 ชม.</b> ทั้งคิว ราคา โปร แถมมี <b>หน้าเว็บร้าน</b> ให้ลูกค้าเสิร์ช Google เจอด้วยค่ะ”</div></div>
+      <div class="step"><div class="k">4 หลักฐาน</div><div class="v">“มีร้านที่ทำจริงให้ดูเป็นตัวอย่างค่ะ (เคส 🐾 อุ้งเท้าช็อป / น้ำหอม FAFIN)”</div></div>
+      <div class="step"><div class="k">5 ปิด/นัด</div><div class="v">“ขอเข้าไปโชว์ตัวอย่าง <b>10 นาที</b> ได้ไหมคะ พี่สะดวกวันไหนดี? หรือส่งให้ดูทาง LINE ก่อนก็ได้ค่ะ”</div></div>
+    </div>
+    <div class="section-label">🛡️ รับมือคำปฏิเสธ</div>
+    <div class="card">
+      <div class="obj">
+        <div class="o"><b>“ไม่มีเวลา / ไม่สนใจ”</b> → “เข้าใจค่ะ เดี๋ยวส่งตัวอย่างให้ดูทาง LINE ก่อนนะคะ ดูแล้วสนใจค่อยคุยต่อ ไม่มีค่าใช้จ่ายค่ะ”</div>
+        <div class="o"><b>“แพงไหม”</b> → “เริ่มต้นไม่แพงอย่างที่คิดค่ะ มีหลายแพ็กเกจให้เลือกตามงบ ขอโชว์ให้เห็นภาพก่อนดีกว่าค่ะ”</div>
+        <div class="o"><b>“มี Facebook อยู่แล้ว”</b> → “FB ดีค่ะ แต่ AI จะตอบแทนตอนที่พี่ไม่ว่าง + เว็บช่วยให้คน<b>เสิร์ช Google เจอร้าน</b> ซึ่ง FB ทำไม่ได้ค่ะ”</div>
+        <div class="o"><b>“ขอคิดดูก่อน”</b> → “ได้เลยค่ะ ขอ LINE ไว้ส่งตัวอย่างให้ดูได้ไหมคะ? เผื่อพี่ตัดสินใจง่ายขึ้นค่ะ”</div>
+      </div>
+    </div>
+    <div class="section-label">💬 ข้อความทัก LINE / FB (ก๊อปได้เลย)</div>
+    <div class="card">
+      <div class="quote" id="dmText">สวัสดีค่ะ 🙂 เห็นร้านน่าสนใจมากเลยค่ะ — NEOS ทำระบบ “พนักงาน AI ตอบแชทลูกค้า 24 ชม. + เว็บร้าน” ให้ร้านย่านบางกะปิค่ะ ช่วยตอบเรื่องคิว/ราคา/โปรแทนตอนที่ยุ่ง ไม่ให้ลูกค้าหลุด 🐾 มีตัวอย่างร้านจริงให้ดูไหมคะ? เผื่อเป็นประโยชน์กับร้านค่ะ</div>
+      <button class="copybtn" id="copyDm">⧉ ก๊อปข้อความ</button>
+    </div>
+    <p class="pfoot">
+      💡 <b>ลำดับที่แนะนำ:</b> เริ่มเดินจาก <b>เดอะมอลล์บางกะปิ</b> → ออกมาฝั่งลาดพร้าว 101 → วนรามคำแหง 24-60 · โทรนัดล่วงหน้า 2-3 ร้านก่อนออก จะได้ไม่เสียเที่ยว<br>
+      ⚠️ เบอร์บางร้านมาจากการค้นเว็บ — ยืนยันตอนโทรอีกที · ติ๊กสถานะบันทึกในเครื่องนี้
+    </p>
+  </div><!-- /#plan-view -->
+</div><!-- /.wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const STATUS = {
+  none:{label:"ยังไม่ติดต่อ"}, call:{label:"โทรแล้ว"}, appt:{label:"นัดหมาย/สนใจ"},
+  won:{label:"ปิดการขาย ✓"}, no:{label:"ไม่สนใจ"},
+};
+const WEB = {
+  none:  {label:"✕ ไม่มีเว็บ",  cls:"web-none",   hasWeb:false},
+  market:{label:"◐ มาร์เก็ตเพลส", cls:"web-market", hasWeb:true},
+  own:   {label:"✓ มีเว็บ",     cls:"web-own",    hasWeb:true},
+  corp:  {label:"✓ เว็บองค์กร",  cls:"web-corp",   hasWeb:true},
+};
+const OPP = { high:{label:"🔥 โอกาสสูง",cls:"opp-high",rank:0}, mid:{label:"โอกาสกลาง",cls:"opp-mid",rank:1}, low:{label:"โอกาสต่ำ",cls:"opp-low",rank:2} };
+
+const GROUPS = [
+  { id:"pet", label:"สัตว์เลี้ยง", icon:"🐾", active:true },
+  { id:"food", label:"ร้านอาหาร / คาเฟ่", icon:"🍜", active:false },
+  { id:"beauty", label:"ความงาม / สปา", icon:"💇", active:true },
+  { id:"hotel", label:"โรงแรม / ที่พัก", icon:"🏨", active:true },
+  { id:"edu", label:"การศึกษา / โรงเรียน", icon:"🏫", active:false },
+  { id:"health", label:"คลินิก / สุขภาพ", icon:"🩺", active:true },
+];
+
+// c: [type,val]  type: tel|line|fb|web|tiktok   web: none|market|own|corp   opp: high|mid|low
+let LEADS = [];  // โหลดจาก Supabase หลังล็อกอิน
+let SRC = {};  // src มากับข้อมูลจาก Supabase
+function srcLabel(u){ try{ const h=new URL(u).hostname.replace(/^www\./,''); if(h.includes('facebook'))return'FB'; if(h.includes('google'))return'ค้นหา'; if(h.includes('kapook'))return'kapook'; if(h.includes('smemarketing'))return'บทความ'; return h.split('.')[0]; }catch(e){ return'ลิงก์'; } }
+
+let STATE = {};   // {prospect_id: {status, note, updated_by}}
+function getState(id){ return STATE[id] || {status:"none", note:""}; }
+function setState(id, patch){
+  const cur = getState(id);
+  STATE[id] = Object.assign({}, cur, patch);
+  renderStats();
+  pushState(id, patch);   // ยิงขึ้น Supabase
+}
+
+let activeGroup = "pet", query = "", filter = "", webFilterVal = "", sortBy = "opp", districtFilterVal = "";
+
+function populateDistricts(){
+  const ds = [...new Set(LEADS.filter(l=>l.g===activeGroup && l.district).map(l=>l.district))].sort();
+  const sel = document.getElementById("districtFilter");
+  sel.innerHTML = '<option value="">เขต: ทุกเขต</option>' + ds.map(d=>{
+    const n = LEADS.filter(l=>l.g===activeGroup && l.district===d).length;
+    return `<option value="${d}">เขต${d} (${n})</option>`;
+  }).join("");
+  districtFilterVal = ""; sel.value = "";
+}
+
+function sortRows(rows){
+  const arr = rows.slice();
+  if(sortBy==="opp")    arr.sort((a,b)=>OPP[a.opp].rank-OPP[b.opp].rank);
+  else if(sortBy==="status"){ const o={none:0,call:1,appt:2,won:3,no:4}; arr.sort((a,b)=>o[getState(a.id).status]-o[getState(b.id).status]); }
+  else if(sortBy==="web")  arr.sort((a,b)=>(WEB[a.web].hasWeb?1:0)-(WEB[b.web].hasWeb?1:0));
+  else if(sortBy==="name") arr.sort((a,b)=>a.name.localeCompare(b.name,"th"));
+  return arr;
+}
+
+function contactHTML(c){
+  const [type, val] = c;
+  const tp = `<span class="ctype">${type}</span>`;
+  if(type==="tel")   return `${tp}<a href="tel:${val.replace(/[^0-9]/g,'')}">${val}</a>`;
+  if(type==="web")   return `${tp}<a href="https://${val}" target="_blank" rel="noopener">${val}</a>`;
+  if(type==="fb")    return `${tp}<a href="https://facebook.com/${encodeURIComponent(val)}" target="_blank" rel="noopener">${val}</a>`;
+  return `${tp}<span class="cval">${val}</span>`;
+}
+
+function renderTabs(){
+  const el = document.getElementById("tabs"); el.innerHTML = "";
+  GROUPS.forEach(gr=>{
+    const b = document.createElement("button");
+    b.className = "tab"; b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", gr.id===activeGroup ? "true":"false");
+    b.disabled = !gr.active;
+    b.innerHTML = `<span>${gr.icon}</span><span>${gr.label}</span>` + (gr.active
+        ? `<span class="soon" style="background:var(--accent-wash);color:var(--accent-ink);border-color:transparent;">${LEADS.filter(l=>l.g===gr.id).length}</span>`
+        : `<span class="soon">เร็วๆ นี้</span>`);
+    if(gr.active) b.onclick = ()=>{ activeGroup = gr.id; renderTabs(); populateDistricts(); renderContent(); };
+    el.appendChild(b);
+  });
+}
+
+function renderStats(){
+  const leads = LEADS.filter(l=>l.g===activeGroup);
+  const cSt = k => leads.filter(l=>getState(l.id).status===k).length;
+  const hasWeb = leads.filter(l=>WEB[l.web].hasWeb).length;
+  const data = [
+    {l:"ธุรกิจทั้งหมด", n:leads.length, cls:""},
+    {l:"มีเว็บแล้ว", n:hasWeb, cls:""},
+    {l:"ไม่มีเว็บ", n:leads.length-hasWeb, cls:"noweb"},
+    {l:"🔥 โอกาสสูง", n:leads.filter(l=>l.opp==="high").length, cls:"hot"},
+    {l:"โทรแล้ว", n:cSt("call"), cls:"call"},
+    {l:"ปิดการขาย", n:cSt("won"), cls:"won"},
+  ];
+  document.getElementById("stats").innerHTML = data.map(d=>
+    `<div class="tile ${d.cls}"><div class="n">${d.n}</div><div class="l">${d.l}</div></div>`).join("");
+}
+
+function renderContent(){
+  renderStats();
+  const host = document.getElementById("content");
+  let leads = LEADS.filter(l=>l.g===activeGroup);
+  if(query){
+    const q = query.toLowerCase();
+    leads = leads.filter(l => (l.name+" "+l.area+" "+l.c.map(x=>x[1]).join(" ")).toLowerCase().includes(q));
+  }
+  if(filter) leads = leads.filter(l=>getState(l.id).status===filter);
+  if(webFilterVal==="noweb")  leads = leads.filter(l=>!WEB[l.web].hasWeb);
+  if(webFilterVal==="hasweb") leads = leads.filter(l=> WEB[l.web].hasWeb);
+  if(districtFilterVal) leads = leads.filter(l=>l.district===districtFilterVal);
+
+  if(!leads.length){
+    host.innerHTML = `<div class="empty"><div class="big">🔍</div>ไม่พบรายชื่อที่ตรงกับเงื่อนไข</div>`;
+    return;
+  }
+  const cats = [...new Set(LEADS.filter(l=>l.g===activeGroup).map(l=>l.cat))];
+  host.innerHTML = cats.map(cat=>{
+    const rows = sortRows(leads.filter(l=>l.cat===cat));
+    if(!rows.length) return "";
+    return `<section class="cat">
+      <div class="cat-head"><h2>${cat}</h2><span class="count">${rows.length} ราย</span></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th style="width:22%">ร้าน / ธุรกิจ</th><th style="width:27%">ช่องทางติดต่อ</th><th style="width:15%">เว็บ · โอกาส</th><th style="width:15%">สถานะ</th><th>โน้ต</th></tr></thead>
+        <tbody>${rows.map(rowHTML).join("")}</tbody>
+      </table></div>
+    </section>`;
+  }).join("");
+
+  host.querySelectorAll("select.status").forEach(sel=>{
+    sel.onchange = ()=>{ applyRowStyle(sel); setState(sel.dataset.id, {status:sel.value}); if(filter) renderContent(); };
+  });
+  host.querySelectorAll("input.note").forEach(inp=>{
+    inp.oninput = ()=> setState(inp.dataset.id, {note:inp.value});
+  });
+}
+
+function rowHTML(l){
+  const st = getState(l.id);
+  return `<tr>
+    <td style="--row-bar:var(--st-${st.status}-bar)"><span class="name">${l.name}</span><br><span class="area">📍 ${l.area}${l.district?' · <b style="color:var(--accent-ink)">เขต'+l.district+'</b>':''}</span><br><a class="maplink" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.name+' '+l.area)}" target="_blank" rel="noopener">🗺️ ดูแผนที่ / เส้นทาง</a></td>
+    <td><div class="contacts">${l.c.length ? l.c.map(contactHTML).join("") : '<span class="cval" style="color:var(--ink-faint)">— เดินเข้าเยี่ยม (walk-in)</span>'}</div></td>
+    <td><div class="badges"><span class="badge ${WEB[l.web].cls}">${WEB[l.web].label}</span><span class="badge ${OPP[l.opp].cls}">${OPP[l.opp].label}</span></div></td>
+    <td>${statusSelect(l.id, st.status)}</td>
+    <td><input class="note" data-id="${l.id}" placeholder="ผู้รับสาย / นัดหมาย / โน้ต…" value="${(st.note||'').replace(/"/g,'&quot;')}"></td>
+  </tr>`;
+}
+function statusSelect(id, cur){
+  const opts = Object.entries(STATUS).map(([k,s])=>`<option value="${k}" ${k===cur?"selected":""}>${s.label}</option>`).join("");
+  return `<select class="status" data-id="${id}" style="--st-bg:var(--st-${cur}-bg);--st-fg:var(--st-${cur}-fg);--st-bar:var(--st-${cur}-bar)">${opts}</select>`;
+}
+function applyRowStyle(sel){
+  const v = sel.value;
+  sel.style.setProperty("--st-bg", `var(--st-${v}-bg)`);
+  sel.style.setProperty("--st-fg", `var(--st-${v}-fg)`);
+  sel.style.setProperty("--st-bar", `var(--st-${v}-bar)`);
+  const cell = sel.closest("tr").querySelector("td:first-child");
+  if(cell) cell.style.setProperty("--row-bar", `var(--st-${v}-bar)`);
+}
+
+document.getElementById("exportBtn").onclick = ()=>{
+  const head = ["กลุ่ม","หมวด","ร้าน/ธุรกิจ","พื้นที่","ช่องทางติดต่อ","เว็บไซต์","โอกาส","Source","สถานะ","โน้ต"];
+  const rows = LEADS.map(l=>{
+    const st = getState(l.id);
+    return [
+      GROUPS.find(g=>g.id===l.g)?.label||l.g, l.cat, l.name, l.area,
+      l.c.map(x=>x[0]+":"+x[1]).join(" | "),
+      WEB[l.web].hasWeb ? "มี" : "ไม่มี", OPP[l.opp].label.replace("🔥 ",""),
+      l.src||"", STATUS[st.status]?.label||"", st.note||""
+    ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",");
+  });
+  const csv = "﻿" + [head.join(","), ...rows].join("\r\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "neos-leads.csv"; a.click();
+};
+document.getElementById("resetBtn").style.display="none";
+// sources modal
+const modalBg = document.getElementById("modalBg");
+function openSources(){
+  const leads = LEADS.filter(l=>l.g===activeGroup);
+  const cats = [...new Set(leads.map(l=>l.cat))];
+  document.getElementById("modalBody").innerHTML = cats.map(cat=>{
+    const rows = leads.filter(l=>l.cat===cat);
+    return `<div class="src-cat">${cat}</div>` + rows.map(l=>
+      `<div class="src-item"><span class="nm">${l.name}</span>${l.src
+        ? `<a class="srclink" href="${l.src}" target="_blank" rel="noopener">🔗 ${srcLabel(l.src)}</a>`
+        : `<span style="color:var(--ink-faint)">—</span>`}</div>`).join("");
+  }).join("");
+  modalBg.classList.add("open");
+}
+function closeSources(){ modalBg.classList.remove("open"); }
+document.getElementById("srcBtn").onclick = openSources;
+document.getElementById("modalClose").onclick = closeSources;
+modalBg.onclick = e=>{ if(e.target===modalBg) closeSources(); };
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSources(); });
+
+document.getElementById("search").oninput = e=>{ query = e.target.value.trim(); renderContent(); };
+document.getElementById("statusFilter").onchange = e=>{ filter = e.target.value; renderContent(); };
+document.getElementById("webFilter").onchange = e=>{ webFilterVal = e.target.value; renderContent(); };
+document.getElementById("sortBy").onchange = e=>{ sortBy = e.target.value; renderContent(); };
+document.getElementById("districtFilter").onchange = e=>{ districtFilterVal = e.target.value; renderContent(); };
+
+function initApp(){ renderTabs(); populateDistricts(); renderContent(); initPlan(); }
+
+// ===== แผนบุก 10 ร้าน (คัดจากข้อมูลจริง) + สลับโหมด =====
+function initPlan(){
+  // คัด: เขตบางกะปิ + ไม่มีเว็บ + มีเบอร์/FB + คละประเภท
+  const pool = LEADS.filter(l=>l.district==="บางกะปิ" && l.web==="none" && (l.c||[]).length);
+  const seen={}, picked=[];
+  pool.forEach(l=>{ const k=l.cat; if((seen[k]||0)<3){ seen[k]=(seen[k]||0)+1; picked.push(l); } });
+  const SHOPS = picked.slice(0,10);
+  const host = document.getElementById("shops");
+  if(SHOPS.length===0){ host.innerHTML='<div style="color:var(--ink-faint);padding:24px;text-align:center">ยังไม่มีร้านที่เข้าเกณฑ์</div>'; return; }
+
+  function pmap(s){ return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.name+" "+s.area+" กรุงเทพ"); }
+  function prender(){
+    host.innerHTML = SHOPS.map((s,i)=>{
+      const st = getState(s.id).status;
+      const isDone = st && st!=="none";
+      const tel = (s.c||[]).find(c=>c[0]==="tel");
+      const fb  = (s.c||[]).find(c=>c[0]==="fb");
+      const contact = tel
+        ? `<a class="call" href="tel:${tel[1].replace(/[^0-9]/g,'')}">📞 ${tel[1]}</a>`
+        : (fb ? `<div class="fbtag">FB: ${fb[1]}</div>` : `<div class="fbtag">เดินเข้าเยี่ยม</div>`);
+      return `<div class="shop ${isDone?'done':''}"><div class="num">${isDone?'✓':(i+1)}</div>`+
+        `<div class="info"><div class="nm">${s.name}</div><div class="meta"><span class="tag">${s.cat}</span>📍 ${s.area}</div>`+
+        `<div class="why">💡 ไม่มีเว็บ + ติดต่อได้ทันที = ปิดง่าย${getState(s.id).updated_by?' · ล่าสุดโดย '+getState(s.id).updated_by:''}</div></div>`+
+        `<div class="actions">${contact}<a class="map" href="${pmap(s)}" target="_blank" rel="noopener">🗺️ แผนที่</a>`+
+        `<button class="mark" data-id="${s.id}">${isDone?'✓ '+(STATUS[st]?STATUS[st].label:'ติดต่อแล้ว'):'ทำเครื่องหมายว่าโทรแล้ว'}</button></div></div>`;
+    }).join("");
+    host.querySelectorAll("button.mark").forEach(b=>{
+      b.onclick=()=>{ const id=b.dataset.id; const cur=getState(id).status;
+        setState(id,{status: (cur==="none"||!cur) ? "call" : "none"}); prender(); renderContent(); };
+    });
+  }
+  const routeUrl="https://www.google.com/maps/dir/"+
+    ["เดอะมอลล์ บางกะปิ"].concat(SHOPS.map(s=>s.name+" "+s.area+" บางกะปิ"))
+    .map(q=>encodeURIComponent(q)).join("/");
+  document.getElementById("routeBtn").href=routeUrl;
+  prender();
+  window.__prenderPlan = prender;
+}
+
+document.getElementById("copyDm").onclick=()=>{
+  const t=document.getElementById("dmText").innerText;
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(()=>{
+    const b=document.getElementById("copyDm"); b.textContent="✓ ก๊อปแล้ว!";
+    setTimeout(()=>b.textContent="⧉ ก๊อปข้อความ",1600);
+  });
+};
+(function(){
+  const dbView=document.getElementById("db-view"), planView=document.getElementById("plan-view"), dbActions=document.getElementById("db-actions");
+  const mDb=document.getElementById("mode-db"), mPlan=document.getElementById("mode-plan");
+  function setMode(isDb){
+    dbView.hidden=!isDb; planView.hidden=isDb; dbActions.style.display=isDb?"":"none";
+    mDb.setAttribute("aria-selected", isDb?"true":"false");
+    mPlan.setAttribute("aria-selected", isDb?"false":"true");
+    window.scrollTo({top:0});
+  }
+  mDb.onclick=()=>setMode(true); mPlan.onclick=()=>setMode(false);
+  setMode(true);
+})();
+
+
+// ============ Supabase / Auth ============
+const SUPABASE_URL='https://hdpjwegiorofmferhlhq.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkcGp3ZWdpb3JvZm1mZXJobGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Nzc0MzksImV4cCI6MjA5NTE1MzQzOX0.EeMA2b7MZDMYFN0G-7JOTj0g5ZSV1CQqfyMl7yWAI1o';
+// 🔧 อีเมลทีมขายที่เข้าได้ (ต้องตรงกับ neos_is_sales_team() ใน Supabase)
+const SALES_EMAILS=['kritsada.nutt1981@gmail.com','waytakaa@gmail.com'];
+
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,lock:(n,t,fn)=>fn()}
+});
+let CUR_EMAIL='';
+
+function lgErr(m){ const e=document.getElementById('lgErr'); e.textContent=m; e.style.display='block'; }
+function loginGoogle(){
+  if(location.protocol==='file:'){ lgErr('เปิดเป็นไฟล์ (file://) ไม่ได้ — ต้องเปิดผ่าน https'); return; }
+  sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href.split('#')[0]}});
+}
+async function loginPassword(){
+  const email=document.getElementById('lgEmail').value.trim();
+  const password=document.getElementById('lgPass').value;
+  if(!email||!password){ lgErr('กรอกอีเมลและรหัสผ่านให้ครบ'); return; }
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error) lgErr('เข้าสู่ระบบไม่สำเร็จ — ตรวจอีเมล/รหัสผ่านอีกครั้ง');
+}
+function logout(){ sb.auth.signOut().then(()=>location.reload()); }
+
+async function checkAuth(){
+  let session=null;
+  try{ session=(await sb.auth.getSession()).data.session; }catch(e){}
+  if(!session){ document.getElementById('login').style.display='flex'; document.getElementById('app').style.display='none'; return; }
+  const email=(session.user.email||'').toLowerCase();
+  if(!SALES_EMAILS.map(x=>x.toLowerCase()).includes(email)){
+    lgErr('บัญชี '+email+' ไม่มีสิทธิ์เข้าหน้านี้ — ติดต่อผู้ดูแล');
+    document.getElementById('login').style.display='flex';
+    document.getElementById('app').style.display='none';
+    await sb.auth.signOut(); return;
+  }
+  CUR_EMAIL=email;
+  document.getElementById('navUser').textContent='👤 '+email;
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='block';
+  await loadData();
+  initApp();
+  startPolling();
+}
+
+// ============ โหลดข้อมูลจาก Supabase ============
+async function loadData(){
+  const {data:pros,error:e1}=await sb.from('neos_prospects').select('*');
+  if(e1){ alert('โหลดรายชื่อไม่สำเร็จ: '+e1.message); return; }
+  LEADS=(pros||[]).map(r=>({id:r.id,g:r.grp,cat:r.cat,name:r.name,area:r.area,
+    district:r.district||'',web:r.web,opp:r.opp,c:r.contacts||[],src:r.src||''}));
+  SRC={}; LEADS.forEach(l=>{ SRC[l.name]=l.src; });
+  await loadStatus();
+}
+async function loadStatus(){
+  const {data:st}=await sb.from('neos_prospect_status').select('*');
+  STATE={}; (st||[]).forEach(r=>{ STATE[r.prospect_id]={status:r.status||'none',note:r.note||'',updated_by:r.updated_by||''}; });
+}
+
+// ============ บันทึกสถานะขึ้น Supabase (โน้ตหน่วง 800ms) ============
+const noteTimers={};
+async function pushState(id,patch){
+  const row={prospect_id:id, updated_by:CUR_EMAIL, updated_at:new Date().toISOString()};
+  const cur=getState(id);
+  row.status = patch.status!==undefined ? patch.status : (cur.status||'none');
+  row.note   = patch.note!==undefined   ? patch.note   : (cur.note||'');
+  const send=async()=>{
+    const {error}=await sb.from('neos_prospect_status').upsert(row,{onConflict:'prospect_id'});
+    if(error){ console.warn('บันทึกไม่สำเร็จ',error.message); return; }
+    if(patch.status!==undefined){
+      sb.from('neos_prospect_events').insert({prospect_id:id,type:'status',
+        body:'เปลี่ยนสถานะเป็น '+((STATUS[patch.status]||{}).label||patch.status),author:CUR_EMAIL});
+    }
+  };
+  if(patch.note!==undefined && patch.status===undefined){
+    clearTimeout(noteTimers[id]); noteTimers[id]=setTimeout(send,800);
+  } else { send(); }
+}
+
+// ============ ดึงสถานะเพื่อนร่วมทีมทุก 20 วิ ============
+let polling=null;
+function startPolling(){
+  if(polling) return;
+  polling=setInterval(async()=>{
+    if(!CUR_EMAIL) return;
+    if(document.activeElement && document.activeElement.classList.contains('note')) return; // กันพิมพ์อยู่แล้วโดนรีเฟรช
+    await loadStatus();
+    renderContent();
+    if(window.__prenderPlan) window.__prenderPlan();
+  },20000);
+}
+
+sb.auth.onAuthStateChange(()=>checkAuth());
+checkAuth();
+</script>
